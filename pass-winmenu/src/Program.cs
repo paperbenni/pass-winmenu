@@ -34,8 +34,8 @@ namespace PassWinmenu
 		public const string PlaintextFileExtension = ".txt";
 		public const string ConfigFileName = "pass-winmenu.yaml";
 
-		private ActionDispatcher actionDispatcher;
 		private UpdateChecker updateChecker;
+		private Option<RemoteUpdateChecker> remoteUpdateChecker;
 		private Notifications notificationService;
 
 		private IContainer container;
@@ -179,6 +179,8 @@ namespace PassWinmenu
 				.SingleInstance();
 
 			builder.Register(context => UpdateCheckerFactory.CreateUpdateChecker(context.Resolve<UpdateCheckingConfig>(), context.Resolve<INotificationService>()));
+			builder.RegisterType<RemoteUpdateCheckerFactory>().AsSelf();
+			builder.Register(context => context.Resolve<RemoteUpdateCheckerFactory>().Build()).AsSelf();
 
 			// Build the container
 			container = builder.Build();
@@ -189,16 +191,18 @@ namespace PassWinmenu
 				container.Resolve<GpgAgentConfigUpdater>().UpdateAgentConfig(gpgConfig.GpgAgent.Config.Keys);
 			}
 
-			actionDispatcher = container.Resolve<ActionDispatcher>();
+			var actionDispatcher = container.Resolve<ActionDispatcher>();
 
 			notificationService.AddMenuActions(actionDispatcher);
 
 			// Assign our hotkeys.
-			AssignHotkeys();
+			AssignHotkeys(actionDispatcher);
 
 			// Start checking for updates
 			updateChecker = container.Resolve<UpdateChecker>();
+			remoteUpdateChecker = container.Resolve<Option<RemoteUpdateChecker>>();
 			updateChecker.Start();
+			remoteUpdateChecker.Apply(c => c.Start());
 		}
 
 		private static Option<ISyncService> CreateSyncService (IComponentContext context)
@@ -355,7 +359,7 @@ namespace PassWinmenu
 		/// <summary>
 		/// Loads keybindings from the configuration file and registers them with Windows.
 		/// </summary>
-		private void AssignHotkeys()
+		private void AssignHotkeys(ActionDispatcher actionDispatcher)
 		{
 			try
 			{
