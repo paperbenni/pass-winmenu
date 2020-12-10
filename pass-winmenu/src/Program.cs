@@ -107,9 +107,11 @@ namespace PassWinmenu
 			builder.Register(_ => ConfigManager.Config.Gpg).AsSelf();
 			builder.Register(_ => ConfigManager.Config.Git).AsSelf();
 			builder.Register(_ => ConfigManager.Config.PasswordStore).AsSelf();
+			builder.Register(_ => ConfigManager.Config.Application).AsSelf();
 			builder.Register(_ => ConfigManager.Config.Application.UpdateChecking).AsSelf();
 			builder.Register(_ => ConfigManager.Config.PasswordStore.UsernameDetection).AsSelf();
 
+			builder.Register(ctx => new ConfigurationReloader(() => ConfigManager.Reload(ConfigFileName))).AsSelf();
 #if DEBUG
 			Log.EnableFileLogging();
 #else
@@ -214,6 +216,15 @@ namespace PassWinmenu
 				updateChecker.Start();
 			}
 			remoteUpdateChecker.Apply(c => c.Start());
+
+			// Enable config reloading
+			if (container.Resolve<ApplicationConfig>().ReloadConfig)
+			{
+				container.Resolve<ConfigurationReloader>()
+					.EnableAutoReloading(ConfigFileName);
+
+				Log.Send("Config reloading enabled");
+			}
 		}
 
 		private static Option<ISyncService> CreateSyncService(IComponentContext context)
@@ -370,11 +381,6 @@ namespace PassWinmenu
 					}
 					App.Exit();
 					return;
-			}
-			if (ConfigManager.Config.Application.ReloadConfig)
-			{
-				ConfigManager.EnableAutoReloading(ConfigFileName);
-				Log.Send("Config reloading enabled");
 			}
 		}
 

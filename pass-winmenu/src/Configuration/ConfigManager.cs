@@ -1,50 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading;
-using System.Windows;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
 namespace PassWinmenu.Configuration
 {
-	internal class ConfigManager
+	internal static class ConfigManager
 	{
 		public static Config Config { get; private set; } = new Config();
-		private static FileSystemWatcher watcher;
-
-		~ConfigManager()
-		{
-			watcher?.Dispose();
-		}
-
-		public static void EnableAutoReloading(string fileName)
-		{
-			var directory = Path.GetDirectoryName(fileName);
-			if (string.IsNullOrWhiteSpace(directory))
-			{
-				directory = Directory.GetCurrentDirectory();
-			}
-			watcher = new FileSystemWatcher(directory)
-			{
-				IncludeSubdirectories = false,
-				EnableRaisingEvents = true
-			};
-			watcher.Changed += (sender, args) =>
-			{
-				// Wait a moment to allow the writing process to close the file.
-				Thread.Sleep(500);
-				Log.Send($"Configuration file changed (change type: {args.ChangeType}), attempting reload.");
-
-				// This needs to be done on the main thread reloading the configuration file
-				// involves creating UI resources (Brush/Thickness) that need to be created
-				// on the same thread as the thread that will apply those resources to the interface.
-				Application.Current.Dispatcher.Invoke(() =>
-				{
-					Reload(fileName);
-				});
-			};
-		}
 
 		public static LoadResult Load(string fileName)
 		{
@@ -52,11 +16,10 @@ namespace PassWinmenu.Configuration
 			{
 				try
 				{
-					using (var defaultConfig = EmbeddedResources.DefaultConfig)
-					using (var configFile = File.Create(fileName))
-					{
-						defaultConfig.CopyTo(configFile);
-					}
+					using var defaultConfig = EmbeddedResources.DefaultConfig;
+					using var configFile = File.Create(fileName);
+
+					defaultConfig.CopyTo(configFile);
 				}
 				catch (Exception e) when (e is FileNotFoundException || e is FileLoadException || e is IOException)
 				{
@@ -132,12 +95,11 @@ namespace PassWinmenu.Configuration
 			}
 
 			File.Move(fileName, newFileName);
-		
-			using (var defaultConfig = EmbeddedResources.DefaultConfig)
-			using (var configFile = File.Create(fileName))
-			{
-				defaultConfig.CopyTo(configFile);
-			}
+
+			using var defaultConfig = EmbeddedResources.DefaultConfig;
+			using var configFile = File.Create(fileName);
+
+			defaultConfig.CopyTo(configFile);
 			return newFileName;
 		}
 	}

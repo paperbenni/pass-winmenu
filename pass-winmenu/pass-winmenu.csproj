@@ -129,6 +129,7 @@
     <Compile Include="src\Configuration\Classes\ApplicationConfig.cs" />
     <Compile Include="src\Configuration\Classes\CharacterGroupConfig.cs" />
     <Compile Include="src\Configuration\Classes\UpdateSource.cs" />
+    <Compile Include="src\Configuration\ConfigurationReloader.cs" />
     <Compile Include="src\Configuration\WidthConverter.cs" />
     <Compile Include="src\Configuration\LoadResult.cs" />
     <Compile Include="src\ExternalPrograms\Git\GitSyncStrategies.cs" />
