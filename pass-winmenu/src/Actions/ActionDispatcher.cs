@@ -30,6 +30,15 @@ namespace PassWinmenu.Actions
 			decryptPasswordAction.Execute(copyToClipboard, typeUsername, typePassword);
 		}
 
+		/// <summary>
+		/// Asks the user to choose a password file, decrypts it,
+		/// generates an OTP code from the secret in the totp field, and copies the resulting value to the clipboard.
+		/// </summary>
+		public void GenerateTotpCode(bool copyToClipboard, bool typeTotpCode)
+		{
+			dialogCreator.GenerateTotpCode(copyToClipboard, typeTotpCode);
+		}
+
 		public void DecryptMetadata(bool copyToClipboard, bool type)
 		{
 			dialogCreator.DecryptMetadata(copyToClipboard, type);

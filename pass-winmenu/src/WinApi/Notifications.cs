@@ -80,6 +80,7 @@ namespace PassWinmenu.WinApi
 			menu.Items.Add("Decrypt Password", null, (sender, args) => actionDispatcher.DecryptPassword(true, false, false));
 			menu.Items.Add("Add new Password", null, (sender, args) => actionDispatcher.Dispatch(HotkeyAction.AddPassword));
 			menu.Items.Add("Edit Password File", null, (sender, args) => actionDispatcher.Dispatch(HotkeyAction.EditPassword));
+			menu.Items.Add("Generate TOTP Code", null, (sender, args) => actionDispatcher.GenerateTotpCode(true, false));
 			menu.Items.Add(new ToolStripSeparator());
 			menu.Items.Add("Push to Remote", null, (sender, args) => actionDispatcher.Dispatch(HotkeyAction.GitPush));
 			menu.Items.Add("Pull from Remote", null, (sender, args) => actionDispatcher.Dispatch(HotkeyAction.GitPull));
