@@ -3,9 +3,21 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace PassWinmenu.ExternalPrograms.Gpg
 {
+	internal class StdErrResult {
+		public readonly List<StatusMessage> StatusMessages;
+		public readonly List<string> StdErrMessages;
+
+		public StdErrResult(List<StatusMessage> StatusMessages, List<string> StdErrMessages) {
+			this.StatusMessages = StatusMessages;
+			this.StdErrMessages = StdErrMessages;
+		}
+	}
+
 	internal class GpgTransport : IGpgTransport
 	{
 		private const string StatusMarker = "[GNUPG:] ";
@@ -25,45 +37,65 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 		public GpgResult CallGpg(string arguments, string input = null)
 		{
 			var gpgProc = CreateGpgProcess(arguments, input);
+
+			var stdErrTask = ReadStdErr(gpgProc);
+			var stdOutTask = ReadStdout(gpgProc);
+
+			Task.WaitAll(new Task[] {stdErrTask, stdOutTask});
+
 			gpgProc.WaitForExit(gpgCallTimeout);
 
-			string stderrLine;
-			var stderrMessages = new List<string>();
-			var statusMessages = new List<StatusMessage>();
-			while ((stderrLine = gpgProc.StandardError.ReadLine()) != null)
-			{
-				Log.Send($"[GPG]: {stderrLine}");
-				if (stderrLine.StartsWith(StatusMarker, StringComparison.Ordinal))
+			string output = stdOutTask.Result;
+			StdErrResult status = stdErrTask.Result;
+
+			return new GpgResult(gpgProc.ExitCode, output, status.StatusMessages, status.StdErrMessages);
+		}
+
+		private Task<string> ReadStdout(IProcess gpgProc) {
+			return Task<string>.Run( () => {
+				// We can use the standard UTF-8 encoding here, as it should be able to handle input without BOM.
+				using (var reader = new StreamReader(gpgProc.StandardOutput.BaseStream, Encoding.UTF8))
 				{
-					// This line is a status line, so extract status information from it.
-					var statusLine = stderrLine.Substring(StatusMarker.Length);
-					var spaceIndex = statusLine.IndexOf(" ", StringComparison.Ordinal);
-					if (spaceIndex == -1)
+					return reader.ReadToEnd();
+				}
+			});
+		}
+
+		private Task<StdErrResult> ReadStdErr(IProcess gpgProc) {
+			return Task<StdErrResult>.Run( () => { 
+
+				string stderrLine;
+				var stderrMessages = new List<string>();
+				var statusMessages = new List<StatusMessage>();
+
+				while ((stderrLine = gpgProc.StandardError.ReadLine()) != null)
+				{
+					Log.Send($"[GPG]: {stderrLine}");
+					if (stderrLine.StartsWith(StatusMarker, StringComparison.Ordinal))
 					{
-						statusMessages.Add(new StatusMessage(statusLine, null));
+						// This line is a status line, so extract status information from it.
+						var statusLine = stderrLine.Substring(StatusMarker.Length);
+						var spaceIndex = statusLine.IndexOf(" ", StringComparison.Ordinal);
+						if (spaceIndex == -1)
+						{
+							statusMessages.Add(new StatusMessage(statusLine, null));
+						}
+						else
+						{
+							var statusLabel = statusLine.Substring(0, spaceIndex);
+							// Length+1 because the space after the status label should be skipped.
+							var statusMessage = statusLine.Substring(statusLabel.Length + 1);
+							statusMessages.Add(new StatusMessage(statusLabel, statusMessage));
+						}
 					}
 					else
 					{
-						var statusLabel = statusLine.Substring(0, spaceIndex);
-						// Length+1 because the space after the status label should be skipped.
-						var statusMessage = statusLine.Substring(statusLabel.Length + 1);
-						statusMessages.Add(new StatusMessage(statusLabel, statusMessage));
+						stderrMessages.Add(stderrLine);
 					}
 				}
-				else
-				{
-					stderrMessages.Add(stderrLine);
-				}
-			}
 
-			string output;
-			// We can use the standard UTF-8 encoding here, as it should be able to handle input without BOM.
-			using (var reader = new StreamReader(gpgProc.StandardOutput.BaseStream, Encoding.UTF8))
-			{
-				output = reader.ReadToEnd();
-			}
-
-			return new GpgResult(gpgProc.ExitCode, output, statusMessages, stderrMessages);
+				return new StdErrResult(statusMessages, stderrMessages);
+			});
 		}
 
 		/// <summary>
