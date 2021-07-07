@@ -1,3 +1,5 @@
+using System;
+
 namespace PassWinmenu.Configuration
 {
 	internal class Config
@@ -5,6 +7,9 @@ namespace PassWinmenu.Configuration
 		public PasswordStoreConfig PasswordStore { get; set; } = new PasswordStoreConfig();
 		public GitConfig Git { get; set; } = new GitConfig();
 		public GpgConfig Gpg { get; set; } = new GpgConfig();
+		[Obsolete("This key is no longer used, but it is still present to allow older" +
+			"configuration files to be deserialised successfully.", true)]
+		public object Output { get; set; } = new object();
 
 		public HotkeyConfig[] Hotkeys { get; set; } =
 		{
