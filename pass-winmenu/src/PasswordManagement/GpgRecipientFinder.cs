@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.IO.Abstractions;
+using PassWinmenu.Utilities;
 using PassWinmenu.Utilities.ExtensionMethods;
 
 namespace PassWinmenu.PasswordManagement
@@ -9,16 +11,23 @@ namespace PassWinmenu.PasswordManagement
 		internal const string GpgIdFileName = ".gpg-id";
 
 		private readonly IDirectoryInfo passwordStore;
+		private readonly EnvironmentVariables environmentVariables;
 		private readonly IFileSystem fileSystem;
 
-		public GpgRecipientFinder(IDirectoryInfo passwordStore)
+		public GpgRecipientFinder(IDirectoryInfo passwordStore, EnvironmentVariables environmentVariables)
 		{
 			this.passwordStore = passwordStore;
+			this.environmentVariables = environmentVariables;
 			this.fileSystem = passwordStore.FileSystem;
 		}
 
 		public string[] FindRecipients(PasswordFile file)
 		{
+			if (!string.IsNullOrWhiteSpace(environmentVariables.PasswordStoreKey))
+			{
+				return environmentVariables.PasswordStoreKey.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+			}
+
 			var current = file.Directory;
 
 			// Walk up from the innermost directory, and keep moving up until an existing directory 

@@ -139,6 +139,7 @@ namespace PassWinmenu
 				typeof(Processes),
 				typeof(ExecutablePathResolver)
 			).AsImplementedInterfaces();
+			builder.Register(context => EnvironmentVariables.LoadFromEnvironment()).AsSelf();
 
 			// Register GPG types
 			builder.RegisterTypes(
@@ -166,7 +167,7 @@ namespace PassWinmenu
 				.Named("PasswordStore", typeof(IDirectoryInfo));
 
 			builder.RegisterType<GpgRecipientFinder>().WithParameter(
-					(parameter, context) => true,
+					(parameter, context) => parameter.ParameterType == typeof(IDirectoryInfo),
 					(parameter, context) => context.ResolveNamed<IDirectoryInfo>("PasswordStore"))
 				.AsImplementedInterfaces();
 
