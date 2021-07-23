@@ -84,7 +84,7 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 		{
 			if(enablePinentryFix) pinentryWatcher.BumpPinentryWindow();
 			gpgAgent.EnsureAgentResponsive();
-			var result = gpgTransport.CallGpg($"--detach-sign --armor", message);
+			var result = gpgTransport.CallGpg($"--detach-sign --local-user {keyId} --armor", message);
 			return result.Stdout;
 		}
 	}
