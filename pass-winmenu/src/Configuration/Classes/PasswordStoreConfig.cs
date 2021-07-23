@@ -1,6 +1,6 @@
 using System;
 using System.IO;
-using PassWinmenu.Utilities;
+using PassWinmenu.WinApi;
 
 namespace PassWinmenu.Configuration
 {
@@ -13,7 +13,7 @@ namespace PassWinmenu.Configuration
 			set
 			{
 				var expanded = Environment.ExpandEnvironmentVariables(value);
-				location = Path.GetFullPath(Helpers.NormaliseDirectory(expanded));
+				location = Path.GetFullPath(PathUtilities.NormaliseDirectory(expanded));
 			}
 		}
 

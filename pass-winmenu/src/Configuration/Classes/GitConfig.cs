@@ -1,6 +1,6 @@
 using System;
-using PassWinmenu.Utilities;
 using PassWinmenu.Utilities.ExtensionMethods;
+using PassWinmenu.WinApi;
 using YamlDotNet.Serialization;
 
 namespace PassWinmenu.Configuration
@@ -24,7 +24,7 @@ namespace PassWinmenu.Configuration
 				else
 				{
 					var expanded = Environment.ExpandEnvironmentVariables(value);
-					gitPath = Helpers.NormaliseDirectory(expanded);
+					gitPath = PathUtilities.NormaliseDirectory(expanded);
 				}
 			}
 		}

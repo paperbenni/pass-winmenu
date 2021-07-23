@@ -2,6 +2,7 @@ using System;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using PassWinmenu.WinApi;
 
 namespace PassWinmenu.Utilities
 {
@@ -55,27 +56,7 @@ namespace PassWinmenu.Utilities
 			suggestions = suggestions.Select(suggestion => Directory.Exists(suggestion) ? suggestion + Path.DirectorySeparatorChar : suggestion);
 
 			// Finally, transform directory suggestions to relative paths for convenience.
-			return suggestions.Select(suggestion => MakeRelativePath(baseDirectory, suggestion)).ToArray();
-		}
-
-		private static string MakeRelativePath(string baseDir, string absoluteDir)
-		{
-			if (!baseDir.EndsWith(Path.DirectorySeparatorChar.ToString(CultureInfo.InvariantCulture), StringComparison.Ordinal))
-			{
-				baseDir = baseDir + Path.DirectorySeparatorChar;
-			}
-			if (string.IsNullOrEmpty(baseDir)) throw new ArgumentNullException(nameof(baseDir));
-			if (string.IsNullOrEmpty(absoluteDir)) throw new ArgumentNullException(nameof(absoluteDir));
-
-			var baseUri = new Uri(baseDir);
-			var absoluteUri = new Uri(absoluteDir);
-
-			if (baseUri.Scheme != absoluteUri.Scheme) { return absoluteDir; } // path can't be made relative.
-
-			var relativeUri = baseUri.MakeRelativeUri(absoluteUri);
-			var relativePath = Uri.UnescapeDataString(relativeUri.ToString());
-
-			return relativePath;
+			return suggestions.Select(suggestion => PathUtilities.MakeRelativePath(baseDirectory, suggestion)).ToArray();
 		}
 	}
 }

@@ -1,5 +1,6 @@
 using System.IO.Abstractions;
 using System.Linq;
+using PassWinmenu.WinApi;
 
 namespace PassWinmenu.Utilities.ExtensionMethods
 {
@@ -22,8 +23,8 @@ namespace PassWinmenu.Utilities.ExtensionMethods
 		/// <returns>True if both DirectoryInfo objects reference the same directory, false otherwise.</returns>
 		internal static bool PathEquals(this IDirectoryInfo a, IDirectoryInfo b)
 		{
-			var pathA = Helpers.NormaliseDirectory(a.FullName);
-			var pathB = Helpers.NormaliseDirectory(b.FullName);
+			var pathA = PathUtilities.NormaliseDirectory(a.FullName);
+			var pathB = PathUtilities.NormaliseDirectory(b.FullName);
 			return pathA == pathB;
 		}
 	}

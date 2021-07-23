@@ -1,5 +1,5 @@
 using System;
-using PassWinmenu.Utilities;
+using PassWinmenu.WinApi;
 
 namespace PassWinmenu.Configuration
 {
@@ -15,7 +15,7 @@ namespace PassWinmenu.Configuration
 				else
 				{
 					var expanded = Environment.ExpandEnvironmentVariables(value);
-					gpgPath = Helpers.NormaliseDirectory(expanded);
+					gpgPath = PathUtilities.NormaliseDirectory(expanded);
 				}
 			}
 		}
@@ -30,7 +30,7 @@ namespace PassWinmenu.Configuration
 				else
 				{
 					var expanded = Environment.ExpandEnvironmentVariables(value);
-					gnupghomeOverride = Helpers.NormaliseDirectory(expanded);
+					gnupghomeOverride = PathUtilities.NormaliseDirectory(expanded);
 				}
 
 			}
