@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Moq;
 using PassWinmenu.Configuration;
 using PassWinmenu.ExternalPrograms.Gpg;
@@ -55,6 +56,36 @@ namespace PassWinmenuTests.ExternalPrograms.Gpg
 		}
 
 		[Fact]
+		public void Decrypt_WithExtraOptions_IncludesOptionsInGpgCall()
+		{
+			var config = new GpgConfig
+			{
+				AdditionalOptions = new AdditionalOptionsConfig()
+				{
+					Always = new Dictionary<string, string>
+					{
+						{
+							"verbose", ""
+						}
+					},
+					Decrypt = new Dictionary<string, string>
+					{
+						{
+							"try-secret-key", "mysecret"
+						}
+					}
+				}
+			};
+			var transportMock = new Mock<IGpgTransport>();
+			transportMock.Setup(t => t.CallGpg(It.IsAny<string>(), null)).Returns(GetSuccessResult);
+			var gpg = new GPG(transportMock.Object, Mock.Of<IGpgAgent>(), StubGpgResultVerifier.AlwaysValid, config);
+
+			gpg.Decrypt("file");
+
+			transportMock.Verify(t => t.CallGpg("--verbose --try-secret-key \"mysecret\" --decrypt \"file\"", null), Times.Once);
+		}
+
+		[Fact]
 		public void Encrypt_NoRecipients_CallsGpg()
 		{
 			var transportMock = new Mock<IGpgTransport>();
@@ -89,6 +120,30 @@ namespace PassWinmenuTests.ExternalPrograms.Gpg
 
 			transportMock.Verify(t => t.CallGpg(It.Is<string>(args =>
 				args.Contains("rcp_0") && args.Contains("rcp_1")), It.IsNotNull<string>()), Times.Once);
+		}
+
+		[Fact]
+		public void Encrypt_WithExtraOptions_IncludesOptionsInGpgCall()
+		{
+			var config = new GpgConfig
+			{
+				AdditionalOptions = new AdditionalOptionsConfig()
+				{
+					Always = new Dictionary<string, string>
+					{
+						{
+							"verbose", ""
+						}
+					},
+				}
+			};
+			var transportMock = new Mock<IGpgTransport>();
+			transportMock.Setup(t => t.CallGpg(It.IsAny<string>(), null)).Returns(GetSuccessResult);
+			var gpg = new GPG(transportMock.Object, Mock.Of<IGpgAgent>(), StubGpgResultVerifier.AlwaysValid, config);
+
+			gpg.Encrypt("data", "file", "rcp_0");
+
+			transportMock.Verify(t => t.CallGpg(It.Is<string>(args => args.Contains("--verbose")), It.IsAny<string>()), Times.Once);
 		}
 
 		[Fact]

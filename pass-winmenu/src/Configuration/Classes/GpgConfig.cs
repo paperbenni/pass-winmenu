@@ -38,6 +38,8 @@ namespace PassWinmenu.Configuration
 
 		public bool PinentryFix { get; set; } = false;
 
+		public AdditionalOptionsConfig AdditionalOptions { get; set; } = new AdditionalOptionsConfig();
+
 		public GpgAgentConfig GpgAgent { get; set; } = new GpgAgentConfig();
 	}
 }

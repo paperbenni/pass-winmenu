@@ -146,6 +146,25 @@ gpg:
     # pass-winmenu to detect when this happens, and force the pinentry window to the
     # foreground.
     pinentry-fix: false
+
+    # If you wish to pass custom options to gpg.exe, you can add them here.
+    # A full list of available options can be found here:
+    # https://www.gnupg.org/documentation/manuals/gnupg/GPG-Options.html#GPG-Options
+    additional-options:
+        # These options are added to all GPG operations.
+        always:
+            # Setting a key without adding a value will add it as a flag option
+            # Example: increasing the log verbosity of GPG:
+#            verbose:
+        # These options are added when encrypting.
+        encrypt:
+            # Example: adding hidden recipients:
+#            hidden-recipient: example@example.org
+        # These options are added when decrypting.
+        decrypt:
+        # These options are added when signing Git commits.
+        sign:
+
     gpg-agent:
         # Gpg-agent can have a pretty long startup time on Windows. This option allows
         # the gpg-agent to be started alongside pass-winmenu so it'll be ready when

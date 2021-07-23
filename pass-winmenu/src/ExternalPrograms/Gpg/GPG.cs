@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using PassWinmenu.Configuration;
 
@@ -13,6 +14,7 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 		private readonly IGpgAgent gpgAgent;
 		private readonly IGpgResultVerifier gpgResultVerifier;
 		private readonly PinentryWatcher pinentryWatcher = new PinentryWatcher();
+		private readonly AdditionalOptionsConfig additionalOptions;
 		private readonly bool enablePinentryFix;
 
 		public GPG(IGpgTransport gpgTransport, IGpgAgent gpgAgent, IGpgResultVerifier gpgResultVerifier, GpgConfig gpgConfig)
@@ -21,6 +23,7 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 			this.gpgAgent = gpgAgent;
 			this.gpgResultVerifier = gpgResultVerifier;
 			this.enablePinentryFix = gpgConfig.PinentryFix;
+			this.additionalOptions = gpgConfig.AdditionalOptions;
 		}
 
 		/// <summary>
@@ -31,9 +34,9 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 		/// <exception cref="GpgException">Thrown when decryption fails.</exception>
 		public string Decrypt(string file)
 		{
-			if(enablePinentryFix) pinentryWatcher.BumpPinentryWindow();
+			if (enablePinentryFix) pinentryWatcher.BumpPinentryWindow();
 			gpgAgent.EnsureAgentResponsive();
-			var result = gpgTransport.CallGpg($"--decrypt \"{file}\"");
+			var result = CallGpg($"--decrypt \"{file}\"", null, additionalOptions.Decrypt);
 			gpgResultVerifier.VerifyDecryption(result);
 			return result.Stdout;
 		}
@@ -50,14 +53,14 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 			if (recipients == null) recipients = Array.Empty<string>();
 			var recipientList = string.Join(" ", recipients.Select(r => $"--recipient \"{r}\""));
 
-			var result = gpgTransport.CallGpg($"--output \"{outputFile}\" {recipientList} --encrypt", data);
+			var result = CallGpg($"--output \"{outputFile}\" --encrypt {recipientList}", data, additionalOptions.Encrypt);
 			gpgResultVerifier.VerifyEncryption(result);
 		}
 
 		private void ListSecretKeys()
 		{
 			gpgAgent.EnsureAgentResponsive();
-			var result = gpgTransport.CallGpg("--list-secret-keys");
+			var result = CallGpg("--list-secret-keys");
 			if (result.Stdout.Length == 0)
 			{
 				throw new GpgError("No private keys found. Pass-winmenu will not be able to decrypt your passwords.");
@@ -76,16 +79,31 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 
 		public string GetVersion()
 		{
-			var output = gpgTransport.CallGpg("--version");
-			return output.Stdout.Split(new []{"\r\n"}, StringSplitOptions.RemoveEmptyEntries).First();
+			var output = CallGpg("--version");
+			return output.Stdout.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries).First();
 		}
 
 		public string Sign(string message, string keyId)
 		{
-			if(enablePinentryFix) pinentryWatcher.BumpPinentryWindow();
+			if (enablePinentryFix) pinentryWatcher.BumpPinentryWindow();
 			gpgAgent.EnsureAgentResponsive();
-			var result = gpgTransport.CallGpg($"--detach-sign --local-user {keyId} --armor", message);
+			var result = CallGpg($"--detach-sign --local-user {keyId} --armor", message, additionalOptions.Sign);
 			return result.Stdout;
+		}
+
+		private GpgResult CallGpg(string arguments, string input = null, IDictionary<string, string> operationArguments = null)
+		{
+			var allOptions = additionalOptions.Always.Concat(operationArguments ?? new Dictionary<string, string>());
+			if (allOptions.Any())
+			{
+				arguments = $"{string.Join(" ", allOptions.Select(FormatPair))} {arguments}";
+			}
+
+			return gpgTransport.CallGpg(arguments, input);
+		}
+		private static string FormatPair(KeyValuePair<string, string> pair)
+		{
+			return "--" + (string.IsNullOrEmpty(pair.Value) ? pair.Key : $"{pair.Key} \"{pair.Value}\"");
 		}
 	}
 }
