@@ -89,6 +89,7 @@ namespace PassWinmenu.WinApi
 			var dropDown = new ToolStripMenuItem("More Actions");
 			dropDown.DropDownItems.Add("Check for Updates", null, (sender, args) => actionDispatcher.Dispatch(HotkeyAction.CheckForUpdates)());
 			dropDown.DropDownItems.Add("Edit Configuration", null, (sender, args) => actionDispatcher.Dispatch(HotkeyAction.EditConfiguration)());
+			dropDown.DropDownItems.Add("Re-Encrypt Password Store", null, (sender, args) => actionDispatcher.Dispatch(HotkeyAction.ReencryptPasswordStore)());
 			dropDown.DropDownItems.Add("View Log", null, (sender, args) => actionDispatcher.Dispatch(HotkeyAction.ViewLog)());
 
 			menu.Items.Add(dropDown);
@@ -156,6 +157,11 @@ namespace PassWinmenu.WinApi
 		public void ShowErrorWindow(string message, string title = "An error occurred.")
 		{
 			MessageBox.Show(message, title, MessageBoxButton.OK, MessageBoxImage.Error);
+		}
+
+		public bool ShowYesNoWindow(string message, string title, MessageBoxImage image = MessageBoxImage.None)
+		{
+			return MessageBox.Show(message, title, MessageBoxButton.YesNo, MessageBoxImage.None) == MessageBoxResult.Yes;
 		}
 
 		private void HandleDownloadUpdateClick(object sender, EventArgs e)

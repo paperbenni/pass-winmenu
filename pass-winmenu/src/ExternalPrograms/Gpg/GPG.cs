@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO.Abstractions;
 using System.Linq;
 using PassWinmenu.Configuration;
 
@@ -90,6 +91,28 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 			gpgAgent.EnsureAgentResponsive();
 			var result = CallGpg($"--detach-sign --local-user {keyId} --armor", message, additionalOptions.Sign);
 			return result.Stdout;
+		}
+
+		public List<string> GetRecipients(string file)
+		{
+			var keys = CallGpg($"--list-only \"{file}\"");
+			var recipients = keys.StatusMessages
+				.Where(m => m.StatusCode == GpgStatusCode.ENC_TO)
+				.Select(m => m.Message.Split(' ')[0]);
+
+			return recipients.ToList();
+		}
+
+		public string FindShortKeyId(string target)
+		{
+			var result = CallGpg($"--list-keys \"{target}\"");
+
+			return result.Stdout.Split(new[] { "\r\n" }, StringSplitOptions.None)
+				.Where(m => m.StartsWith("pub", StringComparison.Ordinal) || m.StartsWith("sub", StringComparison.Ordinal))
+				.Select(l => l.Split(':'))
+				.Where(l => l[11].Contains("e"))
+				.Select(l => l[4])
+				.FirstOrDefault();
 		}
 
 		private GpgResult CallGpg(string arguments, string input = null, IDictionary<string, string> operationArguments = null)

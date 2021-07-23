@@ -237,6 +237,42 @@ namespace PassWinmenuTests.ExternalPrograms.Gpg
 			version.ShouldBe("GPG version 1.0");
 		}
 
+		[Fact]
+		public void GetRecipients_ReturnsRecipients()
+		{
+			var transportMock = new Mock<IGpgTransport>();
+			transportMock.Setup(
+					t => t.CallGpg(It.IsNotNull<string>(), It.IsAny<string>()))
+				.Returns(new GpgResultBuilder()
+					.WithStdout("GPG version 1.0\r\nmore info")
+					.WithStatusMessage(GpgStatusCode.ENC_TO, "user0 0 0")
+					.WithStatusMessage(GpgStatusCode.ENC_TO, "user1 0 0")
+					.Build()); ;
+			var gpg = new GPG(transportMock.Object, Mock.Of<IGpgAgent>(), StubGpgResultVerifier.AlwaysValid, new GpgConfig());
+
+			var recipients = gpg.GetRecipients("testFile");
+
+			recipients.ShouldBe(new[] { "user0", "user1" });
+		}
+
+		[Fact]
+		public void FindShortKeyId_ReturnsKeyId()
+		{
+			var transportMock = new Mock<IGpgTransport>();
+			transportMock.Setup(
+					t => t.CallGpg(It.IsNotNull<string>(), It.IsAny<string>()))
+				.Returns(new GpgResultBuilder()
+					.WithStdout("uid:u::::1627027253::B3B2807670A468499DF1292C1140265C5D4B56E1::Test User <test@geluk.io>::::::::::0:" +
+					"\r\nsub:u:3072:1:EDE97135FC244819:1627027253:1690099253:::::e::::::23:" +
+					"\r\nfpr:::::::::63BAC0DAFD648D28BC675FF2EDE97135FC244819:")
+					.Build()); ;
+			var gpg = new GPG(transportMock.Object, Mock.Of<IGpgAgent>(), StubGpgResultVerifier.AlwaysValid, new GpgConfig());
+
+			var shortKeyId = gpg.FindShortKeyId("testFile");
+
+			shortKeyId.ShouldBe("EDE97135FC244819");
+		}
+
 		private GpgResult GetSuccessResult()
 		{
 			return new GpgResultBuilder().Build();

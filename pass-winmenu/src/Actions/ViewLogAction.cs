@@ -12,7 +12,7 @@ namespace PassWinmenu.Actions
 		public void Execute()
 		{
 			Helpers.AssertOnUiThread();
-			var viewer = new LogViewer(string.Join("\n", Log.History.Select(l => l.ToString())));
+			var viewer = new LogViewer("Log viewer", string.Join("\n", Log.History.Select(l => l.ToString())));
 			viewer.ShowDialog();
 		}
 	}

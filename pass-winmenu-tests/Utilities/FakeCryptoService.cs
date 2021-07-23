@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IO.Abstractions;
 using PassWinmenu.ExternalPrograms;
 
@@ -20,6 +21,16 @@ namespace PassWinmenuTests.Utilities
 		public void Encrypt(string data, string outputFile, bool overwrite, params string[] recipients)
 		{
 			fileSystem.File.WriteAllText(outputFile, data);
+		}
+
+		public string FindShortKeyId(string target)
+		{
+			return null;
+		}
+
+		public List<string> GetRecipients(string file)
+		{
+			return new List<string>();
 		}
 
 		public string GetVersion()
