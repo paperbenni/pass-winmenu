@@ -35,6 +35,21 @@ namespace PassWinmenuTests.ExternalPrograms.Gpg
 			transportMock.Verify(t => t.CallGpg(It.IsAny<string>(), null), Times.Once);
 		}
 
+		[Fact]
+		public void Decrypt_PinentryFixEnabled_DoesNotThrow()
+		{
+			var transportMock = new Mock<IGpgTransport>();
+			transportMock.Setup(t => t.CallGpg(It.IsAny<string>(), null)).Returns(GetSuccessResult);
+			var gpg = new GPG(transportMock.Object, Mock.Of<IGpgAgent>(), StubGpgResultVerifier.AlwaysValid, new GpgConfig
+			{
+				PinentryFix = true,
+			});
+
+			gpg.Decrypt("file");
+
+			transportMock.Verify(t => t.CallGpg(It.IsAny<string>(), null), Times.Once);
+		}
+
 		[Theory]
 		[InlineData("password")]
 		[InlineData("password\nline2")]
@@ -120,6 +135,19 @@ namespace PassWinmenuTests.ExternalPrograms.Gpg
 
 			transportMock.Verify(t => t.CallGpg(It.Is<string>(args =>
 				args.Contains("rcp_0") && args.Contains("rcp_1")), It.IsNotNull<string>()), Times.Once);
+		}
+
+		[Fact]
+		public void Encrypt_Overwrite_CallsGpgWithYesOption()
+		{
+			var transportMock = new Mock<IGpgTransport>();
+			transportMock.Setup(t => t.CallGpg(It.IsNotNull<string>(), It.IsNotNull<string>())).Returns(GetSuccessResult);
+			var gpg = new GPG(transportMock.Object, Mock.Of<IGpgAgent>(), StubGpgResultVerifier.AlwaysValid, new GpgConfig());
+
+			gpg.Encrypt("data", "file", true);
+
+			transportMock.Verify(t => t.CallGpg(It.Is<string>(args =>
+				args.Contains("--yes")), It.IsNotNull<string>()), Times.Once);
 		}
 
 		[Fact]
