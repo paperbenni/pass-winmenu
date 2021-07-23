@@ -48,12 +48,13 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 		/// <param name="outputFile">The path to the output file.</param>
 		/// <param name="recipients">An array of GPG ids for which the file should be encrypted.</param>
 		/// <exception cref="GpgException">Thrown when encryption fails.</exception>
-		public void Encrypt(string data, string outputFile, params string[] recipients)
+		public void Encrypt(string data, string outputFile, bool allowOverwrite, params string[] recipients)
 		{
 			if (recipients == null) recipients = Array.Empty<string>();
 			var recipientList = string.Join(" ", recipients.Select(r => $"--recipient \"{r}\""));
+			var overwrite = allowOverwrite ? "--yes " : "";
 
-			var result = CallGpg($"--output \"{outputFile}\" --encrypt {recipientList}", data, additionalOptions.Encrypt);
+			var result = CallGpg($"{overwrite}--output \"{outputFile}\" --encrypt {recipientList}", data, additionalOptions.Encrypt);
 			gpgResultVerifier.VerifyEncryption(result);
 		}
 

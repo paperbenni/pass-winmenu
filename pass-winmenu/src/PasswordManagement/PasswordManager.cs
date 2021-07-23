@@ -99,18 +99,11 @@ namespace PassWinmenu.PasswordManagement
 		private PasswordFile EncryptPasswordInternal(DecryptedPasswordFile file, bool overwrite)
 		{
 			file.Directory.Create();
-			if (file.FileInfo.Exists)
+			if (!overwrite && file.FileInfo.Exists)
 			{
-				if (overwrite)
-				{
-					file.FileInfo.Delete();
-				}
-				else
-				{
-					throw new InvalidOperationException("A password file already exists at the specified location.");
-				}
+				throw new InvalidOperationException("A password file already exists at the specified location.");
 			}
-			cryptoService.Encrypt(file.Content, file.FullPath, recipientFinder.FindRecipients(file));
+			cryptoService.Encrypt(file.Content, file.FullPath, overwrite, recipientFinder.FindRecipients(file));
 			return new PasswordFile(file);
 		}
 

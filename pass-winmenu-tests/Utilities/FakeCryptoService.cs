@@ -17,7 +17,7 @@ namespace PassWinmenuTests.Utilities
 			return fileSystem.File.ReadAllText(file);
 		}
 
-		public void Encrypt(string data, string outputFile, params string[] recipients)
+		public void Encrypt(string data, string outputFile, bool overwrite, params string[] recipients)
 		{
 			fileSystem.File.WriteAllText(outputFile, data);
 		}
