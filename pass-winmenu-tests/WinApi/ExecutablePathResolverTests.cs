@@ -9,7 +9,7 @@ using Xunit;
 
 namespace PassWinmenuTests.WinApi
 {
-		public class ExecutablePathResolverTests
+	public class ExecutablePathResolverTests
 	{
 		private const string Category = "Windows API: Executable Path Resolver";
 

@@ -3,7 +3,7 @@ using Xunit;
 
 namespace PassWinmenuTests.WinApi
 {
-		public class ClipboardHelperTests
+	public class ClipboardHelperTests
 	{
 		private const string Category = "Windows API: Clipboard Helper";
 
