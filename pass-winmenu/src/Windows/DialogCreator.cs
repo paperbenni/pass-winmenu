@@ -107,8 +107,18 @@ namespace PassWinmenu.Windows
 			{
 				notificationService.Raise($"The new password has been copied to your clipboard.\nIt will be cleared in {ConfigManager.Config.Interface.ClipboardTimeout:0.##} seconds.", Severity.Info);
 			}
-			// Add the password to Git
-			syncService?.AddPassword(passwordFile.FullPath);
+
+			try
+			{
+				// Add the password to Git
+				syncService?.AddPassword(passwordFile.FullPath);
+			}
+			catch (GitException e)
+			{
+				Log.Send($"Failed to commit {passwordFile.FullPath}");
+				Log.ReportException(e);
+				notificationService.ShowErrorWindow("Unable to commit your changes: " + e.Message);
+			}
 		}
 
 		/// <summary>
