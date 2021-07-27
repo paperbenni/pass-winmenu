@@ -107,6 +107,13 @@ namespace PassWinmenu.ExternalPrograms
 		private void CommitFile(string filePath)
 		{
 			var status = repo.RetrieveStatus(filePath);
+			if (status == FileStatus.Nonexistent)
+			{
+				// This file does not exist in the repository.
+				// It may be located inside a submodule, making it difficult to handle correctly
+				// until we implement full submodule support. For now, we'll just ignore it.
+				return;
+			}
 			Commands.Stage(repo, filePath);
 
 			var relativePath = PathUtilities.MakeRelativePath(repo.Info.WorkingDirectory, filePath);
