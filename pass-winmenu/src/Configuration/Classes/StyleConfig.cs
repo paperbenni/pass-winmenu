@@ -30,6 +30,10 @@ namespace PassWinmenu.Configuration
 			BorderColour = Helpers.BrushFromColourString("#FF000000"),
 			Margin = new Thickness(0)
 		};
+		public TextStyleConfig SearchHint { get; set; } = new TextStyleConfig
+		{
+			TextColour = Helpers.BrushFromColourString("#FF999999"),
+		};
 		public int ScrollBoundary { get; set; } = 0;
 		public string Orientation { get; set; } = "vertical";
 		public double FontSize { get; set; } = 14;

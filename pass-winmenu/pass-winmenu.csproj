@@ -117,6 +117,7 @@
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="src\Actions\ReencryptPasswordStoreAction.cs" />
     <Compile Include="src\Configuration\Classes\AdditionalOptionsConfig.cs" />
+    <Compile Include="src\Configuration\Classes\TextStyleConfig.cs" />
     <Compile Include="src\Configuration\RuntimeConfiguration.cs" />
     <Compile Include="src\Configuration\RuntimeConfigurationError.cs" />
     <Compile Include="src\Actions\ActionDispatcher.cs" />

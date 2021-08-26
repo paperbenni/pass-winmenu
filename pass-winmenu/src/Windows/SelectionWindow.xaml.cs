@@ -53,9 +53,10 @@ namespace PassWinmenu.Windows
 		/// <summary>
 		/// Initialises the window with the provided options.
 		/// </summary>
-		protected SelectionWindow(SelectionWindowConfiguration configuration)
+		protected SelectionWindow(SelectionWindowConfiguration configuration, string hint)
 		{
 			TimerHelper.Current.TakeSnapshot("mainwnd-creating");
+			HintText = hint;
 			styleConfig = ConfigManager.Config.Interface.Style;
 			scrollBoundary = ConfigManager.Config.Interface.Style.ScrollBoundary;
 
@@ -98,7 +99,7 @@ namespace PassWinmenu.Windows
 			SearchBox.FontSize = styleConfig.FontSize;
 			SearchBox.FontFamily = new FontFamily(styleConfig.FontFamily);
 
-			Hint.Foreground = styleConfig.Search.TextColour;
+			Hint.Foreground = styleConfig.SearchHint.TextColour;
 			Hint.FontSize = styleConfig.FontSize;
 			Hint.FontFamily = new FontFamily(styleConfig.FontFamily);
 

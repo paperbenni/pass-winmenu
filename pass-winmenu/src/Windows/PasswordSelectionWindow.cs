@@ -10,7 +10,7 @@ namespace PassWinmenu.Windows
 	{
 		private readonly Dictionary<string, TEntry> entries;
 
-		public PasswordSelectionWindow(IEnumerable<TEntry> options, Func<TEntry, string> keySelector, SelectionWindowConfiguration configuration) : base(configuration)
+		public PasswordSelectionWindow(IEnumerable<TEntry> options, Func<TEntry, string> keySelector, SelectionWindowConfiguration configuration, string hint) : base(configuration, hint)
 		{
 			entries = options.ToDictionary(keySelector);
 			ResetLabels(entries.Keys);

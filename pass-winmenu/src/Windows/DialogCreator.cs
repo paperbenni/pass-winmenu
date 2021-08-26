@@ -257,7 +257,7 @@ namespace PassWinmenu.Windows
 
 			if (string.IsNullOrWhiteSpace(key))
 			{
-				key = ShowPasswordMenu(passFile.Keys, k => k.Key).ValueOrDefault().Key;
+				key = ShowPasswordMenu(passFile.Keys, k => k.Key, "Choose a key...").ValueOrDefault().Key;
 				if (key == null)
 				{
 					return;
@@ -273,7 +273,7 @@ namespace PassWinmenu.Windows
 			string chosenValue;
 			if (values.Count > 1)
 			{
-				var choice = ShowPasswordMenu(values, v => v.Key);
+				var choice = ShowPasswordMenu(values, v => v.Value, "Multiple keys found, choose a value...");
 				if (choice.IsNone)
 				{
 					return;
@@ -318,7 +318,7 @@ namespace PassWinmenu.Windows
 			}
 
 			// Ask the user where the password file should be placed.
-			var pathWindow = new FileSelectionWindow(ConfigManager.Config.PasswordStore.Location, windowConfig);
+			var pathWindow = new FileSelectionWindow(ConfigManager.Config.PasswordStore.Location, windowConfig, "Choose a location...");
 			pathWindow.ShowDialog();
 			if (!pathWindow.Success)
 			{
@@ -331,9 +331,10 @@ namespace PassWinmenu.Windows
 		/// Opens the password menu and displays it to the user, allowing them to choose an existing password file.
 		/// </summary>
 		/// <param name="options">A list of options the user can choose from.</param>
-		/// <param name="keySelector">A function that selects a string to display for each option in <paramref name="options"/></param>
+		/// <param name="keySelector">A function that selects a string to display for each option in <paramref name="options"/>.</param>
+		/// <param name="hint">A search hint to show, or null if no hint should be shown.</param>
 		/// <returns>One of the values contained in <paramref name="options"/>, or the default value of <typeparamref name="TEntry"/> if no option was chosen.</returns>
-		public Option<TEntry> ShowPasswordMenu<TEntry>(IEnumerable<TEntry> options, Func<TEntry, string> keySelector)
+		public Option<TEntry> ShowPasswordMenu<TEntry>(IEnumerable<TEntry> options, Func<TEntry, string> keySelector, string hint)
 		{
 			SelectionWindowConfiguration windowConfig;
 			try
@@ -346,7 +347,7 @@ namespace PassWinmenu.Windows
 				return default;
 			}
 
-			var menu = new PasswordSelectionWindow<TEntry>(options, keySelector, windowConfig);
+			var menu = new PasswordSelectionWindow<TEntry>(options, keySelector, windowConfig, hint);
 			menu.ShowDialog();
 			if (menu.Success)
 			{
@@ -374,7 +375,7 @@ namespace PassWinmenu.Windows
 				MessageBox.Show("Your password store doesn't appear to contain any passwords yet.", "Empty password store", MessageBoxButton.OK, MessageBoxImage.Information);
 				return null;
 			}
-			return ShowPasswordMenu(passFiles, pathDisplayHelper.GetDisplayPath).ValueOrDefault();
+			return ShowPasswordMenu(passFiles, pathDisplayHelper.GetDisplayPath, "Select a password...").ValueOrDefault();
 		}
 
 		private void EditWithEditWindow(DecryptedPasswordFile file)

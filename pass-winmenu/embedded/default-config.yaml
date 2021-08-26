@@ -359,6 +359,8 @@ interface:
             background-colour: '#00FFFFFF'
             border-colour: '#FF000000'
             border-width: [0, 0, 1, 0]
+        search-hint:
+            text-colour: '#FF999999'
         # This determines the styling of all unselected options.
         options:
             text-colour: '#FFDDDDDD'
