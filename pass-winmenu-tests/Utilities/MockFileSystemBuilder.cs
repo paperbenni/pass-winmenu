@@ -23,6 +23,12 @@ namespace PassWinmenuTests.Utilities
 			return this;
 		}
 
+		public MockFileSystemBuilder WithDirectory(string path)
+		{
+			files[path] = MockDirectoryData.NullObject;
+			return this;
+		}
+
 		public MockFileSystemBuilder WithFile(string path, string content)
 		{
 			files[path] = new MockFileData(content);
