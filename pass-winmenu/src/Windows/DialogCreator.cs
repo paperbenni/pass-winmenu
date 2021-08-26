@@ -257,14 +257,14 @@ namespace PassWinmenu.Windows
 
 			if (string.IsNullOrWhiteSpace(key))
 			{
-				var keys = passFile.Keys.Select(k => k.Key).Distinct();
-				var selection = ShowPasswordMenu(keys);
-				if (selection == null) return;
-				key = selection;
+				key = ShowPasswordMenu(passFile.Keys, k => k.Key).ValueOrDefault().Key;
+				if (key == null)
+				{
+					return;
+				}
 			}
 
 			var values = passFile.Keys.Where(k => k.Key == key).ToList();
-
 			if (values.Count == 0)
 			{
 				return;
@@ -273,17 +273,18 @@ namespace PassWinmenu.Windows
 			string chosenValue;
 			if (values.Count > 1)
 			{
-				chosenValue = ShowPasswordMenu(values.Select(v => v.Value));
-				if (chosenValue == null)
+				var choice = ShowPasswordMenu(values, v => v.Key);
+				if (choice.IsNone)
 				{
 					return;
 				}
+
+				chosenValue = choice.ValueOrDefault().Value;
 			}
 			else
 			{
 				chosenValue = values[0].Value;
 			}
-
 
 			if (copyToClipboard)
 			{
@@ -323,15 +324,16 @@ namespace PassWinmenu.Windows
 			{
 				return null;
 			}
-			return pathWindow.GetSelection() + Program.EncryptedFileExtension;
+			return pathWindow.SelectionText + Program.EncryptedFileExtension;
 		}
 
 		/// <summary>
 		/// Opens the password menu and displays it to the user, allowing them to choose an existing password file.
 		/// </summary>
 		/// <param name="options">A list of options the user can choose from.</param>
-		/// <returns>One of the values contained in <paramref name="options"/>, or null if no option was chosen.</returns>
-		private string ShowPasswordMenu(IEnumerable<string> options)
+		/// <param name="keySelector">A function that selects a string to display for each option in <paramref name="options"/></param>
+		/// <returns>One of the values contained in <paramref name="options"/>, or the default value of <typeparamref name="TEntry"/> if no option was chosen.</returns>
+		public Option<TEntry> ShowPasswordMenu<TEntry>(IEnumerable<TEntry> options, Func<TEntry, string> keySelector)
 		{
 			SelectionWindowConfiguration windowConfig;
 			try
@@ -341,16 +343,17 @@ namespace PassWinmenu.Windows
 			catch (ConfigurationParseException e)
 			{
 				notificationService.Raise(e.Message, Severity.Error);
-				return null;
+				return default;
 			}
 
-			var menu = new PasswordSelectionWindow(options, windowConfig);
+			var menu = new PasswordSelectionWindow<TEntry>(options, keySelector, windowConfig);
 			menu.ShowDialog();
 			if (menu.Success)
 			{
-				return menu.GetSelection();
+				return Option.Some(menu.Selection);
 			}
-			return null;
+
+			return Option<TEntry>.None();
 		}
 
 		/// <summary>
@@ -365,15 +368,13 @@ namespace PassWinmenu.Windows
 			Helpers.AssertOnUiThread();
 
 			// Find GPG-encrypted password files
-			var passFiles = passwordManager.GetPasswordFiles(ConfigManager.Config.PasswordStore.PasswordFileMatch).ToList();
+			var passFiles = passwordManager.GetPasswordFiles().ToList();
 			if (passFiles.Count == 0)
 			{
 				MessageBox.Show("Your password store doesn't appear to contain any passwords yet.", "Empty password store", MessageBoxButton.OK, MessageBoxImage.Information);
 				return null;
 			}
-			var selection = ShowPasswordMenu(passFiles.Select(pathDisplayHelper.GetDisplayPath));
-			if (selection == null) return null;
-			return passFiles.Single(f => pathDisplayHelper.GetDisplayPath(f) == selection);
+			return ShowPasswordMenu(passFiles, pathDisplayHelper.GetDisplayPath).ValueOrDefault();
 		}
 
 		private void EditWithEditWindow(DecryptedPasswordFile file)

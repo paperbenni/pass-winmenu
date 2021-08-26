@@ -14,7 +14,9 @@ using PassWinmenu.Utilities;
 namespace PassWinmenu.Windows
 {
 	/// <summary>
-	/// Interaction logic for SelectionWindow.xaml
+	/// A window containing a textbox and several labels. One of those labels can be selected
+	/// using the keyboard or mouse. Implementers should override <see cref="OnSearchTextChanged(object, TextChangedEventArgs)"/>
+	/// in order to specify how search input should be handled.
 	/// </summary>
 	internal abstract partial class SelectionWindow
 	{
@@ -30,7 +32,10 @@ namespace PassWinmenu.Windows
 		/// <summary>
 		/// The label that is currently selected.
 		/// </summary>
-		public SelectionLabel Selected { get; protected set; }
+		public SelectionLabel SelectedLabel { get; protected set; }
+
+		public string SelectionText => SelectedLabel.Text;
+
 		/// <summary>
 		/// True if the user has chosen one of the options, false otherwise.
 		/// </summary>
@@ -155,7 +160,7 @@ namespace PassWinmenu.Windows
 		/// <summary>
 		/// Handles text input in the textbox.
 		/// </summary>
-		protected abstract void SearchBox_OnTextChanged(object sender, TextChangedEventArgs e);
+		protected abstract void OnSearchTextChanged(object sender, TextChangedEventArgs e);
 
 		/// <summary>
 		/// Resets the labels to the given option strings, and scrolls back to the top.
@@ -203,39 +208,30 @@ namespace PassWinmenu.Windows
 		{
 			if (label == null) return;
 
-			if (Selected != null)
+			if (SelectedLabel != null)
 			{
-				Selected.Background = styleConfig.Options.BackgroundColour;
-				Selected.Foreground = styleConfig.Options.TextColour;
-				Selected.LabelBorder.BorderBrush = styleConfig.Options.BorderColour;
-				Selected.LabelBorder.BorderThickness = styleConfig.Options.BorderWidth;
+				SelectedLabel.Background = styleConfig.Options.BackgroundColour;
+				SelectedLabel.Foreground = styleConfig.Options.TextColour;
+				SelectedLabel.LabelBorder.BorderBrush = styleConfig.Options.BorderColour;
+				SelectedLabel.LabelBorder.BorderThickness = styleConfig.Options.BorderWidth;
 			}
-			Selected = label;
-			Selected.Background = styleConfig.Selection.BackgroundColour;
-			Selected.Foreground = styleConfig.Selection.TextColour;
-			Selected.LabelBorder.BorderBrush = styleConfig.Selection.BorderColour;
-			Selected.LabelBorder.BorderThickness = styleConfig.Selection.BorderWidth;
+			SelectedLabel = label;
+			SelectedLabel.Background = styleConfig.Selection.BackgroundColour;
+			SelectedLabel.Foreground = styleConfig.Selection.TextColour;
+			SelectedLabel.LabelBorder.BorderBrush = styleConfig.Selection.BorderColour;
+			SelectedLabel.LabelBorder.BorderThickness = styleConfig.Selection.BorderWidth;
 		}
 
 		private void UnselectCurrent()
 		{
-			if (Selected == null) return;
-			Selected.Background = styleConfig.Options.BackgroundColour;
-			Selected.Foreground = styleConfig.Options.TextColour;
-			Selected.LabelBorder.BorderBrush = styleConfig.Options.BorderColour;
-			Selected.LabelBorder.BorderThickness = styleConfig.Options.BorderWidth;
-			Selected = null;
+			if (SelectedLabel == null) return;
+			SelectedLabel.Background = styleConfig.Options.BackgroundColour;
+			SelectedLabel.Foreground = styleConfig.Options.TextColour;
+			SelectedLabel.LabelBorder.BorderBrush = styleConfig.Options.BorderColour;
+			SelectedLabel.LabelBorder.BorderThickness = styleConfig.Options.BorderWidth;
+			SelectedLabel = null;
 		}
 		
-		/// <summary>
-		/// Returns the text on the currently selected label.
-		/// </summary>
-		/// <returns></returns>
-		public string GetSelection()
-		{
-			return Selected.Text;
-		}
-
 		protected SelectionLabel CreateLabel(string content)
 		{
 			var label = new SelectionLabel(content,
@@ -245,7 +241,7 @@ namespace PassWinmenu.Windows
 
 			label.MouseLeftButtonUp += (sender, args) =>
 			{
-				if (label == Selected)
+				if (label == SelectedLabel)
 				{
 					HandleSelect();
 				}
@@ -357,7 +353,7 @@ namespace PassWinmenu.Windows
 
 		private void SelectNext()
 		{
-			var selectionIndex = Options.IndexOf(Selected);
+			var selectionIndex = Options.IndexOf(SelectedLabel);
 			if (selectionIndex < Options.Count)
 			{
 				// Number of options that we're out of the scrolling bounds
@@ -372,7 +368,7 @@ namespace PassWinmenu.Windows
 				else
 				{
 					scrollOffset += 1;
-					var current = Selected;
+					var current = SelectedLabel;
 					SetLabelContents(optionStrings.Skip(scrollOffset).ToList());
 					Select(current);
 				}
@@ -382,7 +378,7 @@ namespace PassWinmenu.Windows
 
 		private void SelectPrevious()
 		{
-			var selectionIndex = Options.IndexOf(Selected);
+			var selectionIndex = Options.IndexOf(SelectedLabel);
 			if (selectionIndex >= 0)
 			{
 				// Number of options that we're out of the scrolling bounds
@@ -397,7 +393,7 @@ namespace PassWinmenu.Windows
 				else
 				{
 					scrollOffset -= 1;
-					var current = Selected;
+					var current = SelectedLabel;
 					SetLabelContents(optionStrings.Skip(scrollOffset).ToList());
 					Select(current);
 				}

@@ -20,7 +20,7 @@ namespace PassWinmenu.Windows
 			ResetLabels(completions);
 		}
 
-		protected override void SearchBox_OnTextChanged(object sender, TextChangedEventArgs e)
+		protected override void OnSearchTextChanged(object sender, TextChangedEventArgs e)
 		{
 			var completions = autocomplete.GetCompletionList(SearchBox.Text).ToList();
 			if (!string.IsNullOrWhiteSpace(SearchBox.Text)
@@ -35,9 +35,9 @@ namespace PassWinmenu.Windows
 		protected override void HandleSelect()
 		{
 			// If a suggestion is selected, put that suggestion in the searchbox.
-			if (Options.IndexOf(Selected) > 0 || string.IsNullOrEmpty(SearchBox.Text))
+			if (Options.IndexOf(SelectedLabel) > 0 || string.IsNullOrEmpty(SearchBox.Text))
 			{
-				var selection = GetSelection();
+				var selection = SelectionText;
 				if (selection.EndsWith(Program.EncryptedFileExtension, StringComparison.Ordinal))
 				{
 					selection = selection.Substring(0, selection.Length - 4);
@@ -50,7 +50,7 @@ namespace PassWinmenu.Windows
 				{
 					return;
 				}
-				var selection = GetSelection();
+				var selection = SelectionText;
 				if (selection.EndsWith(Program.EncryptedFileExtension, StringComparison.Ordinal))
 				{
 					MessageBox.Show("A .gpg extension will be added automatically and does not need to be entered here.");

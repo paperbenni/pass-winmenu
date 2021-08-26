@@ -6,31 +6,33 @@ using System.Windows.Controls;
 
 namespace PassWinmenu.Windows
 {
-	internal class PasswordSelectionWindow : SelectionWindow
+	internal class PasswordSelectionWindow<TEntry> : SelectionWindow
 	{
-		private readonly List<string> options;
+		private readonly Dictionary<string, TEntry> entries;
 
-		public PasswordSelectionWindow(IEnumerable<string> options, SelectionWindowConfiguration configuration) : base(configuration)
+		public PasswordSelectionWindow(IEnumerable<TEntry> options, Func<TEntry, string> keySelector, SelectionWindowConfiguration configuration) : base(configuration)
 		{
-			this.options = options.ToList();
-			ResetLabels(this.options);
+			entries = options.ToDictionary(keySelector);
+			ResetLabels(entries.Keys);
 		}
 
-		protected override void SearchBox_OnTextChanged(object sender, TextChangedEventArgs e)
+		public TEntry Selection => entries[SelectedLabel.Text];
+
+		protected override void OnSearchTextChanged(object sender, TextChangedEventArgs e)
 		{
 			// We split on spaces to allow the user to quickly search for a certain term, as it allows them
-			// to search, for example, for reddit.com/username by entering "re us"
+			// to search, for example, for site.com/username by entering "si us"
 			var terms = SearchBox.Text.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-			var matching = options.Where((option) =>
+			var matching = entries.Keys.Where((key) =>
 			{
-				var lcOption = option.ToLower(CultureInfo.CurrentCulture);
+				var lcOption = key.ToLower(CultureInfo.CurrentCulture);
 				return terms.All(term =>
 				{
 					// Perform case-sensitive matching if the user entered an uppercase character.
 					if (term.Any(char.IsUpper))
 					{
-						if (option.Contains(term)) return true;
+						if (key.Contains(term)) return true;
 					}
 					else
 					{
@@ -44,7 +46,7 @@ namespace PassWinmenu.Windows
 
 		protected override void HandleSelect()
 		{
-			if (Selected != null)
+			if (SelectedLabel != null)
 			{
 				Success = true;
 				Close();
