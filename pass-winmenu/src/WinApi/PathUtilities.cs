@@ -1,6 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.IO.Abstractions;
+using System.Linq;
+using System.Text;
+using PassWinmenu.Utilities.ExtensionMethods;
 
 namespace PassWinmenu.WinApi
 {
@@ -10,13 +15,12 @@ namespace PassWinmenu.WinApi
 		/// Reformats a path as relative to the specified base directory.
 		/// If the path does not point to a child of the base directory,
 		/// the full path is returned.
-		/// Note: If Windows-style directory separators are provided,
-		/// they will be converted to UNIX-style.
+		/// This function is intended for usage in situations where relative
+		/// paths are displayed to the user, so it produces UNIX-style
+		/// directory separators in its output, and it leaves trailing slashes intact.
 		/// </summary>
-		/// <param name="baseDir"></param>
-		/// <param name="absoluteDir"></param>
-		/// <returns></returns>
-		public static string MakeRelativePath(string baseDir, string absoluteDir)
+		[Obsolete("Use the System.IO.Abstractions-based overload instead.")]
+		public static string MakeRelativePathForDisplay(string baseDir, string absoluteDir)
 		{
 			if (!baseDir.EndsWith(Path.DirectorySeparatorChar.ToString(CultureInfo.InvariantCulture), StringComparison.Ordinal))
 			{
@@ -34,6 +38,60 @@ namespace PassWinmenu.WinApi
 			var relativePath = Uri.UnescapeDataString(relativeUri.ToString());
 
 			return relativePath;
+		}
+
+		/// <summary>
+		/// Reformats a file path as relative to the specified base directory.
+		/// If the path does not point to a child of the base directory,
+		/// the full path is returned.
+		/// This function is intended for usage in situations where relative
+		/// paths are displayed to the user, so it produces UNIX-style
+		/// directory separators in its output.
+		/// </summary>
+		public static string MakeRelativePathForDisplay(IDirectoryInfo baseDir, IFileInfo child)
+		{
+			if (!baseDir.IsChild(child))
+			{
+				return child.FullName;
+			}
+			var parent = child.Directory;
+			var entries = new List<string>();
+			entries.Insert(0, child.Name);
+			while (!parent.PathEquals(baseDir))
+			{
+				entries.Insert(0, parent.Name);
+				parent = parent.Parent;
+			}
+			return string.Join("/", entries);
+		}
+
+		/// <summary>
+		/// Reformats a directory path as relative to the specified base directory.
+		/// If the path does not point to a child of the base directory,
+		/// the full path is returned.
+		/// This function is intended for usage in situations where relative
+		/// paths are displayed to the user, so it produces UNIX-style
+		/// directory separators in its output.
+		/// </summary>
+		public static string MakeRelativePathForDisplay(IDirectoryInfo baseDir, IDirectoryInfo child)
+		{
+			if (!baseDir.IsChildOrSelf(child))
+			{
+				return child.FullName;
+			}
+
+			var path = new StringBuilder();
+			var current = child;
+			while (!current.PathEquals(baseDir))
+			{
+				path.Insert(0, current.Name + "/");
+				current = current.Parent;
+			}
+			if (path.Length == 0)
+			{
+				return ".";
+			}
+			return path.ToString();
 		}
 
 		/// <summary>

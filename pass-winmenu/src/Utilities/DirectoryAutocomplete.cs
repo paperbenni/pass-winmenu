@@ -56,7 +56,7 @@ namespace PassWinmenu.Utilities
 			suggestions = suggestions.Select(suggestion => Directory.Exists(suggestion) ? suggestion + Path.DirectorySeparatorChar : suggestion);
 
 			// Finally, transform directory suggestions to relative paths for convenience.
-			return suggestions.Select(suggestion => PathUtilities.MakeRelativePath(baseDirectory, suggestion)).ToArray();
+			return suggestions.Select(suggestion => PathUtilities.MakeRelativePathForDisplay(baseDirectory, suggestion)).ToArray();
 		}
 	}
 }

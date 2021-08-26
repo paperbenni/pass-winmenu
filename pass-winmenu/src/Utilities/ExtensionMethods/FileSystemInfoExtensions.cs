@@ -3,7 +3,7 @@ using PassWinmenu.WinApi;
 
 namespace PassWinmenu.Utilities.ExtensionMethods
 {
-	static class FileSystemInfoExtensions
+	internal static class FileSystemInfoExtensions
 	{
 		/// <summary>
 		/// Checks for path equality between two IFileSystemInfo objects.
