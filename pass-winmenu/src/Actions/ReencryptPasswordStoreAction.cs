@@ -8,6 +8,7 @@ using PassWinmenu.Configuration;
 using PassWinmenu.ExternalPrograms;
 using PassWinmenu.PasswordManagement;
 using PassWinmenu.Utilities;
+using PassWinmenu.Utilities.ExtensionMethods;
 using PassWinmenu.WinApi;
 using PassWinmenu.Windows;
 
@@ -17,9 +18,9 @@ namespace PassWinmenu.Actions
 	{
 		private readonly INotificationService notificationService;
 		private readonly IPasswordManager passwordManager;
-		private readonly PasswordStoreConfig passwordStoreConfig;
 		private readonly ICryptoService cryptoService;
 		private readonly IRecipientFinder recipientFinder;
+		private readonly DialogCreator dialogCreator;
 
 		public HotkeyAction ActionType => HotkeyAction.ReencryptPasswordStore;
 
@@ -28,13 +29,14 @@ namespace PassWinmenu.Actions
 			IPasswordManager passwordManager,
 			PasswordStoreConfig passwordStoreConfig,
 			ICryptoService cryptoService,
-			IRecipientFinder recipientFinder)
+			IRecipientFinder recipientFinder,
+			DialogCreator dialogCreator)
 		{
 			this.notificationService = notificationService;
 			this.passwordManager = passwordManager;
-			this.passwordStoreConfig = passwordStoreConfig;
 			this.cryptoService = cryptoService;
 			this.recipientFinder = recipientFinder;
+			this.dialogCreator = dialogCreator;
 		}
 
 		public void Execute()
@@ -55,11 +57,27 @@ namespace PassWinmenu.Actions
 			}
 
 			var files = passwordManager.GetPasswordFiles();
+			var directories = files
+				.Select(f => new
+				{
+					f.Directory,
+					f.PasswordStore,
+				})
+				.DistinctBy(d => d.Directory.FullName);
+
+			var selection = dialogCreator
+				.ShowPasswordMenu(directories, k => PathUtilities.MakeRelativePathForDisplay(k.PasswordStore, k.Directory), "Select a directory to re-encrypt...")
+				.ValueOrDefault();
+			if (selection == null)
+			{
+				return;
+			}
+
 			var viewer = new LogViewer("Re-encryption progress", "Re-encrypting the password store...\n");
 			viewer.Show();
 			Task.Run(() =>
 			{
-				foreach (var file in files)
+				foreach (var file in files.Where(f => selection.Directory.IsChild(f.FileInfo)))
 				{
 					try
 					{
