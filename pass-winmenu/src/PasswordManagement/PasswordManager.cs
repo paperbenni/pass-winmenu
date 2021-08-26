@@ -4,8 +4,10 @@ using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
 using System.Text.RegularExpressions;
+using PassWinmenu.Configuration;
 using PassWinmenu.ExternalPrograms;
 using PassWinmenu.Utilities;
+using PassWinmenu.Utilities.ExtensionMethods;
 
 namespace PassWinmenu.PasswordManagement
 {
@@ -15,6 +17,7 @@ namespace PassWinmenu.PasswordManagement
 		private readonly ICryptoService cryptoService;
 		private readonly IRecipientFinder recipientFinder;
 		private readonly PasswordFileParser passwordFileParser;
+		private readonly PasswordStoreConfig configuration;
 
 		private IFileSystem FileSystem => passwordStore.FileSystem;
 
@@ -22,12 +25,14 @@ namespace PassWinmenu.PasswordManagement
 			IDirectoryInfo passwordStore,
 			ICryptoService cryptoService,
 			IRecipientFinder recipientFinder,
-			PasswordFileParser passwordFileParser)
+			PasswordFileParser passwordFileParser,
+			PasswordStoreConfig configuration)
 		{
-			this.recipientFinder = recipientFinder;
-			this.passwordFileParser = passwordFileParser;
 			this.passwordStore = passwordStore;
 			this.cryptoService = cryptoService;
+			this.recipientFinder = recipientFinder;
+			this.passwordFileParser = passwordFileParser;
+			this.configuration = configuration;
 		}
 
 		/// <summary>
@@ -82,14 +87,32 @@ namespace PassWinmenu.PasswordManagement
 		}
 
 		/// <summary>
-		/// Returns all password files that match a search pattern.
+		/// Returns all password files in the store
 		/// </summary>
-		/// <param name="pattern">The pattern against which the files should be matched.</param>
-		public IEnumerable<PasswordFile> GetPasswordFiles(string pattern)
+		public IEnumerable<PasswordFile> GetPasswordFiles()
 		{
-			var patternRegex = new Regex(pattern);
+			var patternRegex = new Regex(configuration.PasswordFileMatch);
 
 			var files = passwordStore.EnumerateFiles("*", SearchOption.AllDirectories);
+			var matchingFiles = files.Where(f => patternRegex.IsMatch(f.Name));
+			var passwordFiles = matchingFiles.Select(CreatePasswordFile);
+
+			return passwordFiles;
+		}
+
+		/// <summary>
+		/// Returns all password files in a subdirectory of the password store
+		/// </summary>
+		public IEnumerable<PasswordFile> GetPasswordFiles(IDirectoryInfo subDirectory)
+		{
+			if (!subDirectory.IsChildOrSelf(passwordStore))
+			{
+				throw new InvalidOperationException("The given directory is not located in the password store.");
+			}
+
+			var patternRegex = new Regex(configuration.PasswordFileMatch);
+
+			var files = subDirectory.EnumerateFiles("*", SearchOption.AllDirectories);
 			var matchingFiles = files.Where(f => patternRegex.IsMatch(f.Name));
 			var passwordFiles = matchingFiles.Select(CreatePasswordFile);
 

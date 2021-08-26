@@ -54,7 +54,7 @@ namespace PassWinmenu.Actions
 				return;
 			}
 
-			var files = passwordManager.GetPasswordFiles(passwordStoreConfig.PasswordFileMatch);
+			var files = passwordManager.GetPasswordFiles();
 			var viewer = new LogViewer("Re-encryption progress", "Re-encrypting the password store...\n");
 			viewer.Show();
 			Task.Run(() =>

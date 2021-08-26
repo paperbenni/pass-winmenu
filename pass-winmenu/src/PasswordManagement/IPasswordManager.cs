@@ -1,10 +1,13 @@
 using System.Collections.Generic;
+using System.IO.Abstractions;
 
 namespace PassWinmenu.PasswordManagement
 {
 	internal interface IPasswordManager
 	{
-		IEnumerable<PasswordFile> GetPasswordFiles(string pattern);
+		IEnumerable<PasswordFile> GetPasswordFiles();
+
+		IEnumerable<PasswordFile> GetPasswordFiles(IDirectoryInfo subDirectory);
 
 		KeyedPasswordFile DecryptPassword(PasswordFile file, bool passwordOnFirstLine);
 
