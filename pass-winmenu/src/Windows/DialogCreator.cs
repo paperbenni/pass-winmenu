@@ -113,7 +113,7 @@ namespace PassWinmenu.Windows
 				// Add the password to Git
 				syncService?.AddPassword(passwordFile.FullPath);
 			}
-			catch (GitException e)
+			catch (Exception e)
 			{
 				Log.Send($"Failed to commit {passwordFile.FullPath}");
 				Log.ReportException(e);
