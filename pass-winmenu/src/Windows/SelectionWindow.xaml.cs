@@ -34,15 +34,21 @@ namespace PassWinmenu.Windows
 		/// </summary>
 		public SelectionLabel SelectedLabel { get; protected set; }
 
+		/// <summary>
+		/// The text of the currently selected label.
+		/// </summary>
 		public string SelectionText => SelectedLabel.Text;
 
 		/// <summary>
 		/// True if the user has chosen one of the options, false otherwise.
+		/// It only makes sense to check this property after the window has closed.
 		/// </summary>
 		public bool Success { get; protected set; }
 
-		// TODO: either use this or remove it
-		public string SearchHint { get; set; } = "Search...";
+		/// <summary>
+		/// A search hint to show when the search box is empty.
+		/// </summary>
+		public string HintText { get; set; } = "";
 
 		/// <summary>
 		/// Initialises the window with the provided options.
@@ -91,6 +97,10 @@ namespace PassWinmenu.Windows
 			SearchBox.BorderThickness = styleConfig.Search.BorderWidth;
 			SearchBox.FontSize = styleConfig.FontSize;
 			SearchBox.FontFamily = new FontFamily(styleConfig.FontFamily);
+
+			Hint.Foreground = styleConfig.Search.TextColour;
+			Hint.FontSize = styleConfig.FontSize;
+			Hint.FontFamily = new FontFamily(styleConfig.FontFamily);
 
 			Background = styleConfig.BackgroundColour;
 			BorderBrush = styleConfig.BorderColour;
@@ -170,6 +180,10 @@ namespace PassWinmenu.Windows
 			scrollOffset = 0;
 			optionStrings = options.ToList();
 			SetLabelContents(optionStrings);
+		}
+		private void OnSearchTextChangedInternal(object sender, TextChangedEventArgs e)
+		{
+			OnSearchTextChanged(sender, e);
 		}
 
 		/// <summary>
