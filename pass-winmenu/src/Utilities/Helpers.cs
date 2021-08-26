@@ -27,7 +27,13 @@ namespace PassWinmenu.Utilities
 		/// <returns>A colour object created from the colour code.</returns>
 		internal static Color ColourFromString(string str)
 		{
-			return (Color)ColorConverter.ConvertFromString(str);
+			try
+			{
+				return (Color)ColorConverter.ConvertFromString(str);
+			} catch (Exception)
+			{
+				throw new Exception($"Unable to convert '{str}' to a colour.");
+			}
 		}
 
 		/// <summary>
