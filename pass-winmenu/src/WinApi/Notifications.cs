@@ -19,7 +19,7 @@ namespace PassWinmenu.WinApi
 	{
 		public NotifyIcon Icon { get; set; }
 
-		private readonly string downloadUpdateString = "https://github.com/Baggykiin/pass-winmenu/releases";
+		private readonly string downloadUpdateString = "https://github.com/geluk/pass-winmenu/releases";
 		private ToolStripMenuItem downloadUpdate;
 		private ToolStripSeparator downloadSeparator;
 		private const int ToolTipTimeoutMs = 5000;
@@ -109,7 +109,7 @@ namespace PassWinmenu.WinApi
 			};
 
 			menu.Items.Add(startWithWindows);
-			menu.Items.Add("About", null, (sender, args) => Process.Start("https://github.com/Baggykiin/pass-winmenu#readme"));
+			menu.Items.Add("About", null, (sender, args) => Process.Start("https://github.com/geluk/pass-winmenu#readme"));
 			menu.Items.Add("Quit", null, (sender, args) => App.Exit());
 			Icon.ContextMenuStrip = menu;
 		}
