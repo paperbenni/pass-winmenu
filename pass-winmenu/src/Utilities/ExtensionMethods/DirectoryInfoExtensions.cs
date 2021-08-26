@@ -1,6 +1,5 @@
 using System.IO.Abstractions;
 using System.Linq;
-using PassWinmenu.WinApi;
 
 namespace PassWinmenu.Utilities.ExtensionMethods
 {
@@ -15,17 +14,23 @@ namespace PassWinmenu.Utilities.ExtensionMethods
 			return directory.EnumerateFiles(name).Any();
 		}
 
-		/// <summary>
-		/// Checks for path equality between two DirectoryInfo objects.
-		/// Unlike a direct comparison of their FullName properties,
-		/// this method ignores trailing slashes.
-		/// </summary>
-		/// <returns>True if both DirectoryInfo objects reference the same directory, false otherwise.</returns>
-		internal static bool PathEquals(this IDirectoryInfo a, IDirectoryInfo b)
+		internal static bool IsChildOrSelf(this IDirectoryInfo directory, IDirectoryInfo child)
 		{
-			var pathA = PathUtilities.NormaliseDirectory(a.FullName);
-			var pathB = PathUtilities.NormaliseDirectory(b.FullName);
-			return pathA == pathB;
+			do
+			{
+				if (child.PathEquals(directory))
+				{
+					return true;
+				}
+				child = child.Parent;
+			} while (child != null);
+
+			return false;
+		}
+		
+		internal static bool IsChild(this IDirectoryInfo directory, IFileInfo child)
+		{
+			return IsChildOrSelf(directory, child.Directory);
 		}
 	}
 }

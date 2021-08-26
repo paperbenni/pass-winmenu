@@ -177,6 +177,8 @@
     <Compile Include="src\UpdateChecking\UpdateCheckerFactory.cs" />
     <Compile Include="src\UpdateChecking\UpdateSourceExtensions.cs" />
     <Compile Include="src\Utilities\EnvironmentVariables.cs" />
+    <Compile Include="src\Utilities\ExtensionMethods\EnumerableExtensions.cs" />
+    <Compile Include="src\Utilities\ExtensionMethods\FileSystemInfoExtensions.cs" />
     <Compile Include="src\Utilities\Option.cs" />
     <Compile Include="src\WinApi\Clipboard.cs" />
     <Compile Include="src\Configuration\Classes\GitConfig.cs" />

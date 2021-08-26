@@ -107,6 +107,7 @@
     <Compile Include="ExternalPrograms\Gpg\GpgTransportTests.cs" />
     <Compile Include="PasswordManagement\GpgRecipientFinderTests.cs" />
     <Compile Include="PasswordManagement\PasswordFileParserTests.cs" />
+    <Compile Include="Utilities\ExtensionMethods\DirectoryInfoExtensionsTests.cs" />
     <Compile Include="Utilities\ExtensionMethods\StringExtensionsTests.cs" />
     <Compile Include="Utilities\FakeCryptoService.cs" />
     <Compile Include="Utilities\FakeProcess.cs" />

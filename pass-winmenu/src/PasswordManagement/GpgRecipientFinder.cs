@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.IO.Abstractions;
 using PassWinmenu.Utilities;
 using PassWinmenu.Utilities.ExtensionMethods;
