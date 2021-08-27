@@ -27,7 +27,7 @@ namespace PassWinmenuTests.ExternalPrograms.Gpg
 			var result = transport.CallGpg("--decrypt");
 
 			result.ShouldSatisfyAllConditions(
-				() => result.Stdout.ShouldBe("stdout data"),
+				() => result.RawStdout.ShouldBe("stdout data"),
 				() => result.StderrMessages.ShouldBe(new[] {"stderr message 1", "stderr message 2"}),
 				() => result.ExitCode.ShouldBe(10)
 			);

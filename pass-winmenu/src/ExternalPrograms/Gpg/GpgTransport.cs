@@ -8,11 +8,13 @@ using System.Threading.Tasks;
 
 namespace PassWinmenu.ExternalPrograms.Gpg
 {
-	internal class StdErrResult {
+	internal class StdErrResult
+	{
 		public readonly List<StatusMessage> StatusMessages;
 		public readonly List<string> StdErrMessages;
 
-		public StdErrResult(List<StatusMessage> StatusMessages, List<string> StdErrMessages) {
+		public StdErrResult(List<StatusMessage> StatusMessages, List<string> StdErrMessages)
+		{
 			this.StatusMessages = StatusMessages;
 			this.StdErrMessages = StdErrMessages;
 		}
@@ -38,64 +40,58 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 		{
 			var gpgProc = CreateGpgProcess(arguments, input);
 
-			var stdErrTask = ReadStdErr(gpgProc);
-			var stdOutTask = ReadStdout(gpgProc);
+			var stdErrTask = Task.Run(() => ReadStdErr(gpgProc));
+			var stdOutTask = Task.Run(() => ReadStdout(gpgProc));
 
-			Task.WaitAll(new Task[] {stdErrTask, stdOutTask});
-
+			Task.WaitAll(stdErrTask, stdOutTask);
 			gpgProc.WaitForExit(gpgCallTimeout);
 
-			string output = stdOutTask.Result;
-			StdErrResult status = stdErrTask.Result;
+			var output = stdOutTask.Result;
+			var status = stdErrTask.Result;
 
 			return new GpgResult(gpgProc.ExitCode, output, status.StatusMessages, status.StdErrMessages);
 		}
 
-		private Task<string> ReadStdout(IProcess gpgProc) {
-			return Task<string>.Run( () => {
-				// We can use the standard UTF-8 encoding here, as it should be able to handle input without BOM.
-				using (var reader = new StreamReader(gpgProc.StandardOutput.BaseStream, Encoding.UTF8))
-				{
-					return reader.ReadToEnd();
-				}
-			});
+		private string ReadStdout(IProcess gpgProc)
+		{
+			// We can use the standard UTF-8 encoding here, as it should be able to handle input without BOM.
+			using var reader = new StreamReader(gpgProc.StandardOutput.BaseStream, Encoding.UTF8);
+			return reader.ReadToEnd();
 		}
 
-		private Task<StdErrResult> ReadStdErr(IProcess gpgProc) {
-			return Task<StdErrResult>.Run( () => { 
+		private StdErrResult ReadStdErr(IProcess gpgProc)
+		{
+			string stderrLine;
+			var stderrMessages = new List<string>();
+			var statusMessages = new List<StatusMessage>();
 
-				string stderrLine;
-				var stderrMessages = new List<string>();
-				var statusMessages = new List<StatusMessage>();
-
-				while ((stderrLine = gpgProc.StandardError.ReadLine()) != null)
+			while ((stderrLine = gpgProc.StandardError.ReadLine()) != null)
+			{
+				Log.Send($"[GPG]: {stderrLine}");
+				if (stderrLine.StartsWith(StatusMarker, StringComparison.Ordinal))
 				{
-					Log.Send($"[GPG]: {stderrLine}");
-					if (stderrLine.StartsWith(StatusMarker, StringComparison.Ordinal))
+					// This line is a status line, so extract status information from it.
+					var statusLine = stderrLine.Substring(StatusMarker.Length);
+					var spaceIndex = statusLine.IndexOf(" ", StringComparison.Ordinal);
+					if (spaceIndex == -1)
 					{
-						// This line is a status line, so extract status information from it.
-						var statusLine = stderrLine.Substring(StatusMarker.Length);
-						var spaceIndex = statusLine.IndexOf(" ", StringComparison.Ordinal);
-						if (spaceIndex == -1)
-						{
-							statusMessages.Add(new StatusMessage(statusLine, null));
-						}
-						else
-						{
-							var statusLabel = statusLine.Substring(0, spaceIndex);
-							// Length+1 because the space after the status label should be skipped.
-							var statusMessage = statusLine.Substring(statusLabel.Length + 1);
-							statusMessages.Add(new StatusMessage(statusLabel, statusMessage));
-						}
+						statusMessages.Add(new StatusMessage(statusLine, null));
 					}
 					else
 					{
-						stderrMessages.Add(stderrLine);
+						var statusLabel = statusLine.Substring(0, spaceIndex);
+						// Length+1 because the space after the status label should be skipped.
+						var statusMessage = statusLine.Substring(statusLabel.Length + 1);
+						statusMessages.Add(new StatusMessage(statusLabel, statusMessage));
 					}
 				}
+				else
+				{
+					stderrMessages.Add(stderrLine);
+				}
+			}
 
-				return new StdErrResult(statusMessages, stderrMessages);
-			});
+			return new StdErrResult(statusMessages, stderrMessages);
 		}
 
 		/// <summary>

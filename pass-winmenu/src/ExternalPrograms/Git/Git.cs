@@ -142,7 +142,7 @@ namespace PassWinmenu.ExternalPrograms
 					null);
 
 				var gpgSignature = signService.Sign(commitBuffer, keyId.Value);
-				var signedCommit = repo.ObjectDatabase.CreateCommitWithSignature(commitBuffer, gpgSignature);
+				var signedCommit = repo.ObjectDatabase.CreateCommitWithSignature(commitBuffer, string.Join("\n", gpgSignature));
 				repo.Refs.UpdateTarget(repo.Refs.Head.ResolveToDirectReference(), signedCommit);
 			}
 			else
