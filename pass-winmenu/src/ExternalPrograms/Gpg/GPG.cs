@@ -118,7 +118,8 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 
 		private GpgResult CallGpg(string arguments, string input = null, IDictionary<string, string> operationArguments = null)
 		{
-			var allOptions = additionalOptions.Always.Concat(operationArguments ?? new Dictionary<string, string>());
+			var allOptions = (additionalOptions.Always ?? new Dictionary<string, string>())
+				.Concat(operationArguments ?? new Dictionary<string, string>());
 			if (allOptions.Any())
 			{
 				arguments = $"{string.Join(" ", allOptions.Select(FormatPair))} {arguments}";
