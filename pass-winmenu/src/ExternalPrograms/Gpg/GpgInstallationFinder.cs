@@ -61,7 +61,7 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 			}
 			catch (ExecutableNotFoundException)
 			{
-				throw new GpgError($"Gpg executable not found. Please verify that '${gpgPathSpec}' points to a valid GPG executable.");
+				throw new GpgError($"Gpg executable not found. Please verify that '{gpgPathSpec}' points to a valid GPG executable.");
 			}
 			var executable = fileSystem.FileInfo.FromFileName(resolved);
 
