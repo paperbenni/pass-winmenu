@@ -357,7 +357,7 @@ interface:
         search:
             text-colour: '#FFDDDDDD'
             background-colour: '#00FFFFFF'
-            border-colour: '#FF000000'
+            border-colour: '[accent]'
             border-width: [0, 0, 1, 0]
         search-hint:
             text-colour: '#FF999999'
