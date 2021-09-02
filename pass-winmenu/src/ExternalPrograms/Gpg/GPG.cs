@@ -82,6 +82,7 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 		public string GetVersion()
 		{
 			var output = CallGpg("--version");
+			output.EnsureNonZeroExitCode();
 			return output.StdoutMessages.First();
 		}
 
