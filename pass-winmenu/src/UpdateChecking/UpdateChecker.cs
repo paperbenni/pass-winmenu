@@ -17,7 +17,7 @@ namespace PassWinmenu.UpdateChecking
 
 		public event EventHandler<UpdateAvailableEventArgs> UpdateAvailable;
 
-		private Timer timer;
+		private Timer? timer;
 
 		public UpdateChecker(IUpdateSource   updateSource,
 		                     SemanticVersion currentVersion,
@@ -76,8 +76,8 @@ namespace PassWinmenu.UpdateChecking
 			}
 
 			// Stop automatic update checking if we've found an update.
-			timer.Stop();
-			timer.Dispose();
+			timer?.Stop();
+			timer?.Dispose();
 			Log.Send($"New update found: {update.Value.VersionNumber} - prerelease: {update.Value.IsPrerelease} - important: {update.Value.Important}", LogLevel.Debug);
 			NotifyUpdate(update.Value);
 			return true;
