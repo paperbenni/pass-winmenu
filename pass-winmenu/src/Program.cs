@@ -125,7 +125,8 @@ namespace PassWinmenu
 			builder.RegisterAssemblyTypes(Assembly.GetAssembly(typeof(ActionDispatcher)))
 				.InNamespaceOf<ActionDispatcher>()
 				.Except<ActionDispatcher>()
-				.AsImplementedInterfaces();
+				.AsImplementedInterfaces()
+				.AsSelf();
 			builder.RegisterType<HotkeyManager>()
 				.AsSelf();
 

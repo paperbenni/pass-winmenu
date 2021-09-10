@@ -29,65 +29,6 @@ namespace PassWinmenu.Windows
 			this.passwordFileParser = passwordFileParser;
 			this.pathDisplayHelper = pathDisplayHelper;
 		}
-		/// <summary>
-		/// Asks the user to choose a password file, decrypts it, and copies the resulting value to the clipboard.
-		/// </summary>
-		public void DecryptPassword(bool copyToClipboard, bool typeUsername, bool typePassword)
-		{
-			var selectedFile = RequestPasswordFile();
-			// If the user cancels their selection, the password decryption should be cancelled too.
-			if (selectedFile == null) return;
-
-			KeyedPasswordFile passFile;
-			try
-			{
-				passFile = passwordManager.DecryptPassword(selectedFile, ConfigManager.Config.PasswordStore.FirstLineOnly);
-			}
-			catch (Exception e) when (e is GpgError || e is GpgException || e is ConfigurationException)
-			{
-				notificationService.ShowErrorWindow("Password decryption failed: " + e.Message);
-				return;
-			}
-			catch (Exception e)
-			{
-				notificationService.ShowErrorWindow($"Password decryption failed: An error occurred: {e.GetType().Name}: {e.Message}");
-				return;
-			}
-
-			if (copyToClipboard)
-			{
-				ClipboardHelper.Place(passFile.Password, TimeSpan.FromSeconds(ConfigManager.Config.Interface.ClipboardTimeout));
-				if (ConfigManager.Config.Notifications.Types.PasswordCopied)
-				{
-					notificationService.Raise($"The password has been copied to your clipboard.\nIt will be cleared in {ConfigManager.Config.Interface.ClipboardTimeout:0.##} seconds.", Severity.Info);
-				}
-			}
-			var usernameEntered = false;
-			if (typeUsername)
-			{
-				try
-				{
-					var username = passwordFileParser.GetUsername(passFile);
-					if (username != null)
-					{
-						KeyboardEmulator.EnterText(username);
-						usernameEntered = true;
-					}
-				}
-				catch (Exception e)
-				{
-					notificationService.ShowErrorWindow($"Could not retrieve your username: {e.Message}");
-					return;
-				}
-			}
-			if (typePassword)
-			{
-				// If a username has also been entered, press Tab to switch to the password field.
-				if (usernameEntered) KeyboardEmulator.EnterTab();
-
-				KeyboardEmulator.EnterText(passFile.Password);
-			}
-		}
 
 		public void DecryptMetadata(bool copyToClipboard, bool type)
 		{

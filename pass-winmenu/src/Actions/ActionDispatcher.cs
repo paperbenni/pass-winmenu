@@ -8,12 +8,16 @@ namespace PassWinmenu.Actions
 	class ActionDispatcher
 	{
 		private readonly DialogCreator dialogCreator;
-
+		private readonly DecryptPasswordAction decryptPasswordAction;
 		private readonly Dictionary<HotkeyAction, IAction> actions;
 
-		public ActionDispatcher(DialogCreator dialogCreator, Dictionary<HotkeyAction, IAction> actions)
+		public ActionDispatcher(
+			DialogCreator dialogCreator,
+			DecryptPasswordAction decryptPasswordAction,
+			Dictionary<HotkeyAction, IAction> actions)
 		{
 			this.dialogCreator = dialogCreator;
+			this.decryptPasswordAction = decryptPasswordAction;
 			this.actions = actions;
 		}
 
@@ -22,7 +26,7 @@ namespace PassWinmenu.Actions
 		/// </summary>
 		public void DecryptPassword(bool copyToClipboard, bool typeUsername, bool typePassword)
 		{
-			dialogCreator.DecryptPassword(copyToClipboard, typeUsername, typePassword);
+			decryptPasswordAction.Execute(copyToClipboard, typeUsername, typePassword);
 		}
 
 		public void DecryptMetadata(bool copyToClipboard, bool type)

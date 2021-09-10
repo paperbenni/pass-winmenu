@@ -55,10 +55,4 @@ namespace PassWinmenu.Actions
 			processes.Start(powerShell);
 		}
 	}
-
-	internal interface IAction
-	{
-		void Execute();
-		HotkeyAction ActionType { get; }
-	}
 }
