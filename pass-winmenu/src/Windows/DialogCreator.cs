@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Windows;
 using PassWinmenu.Configuration;
-using PassWinmenu.ExternalPrograms;
 using PassWinmenu.ExternalPrograms.Gpg;
 using PassWinmenu.PasswordManagement;
 using PassWinmenu.Utilities;
@@ -16,7 +14,6 @@ namespace PassWinmenu.Windows
 	internal class DialogCreator
 	{
 		private readonly INotificationService notificationService;
-		private readonly ISyncService? syncService;
 		private readonly IPasswordManager passwordManager;
 		private readonly PasswordFileParser passwordFileParser;
 		private readonly PathDisplayHelper pathDisplayHelper;
@@ -25,76 +22,13 @@ namespace PassWinmenu.Windows
 			INotificationService notificationService,
 			IPasswordManager passwordManager,
 			PasswordFileParser passwordFileParser,
-			Option<ISyncService> syncService,
 			PathDisplayHelper pathDisplayHelper)
 		{
 			this.notificationService = notificationService ?? throw new ArgumentNullException(nameof(notificationService));
 			this.passwordManager = passwordManager ?? throw new ArgumentNullException(nameof(passwordManager));
 			this.passwordFileParser = passwordFileParser;
 			this.pathDisplayHelper = pathDisplayHelper;
-			this.syncService = syncService.ValueOrDefault();
 		}
-		/// <summary>
-		/// Adds a new password to the password store.
-		/// </summary>
-		public void AddPassword()
-		{
-			Helpers.AssertOnUiThread();
-
-			var passwordFilePath = ShowFileSelectionWindow();
-			// passwordFileName will be null if no file was selected
-			if (passwordFilePath == null) return;
-
-			// Display the password generation window.
-			string password;
-			string metadata;
-			using (var passwordWindow = new PasswordWindow(Path.GetFileName(passwordFilePath), ConfigManager.Config.PasswordStore.PasswordGeneration))
-			{
-				passwordWindow.ShowDialog();
-				if (!passwordWindow.DialogResult.GetValueOrDefault())
-				{
-					return;
-				}
-				password = passwordWindow.Password.Text;
-				metadata = passwordWindow.ExtraContent.Text.Replace(Environment.NewLine, "\n");
-			}
-
-			PasswordFile passwordFile;
-			try
-			{
-				passwordFile = passwordManager.AddPassword(passwordFilePath, password, metadata);
-			}
-			catch (GpgException e)
-			{
-				notificationService.ShowErrorWindow("Unable to encrypt your password: " + e.Message);
-				return;
-			}
-			catch (ConfigurationException e)
-			{
-				notificationService.ShowErrorWindow("Unable to encrypt your password: " + e.Message);
-				return;
-			}
-			// Copy the newly generated password.
-			ClipboardHelper.Place(password, TimeSpan.FromSeconds(ConfigManager.Config.Interface.ClipboardTimeout));
-
-			if (ConfigManager.Config.Notifications.Types.PasswordGenerated)
-			{
-				notificationService.Raise($"The new password has been copied to your clipboard.\nIt will be cleared in {ConfigManager.Config.Interface.ClipboardTimeout:0.##} seconds.", Severity.Info);
-			}
-
-			try
-			{
-				// Add the password to Git
-				syncService?.AddPassword(passwordFile.FullPath);
-			}
-			catch (Exception e)
-			{
-				Log.Send($"Failed to commit {passwordFile.FullPath}");
-				Log.ReportException(e);
-				notificationService.ShowErrorWindow("Unable to commit your changes: " + e.Message);
-			}
-		}
-
 		/// <summary>
 		/// Asks the user to choose a password file, decrypts it, and copies the resulting value to the clipboard.
 		/// </summary>
@@ -278,7 +212,7 @@ namespace PassWinmenu.Windows
 		/// Opens a window where the user can choose the location for a new password file.
 		/// </summary>
 		/// <returns>The path to the file that the user has chosen</returns>
-		private string? ShowFileSelectionWindow()
+		public string? ShowFileSelectionWindow()
 		{
 			SelectionWindowConfiguration windowConfig;
 			try

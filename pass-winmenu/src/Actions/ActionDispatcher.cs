@@ -17,11 +17,6 @@ namespace PassWinmenu.Actions
 			this.actions = actions;
 		}
 
-		public void AddPassword()
-		{
-			dialogCreator.AddPassword();
-		}
-
 		/// <summary>
 		/// Asks the user to choose a password file, decrypts it, and copies the resulting value to the clipboard.
 		/// </summary>
@@ -38,14 +33,6 @@ namespace PassWinmenu.Actions
 		public void DecryptPasswordField(bool copyToClipboard, bool type, string fieldName = null)
 		{
 			dialogCreator.GetKey(copyToClipboard, type, fieldName);
-		}
-
-		internal void ShowDebugInfo()
-		{
-			// TODO: determine how to handle this.
-			// Either create a new window accessible from 'More Actions',
-			// or add the information to the log viewer.
-			throw new NotImplementedException("Not implemented.");
 		}
 
 		public void Dispatch(HotkeyAction hotkeyAction)

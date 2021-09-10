@@ -115,6 +115,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="src\Actions\AddPasswordAction.cs" />
     <Compile Include="src\Actions\EditPasswordAction.cs" />
     <Compile Include="src\Actions\ReencryptPasswordStoreAction.cs" />
     <Compile Include="src\Configuration\Classes\AdditionalOptionsConfig.cs" />

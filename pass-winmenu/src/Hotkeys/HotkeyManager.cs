@@ -73,8 +73,6 @@ namespace PassWinmenu.Hotkeys
 							AddHotKey(keys, () => actionDispatcher.DecryptMetadata(hotkey.Options.CopyToClipboard, hotkey.Options.Type));
 							break;
 						case HotkeyAction.AddPassword:
-							AddHotKey(keys, actionDispatcher.AddPassword);
-							break;
 						case HotkeyAction.EditPassword:
 						case HotkeyAction.ShowDebugInfo:
 						case HotkeyAction.CheckForUpdates:
