@@ -13,13 +13,13 @@ namespace PassWinmenu.PasswordManagement
 {
 	internal class PasswordManager : IPasswordManager
 	{
-		private readonly IDirectoryInfo passwordStore;
 		private readonly ICryptoService cryptoService;
 		private readonly IRecipientFinder recipientFinder;
 		private readonly PasswordFileParser passwordFileParser;
 		private readonly PasswordStoreConfig configuration;
 
-		private IFileSystem FileSystem => passwordStore.FileSystem;
+		private IFileSystem FileSystem => PasswordStore.FileSystem;
+		public IDirectoryInfo PasswordStore { get; }
 
 		public PasswordManager(
 			IDirectoryInfo passwordStore,
@@ -28,7 +28,7 @@ namespace PassWinmenu.PasswordManagement
 			PasswordFileParser passwordFileParser,
 			PasswordStoreConfig configuration)
 		{
-			this.passwordStore = passwordStore;
+			this.PasswordStore = passwordStore;
 			this.cryptoService = cryptoService;
 			this.recipientFinder = recipientFinder;
 			this.passwordFileParser = passwordFileParser;
@@ -93,7 +93,7 @@ namespace PassWinmenu.PasswordManagement
 		{
 			var patternRegex = new Regex(configuration.PasswordFileMatch);
 
-			var files = passwordStore.EnumerateFiles("*", SearchOption.AllDirectories);
+			var files = PasswordStore.EnumerateFiles("*", SearchOption.AllDirectories);
 			var matchingFiles = files.Where(f => patternRegex.IsMatch(f.Name));
 			var passwordFiles = matchingFiles.Select(CreatePasswordFile);
 
@@ -105,7 +105,7 @@ namespace PassWinmenu.PasswordManagement
 		/// </summary>
 		public IEnumerable<PasswordFile> GetPasswordFiles(IDirectoryInfo subDirectory)
 		{
-			if (!subDirectory.IsChildOrSelf(passwordStore))
+			if (!subDirectory.IsChildOrSelf(PasswordStore))
 			{
 				throw new InvalidOperationException("The given directory is not located in the password store.");
 			}
@@ -132,13 +132,13 @@ namespace PassWinmenu.PasswordManagement
 
 		private PasswordFile CreatePasswordFile(IFileInfo file)
 		{
-			return new PasswordFile(file, passwordStore);
+			return new PasswordFile(file, PasswordStore);
 		}
 
 		private PasswordFile CreatePasswordFileFromPath(string relativePath)
 		{
-			var fullPath = FileSystem.Path.Combine(passwordStore.FullName, relativePath);
-			return new PasswordFile(FileSystem.FileInfo.FromFileName(fullPath), passwordStore);
+			var fullPath = FileSystem.Path.Combine(PasswordStore.FullName, relativePath);
+			return new PasswordFile(FileSystem.FileInfo.FromFileName(fullPath), PasswordStore);
 		}
 	}
 }

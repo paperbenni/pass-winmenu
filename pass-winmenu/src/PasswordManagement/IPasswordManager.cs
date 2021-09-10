@@ -5,6 +5,8 @@ namespace PassWinmenu.PasswordManagement
 {
 	internal interface IPasswordManager
 	{
+		IDirectoryInfo PasswordStore { get; }
+
 		IEnumerable<PasswordFile> GetPasswordFiles();
 
 		IEnumerable<PasswordFile> GetPasswordFiles(IDirectoryInfo subDirectory);
