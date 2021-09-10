@@ -104,10 +104,12 @@ namespace PassWinmenu
 			LoadConfigFile(runtimeConfig);
 
 			builder.Register(_ => ConfigManager.Config).AsSelf();
-			builder.Register(_ => ConfigManager.Config.Gpg).AsSelf();
-			builder.Register(_ => ConfigManager.Config.Git).AsSelf();
-			builder.Register(_ => ConfigManager.Config.PasswordStore).AsSelf();
 			builder.Register(_ => ConfigManager.Config.Application.UpdateChecking).AsSelf();
+			builder.Register(_ => ConfigManager.Config.Git).AsSelf();
+			builder.Register(_ => ConfigManager.Config.Gpg).AsSelf();
+			builder.Register(_ => ConfigManager.Config.Interface).AsSelf();
+			builder.Register(_ => ConfigManager.Config.Interface.PasswordEditor).AsSelf();
+			builder.Register(_ => ConfigManager.Config.PasswordStore).AsSelf();
 			builder.Register(_ => ConfigManager.Config.PasswordStore.UsernameDetection).AsSelf();
 
 #if DEBUG
@@ -159,7 +161,10 @@ namespace PassWinmenu
 			builder.Register(context => context.Resolve<GpgInstallationFinder>().FindGpgInstallation(ConfigManager.Config.Gpg.GpgPath))
 				.SingleInstance();
 
+			// Register user interaction types
 			builder.RegisterType<DialogCreator>()
+				.AsSelf();
+			builder.RegisterType<PathDisplayHelper>()
 				.AsSelf();
 
 			// Register the internal password manager
