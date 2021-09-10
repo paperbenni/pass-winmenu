@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.IO.Abstractions;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -10,9 +11,9 @@ namespace PassWinmenu.Windows
 	internal class FileSelectionWindow : SelectionWindow
 	{
 		private readonly DirectoryAutocomplete autocomplete;
-		private readonly string baseDirectory;
+		private readonly IDirectoryInfo baseDirectory;
 
-		public FileSelectionWindow(string baseDirectory, SelectionWindowConfiguration configuration, string hint) : base(configuration, hint)
+		public FileSelectionWindow(IDirectoryInfo baseDirectory, SelectionWindowConfiguration configuration, string hint) : base(configuration, hint)
 		{
 			this.baseDirectory = baseDirectory;
 			autocomplete = new DirectoryAutocomplete(baseDirectory);
@@ -58,7 +59,7 @@ namespace PassWinmenu.Windows
 					SetSearchBoxText(selection);
 					return;
 				}
-				if (File.Exists(Path.Combine(baseDirectory, selection + Program.EncryptedFileExtension)))
+				if (File.Exists(Path.Combine(baseDirectory.FullName, selection + Program.EncryptedFileExtension)))
 				{
 					MessageBox.Show($"The password file \"{selection + Program.EncryptedFileExtension}\" already exists.");
 					return;

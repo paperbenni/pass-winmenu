@@ -12,35 +12,6 @@ namespace PassWinmenu.WinApi
 	internal static class PathUtilities
 	{
 		/// <summary>
-		/// Reformats a path as relative to the specified base directory.
-		/// If the path does not point to a child of the base directory,
-		/// the full path is returned.
-		/// This function is intended for usage in situations where relative
-		/// paths are displayed to the user, so it produces UNIX-style
-		/// directory separators in its output, and it leaves trailing slashes intact.
-		/// </summary>
-		[Obsolete("Use the System.IO.Abstractions-based overload instead.")]
-		public static string MakeRelativePathForDisplay(string baseDir, string absoluteDir)
-		{
-			if (!baseDir.EndsWith(Path.DirectorySeparatorChar.ToString(CultureInfo.InvariantCulture), StringComparison.Ordinal))
-			{
-				baseDir = baseDir + Path.DirectorySeparatorChar;
-			}
-			if (string.IsNullOrEmpty(baseDir)) throw new ArgumentNullException(nameof(baseDir));
-			if (string.IsNullOrEmpty(absoluteDir)) throw new ArgumentNullException(nameof(absoluteDir));
-
-			var baseUri = new Uri(baseDir);
-			var absoluteUri = new Uri(absoluteDir);
-
-			if (baseUri.Scheme != absoluteUri.Scheme) { return absoluteDir; } // path can't be made relative.
-
-			var relativeUri = baseUri.MakeRelativeUri(absoluteUri);
-			var relativePath = Uri.UnescapeDataString(relativeUri.ToString());
-
-			return relativePath;
-		}
-
-		/// <summary>
 		/// Reformats a file path as relative to the specified base directory.
 		/// If the path does not point to a child of the base directory,
 		/// the full path is returned.

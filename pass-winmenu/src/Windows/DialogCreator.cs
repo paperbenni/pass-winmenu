@@ -318,7 +318,7 @@ namespace PassWinmenu.Windows
 			}
 
 			// Ask the user where the password file should be placed.
-			var pathWindow = new FileSelectionWindow(ConfigManager.Config.PasswordStore.Location, windowConfig, "Choose a location...");
+			var pathWindow = new FileSelectionWindow(passwordManager.PasswordStore, windowConfig, "Choose a location...");
 			pathWindow.ShowDialog();
 			if (!pathWindow.Success)
 			{

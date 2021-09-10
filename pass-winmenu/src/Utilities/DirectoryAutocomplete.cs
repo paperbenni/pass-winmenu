@@ -1,6 +1,7 @@
 using System;
 using System.Globalization;
 using System.IO;
+using System.IO.Abstractions;
 using System.Linq;
 using PassWinmenu.WinApi;
 
@@ -8,13 +9,15 @@ namespace PassWinmenu.Utilities
 {
 	internal class DirectoryAutocomplete
 	{
+		private readonly IDirectoryInfo baseDirectoryInfo;
 		private readonly string baseDirectory;
 
-		public DirectoryAutocomplete(string baseDirectory)
+		public DirectoryAutocomplete(IDirectoryInfo baseDirectory)
 		{
+			this.baseDirectoryInfo = baseDirectory;
 			// Ensure consistency of directory separators.
 			// We can't use Path.Combine() here because it doesn't concatenate drive letters properly.
-			this.baseDirectory = string.Join(Path.DirectorySeparatorChar.ToString(CultureInfo.InvariantCulture), baseDirectory.Split(new[] { '/', '\\' }, StringSplitOptions.RemoveEmptyEntries));
+			this.baseDirectory = string.Join(Path.DirectorySeparatorChar.ToString(CultureInfo.InvariantCulture), baseDirectoryInfo.FullName.Split(new[] { '/', '\\' }, StringSplitOptions.RemoveEmptyEntries));
 			// Append a directory separator so Path.GetDirectoryName(baseDirectory) will correctly return the full base directory, instead of its parent directory.
 			this.baseDirectory = this.baseDirectory + Path.DirectorySeparatorChar;
 		}
@@ -56,7 +59,7 @@ namespace PassWinmenu.Utilities
 			suggestions = suggestions.Select(suggestion => Directory.Exists(suggestion) ? suggestion + Path.DirectorySeparatorChar : suggestion);
 
 			// Finally, transform directory suggestions to relative paths for convenience.
-			return suggestions.Select(suggestion => PathUtilities.MakeRelativePathForDisplay(baseDirectory, suggestion)).ToArray();
+			return suggestions.Select(suggestion => PathUtilities.MakeRelativePathForDisplay(baseDirectoryInfo, suggestion)).ToArray();
 		}
 	}
 }

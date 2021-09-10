@@ -8,25 +8,29 @@ namespace PassWinmenuTests.WinApi
 	public class PathUtilitiesTests
 	{
 		[Fact]
-		public void MakeRelativePath_IsChildPath_MakesRelativeToBase()
+		public void MakeRelativePathForDisplay_IsChildPath_MakesRelativeToBase()
 		{
-			var parent = @"C:\parent";
+			var filesystem = new MockFileSystemBuilder().Build();
+
+			var parent = filesystem.DirectoryInfo.FromDirectoryName(@"C:\parent");
 			var child = @"C:\parent\child";
 
 			PathUtilities.MakeRelativePathForDisplay(parent, child).ShouldBe("child");
 		}
 
 		[Fact]
-		public void MakeRelativePath_TrailingSlash_PreservesTrailingSlash()
+		public void MakeRelativePathForDisplay_TrailingSlash_PreservesTrailingSlash()
 		{
-			var parent = @"C:\parent";
+			var filesystem = new MockFileSystemBuilder().Build();
+
+			var parent = filesystem.DirectoryInfo.FromDirectoryName(@"C:\parent");
 			var child = @"C:\parent\child\";
 
 			PathUtilities.MakeRelativePathForDisplay(parent, child).ShouldBe("child/");
 		}
 
 		[Fact]
-		public void MakeRelativePath_SamePath_ProducesSingleDot()
+		public void MakeRelativePathForDisplay_SamePath_ProducesSingleDot()
 		{
 			var filesystem = new MockFileSystemBuilder().Build();
 
@@ -37,7 +41,7 @@ namespace PassWinmenuTests.WinApi
 		}
 
 		[Fact]
-		public void MakeRelativePath_Directory_AddsTrailingSlash()
+		public void MakeRelativePathForDisplay_Directory_AddsTrailingSlash()
 		{
 			var filesystem = new MockFileSystemBuilder().Build();
 
@@ -48,7 +52,7 @@ namespace PassWinmenuTests.WinApi
 		}
 
 		[Fact]
-		public void MakeRelativePath_File_NoTrailingSlash()
+		public void MakeRelativePathForDisplay_File_NoTrailingSlash()
 		{
 			var filesystem = new MockFileSystemBuilder().Build();
 
