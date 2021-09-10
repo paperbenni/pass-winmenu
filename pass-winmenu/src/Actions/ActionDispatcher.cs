@@ -22,11 +22,6 @@ namespace PassWinmenu.Actions
 			dialogCreator.AddPassword();
 		}
 
-		public void EditPassword()
-		{
-			dialogCreator.EditPassword();
-		}
-
 		/// <summary>
 		/// Asks the user to choose a password file, decrypts it, and copies the resulting value to the clipboard.
 		/// </summary>
@@ -53,13 +48,16 @@ namespace PassWinmenu.Actions
 			throw new NotImplementedException("Not implemented.");
 		}
 
-		public Action Dispatch(HotkeyAction hotkeyAction)
+		public void Dispatch(HotkeyAction hotkeyAction)
 		{
 			if (actions.TryGetValue(hotkeyAction, out var action))
 			{
-				return action.Execute;
+				action.Execute();
 			}
-			throw new NotImplementedException("Action does not exist.");
+			else
+			{
+				throw new NotImplementedException("Action does not exist.");
+			}
 		}
 	}
 }

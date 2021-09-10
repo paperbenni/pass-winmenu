@@ -76,17 +76,15 @@ namespace PassWinmenu.Hotkeys
 							AddHotKey(keys, actionDispatcher.AddPassword);
 							break;
 						case HotkeyAction.EditPassword:
-							AddHotKey(keys, actionDispatcher.EditPassword);
-							break;
 						case HotkeyAction.ShowDebugInfo:
 						case HotkeyAction.CheckForUpdates:
 						case HotkeyAction.GitPull:
 						case HotkeyAction.GitPush:
 						case HotkeyAction.OpenShell:
-							AddHotKey(keys, actionDispatcher.Dispatch(action));
+							AddHotKey(keys, () => actionDispatcher.Dispatch(action));
 							break;
 						default:
-							throw new ArgumentOutOfRangeException();
+							throw new ArgumentOutOfRangeException("Invalid hotkey action");
 					}
 				}
 				catch (HotkeyException e) when (e.InnerException?.HResult == HResult.HotkeyAlreadyRegistered)

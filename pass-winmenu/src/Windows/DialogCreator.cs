@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -10,15 +8,15 @@ using PassWinmenu.ExternalPrograms;
 using PassWinmenu.ExternalPrograms.Gpg;
 using PassWinmenu.PasswordManagement;
 using PassWinmenu.Utilities;
-using PassWinmenu.Utilities.ExtensionMethods;
 using PassWinmenu.WinApi;
 
+#nullable enable
 namespace PassWinmenu.Windows
 {
 	internal class DialogCreator
 	{
 		private readonly INotificationService notificationService;
-		private readonly ISyncService syncService;
+		private readonly ISyncService? syncService;
 		private readonly IPasswordManager passwordManager;
 		private readonly PasswordFileParser passwordFileParser;
 		private readonly PathDisplayHelper pathDisplayHelper;
@@ -27,39 +25,15 @@ namespace PassWinmenu.Windows
 			INotificationService notificationService,
 			IPasswordManager passwordManager,
 			PasswordFileParser passwordFileParser,
-			Option<ISyncService> syncService)
+			Option<ISyncService> syncService,
+			PathDisplayHelper pathDisplayHelper)
 		{
 			this.notificationService = notificationService ?? throw new ArgumentNullException(nameof(notificationService));
 			this.passwordManager = passwordManager ?? throw new ArgumentNullException(nameof(passwordManager));
 			this.passwordFileParser = passwordFileParser;
-			this.syncService = syncService.Value;
-			this.pathDisplayHelper = new PathDisplayHelper(ConfigManager.Config.Interface.DirectorySeparator);
+			this.pathDisplayHelper = pathDisplayHelper;
+			this.syncService = syncService.ValueOrDefault();
 		}
-		public void EditPassword()
-		{
-			var selectedFile = RequestPasswordFile();
-			if (selectedFile == null) return;
-
-			if (ConfigManager.Config.Interface.PasswordEditor.UseBuiltin)
-			{
-				DecryptedPasswordFile decryptedFile;
-				try
-				{
-					decryptedFile = passwordManager.DecryptPassword(selectedFile, false);
-				}
-				catch (Exception e)
-				{
-					notificationService.ShowErrorWindow($"Unable to edit your password (decryption failed): {e.Message}");
-					return;
-				}
-				EditWithEditWindow(decryptedFile);
-			}
-			else
-			{
-				EditWithTextEditor(selectedFile);
-			}
-		}
-
 		/// <summary>
 		/// Adds a new password to the password store.
 		/// </summary>
@@ -304,7 +278,7 @@ namespace PassWinmenu.Windows
 		/// Opens a window where the user can choose the location for a new password file.
 		/// </summary>
 		/// <returns>The path to the file that the user has chosen</returns>
-		private string ShowFileSelectionWindow()
+		private string? ShowFileSelectionWindow()
 		{
 			SelectionWindowConfiguration windowConfig;
 			try
@@ -326,6 +300,29 @@ namespace PassWinmenu.Windows
 			}
 			return pathWindow.SelectionText + Program.EncryptedFileExtension;
 		}
+
+		/// <summary>
+		/// Asks the user to choose a password file.
+		/// </summary>
+		/// <returns>
+		/// The path to the chosen password file (relative to the password directory),
+		/// or null if the user didn't choose anything.
+		/// </returns>
+		public PasswordFile? RequestPasswordFile()
+		{
+			Helpers.AssertOnUiThread();
+
+			// Find GPG-encrypted password files
+			var passFiles = passwordManager.GetPasswordFiles().ToList();
+			if (passFiles.Count == 0)
+			{
+				MessageBox.Show("Your password store doesn't appear to contain any passwords yet.", "Empty password store", MessageBoxButton.OK, MessageBoxImage.Information);
+				return null;
+			}
+			return ShowPasswordMenu(passFiles, pathDisplayHelper.GetDisplayPath, "Select a password...").ValueOrDefault();
+		}
+
+
 
 		/// <summary>
 		/// Opens the password menu and displays it to the user, allowing them to choose an existing password file.
@@ -357,194 +354,5 @@ namespace PassWinmenu.Windows
 			return Option<TEntry>.None();
 		}
 
-		/// <summary>
-		/// Asks the user to choose a password file.
-		/// </summary>
-		/// <returns>
-		/// The path to the chosen password file (relative to the password directory),
-		/// or null if the user didn't choose anything.
-		/// </returns>
-		private PasswordFile RequestPasswordFile()
-		{
-			Helpers.AssertOnUiThread();
-
-			// Find GPG-encrypted password files
-			var passFiles = passwordManager.GetPasswordFiles().ToList();
-			if (passFiles.Count == 0)
-			{
-				MessageBox.Show("Your password store doesn't appear to contain any passwords yet.", "Empty password store", MessageBoxButton.OK, MessageBoxImage.Information);
-				return null;
-			}
-			return ShowPasswordMenu(passFiles, pathDisplayHelper.GetDisplayPath, "Select a password...").ValueOrDefault();
-		}
-
-		private void EditWithEditWindow(DecryptedPasswordFile file)
-		{
-			Helpers.AssertOnUiThread();
-
-			using (var window = new EditWindow(pathDisplayHelper.GetDisplayPath(file), file.Content, ConfigManager.Config.PasswordStore.PasswordGeneration))
-			{
-				if (!window.ShowDialog() ?? true)
-				{
-					return;
-				}
-
-				var newFile = new DecryptedPasswordFile(file, window.PasswordContent.Text);
-				try
-				{
-					passwordManager.EncryptPassword(newFile);
-
-					syncService?.EditPassword(newFile.FullPath);
-					if (ConfigManager.Config.Notifications.Types.PasswordUpdated)
-					{
-						notificationService.Raise($"Password file \"{newFile.FileNameWithoutExtension}\" has been updated.", Severity.Info);
-					}
-				}
-				catch (GitException e)
-				{
-					notificationService.ShowErrorWindow($"Unable to commit your changes: {e.Message}");
-					EditWithEditWindow(newFile);
-				}
-				catch (Exception e)
-				{
-					notificationService.ShowErrorWindow($"Unable to save your password (encryption failed): {e.Message}");
-					EditWithEditWindow(newFile);
-				}
-			}
-		}
-
-		/// <summary>
-		/// Ensures the file at the given path is deleted, warning the user if deletion failed.
-		/// </summary>
-		private void EnsureRemoval(string path)
-		{
-			try
-			{
-				File.Delete(path);
-			}
-			catch (Exception e)
-			{
-				notificationService.ShowErrorWindow($"Unable to delete the plaintext file at {path}.\n" +
-													$"An error occurred: {e.GetType().Name} ({e.Message}).\n\n" +
-													$"Please navigate to the given path and delete it manually.", "Plaintext file not deleted.");
-			}
-		}
-
-		private static string CreateTemporaryPlaintextFile()
-		{
-			var tempDir = ConfigManager.Config.Interface.PasswordEditor.TemporaryFileDirectory;
-
-			if (string.IsNullOrWhiteSpace(tempDir))
-			{
-				Log.Send("No temporary file directory specified, using default.", LogLevel.Warning);
-				tempDir = Path.GetTempPath();
-			}
-
-			if (!Directory.Exists(tempDir))
-			{
-				Log.Send($"Temporary directory \"{tempDir}\" does not exist, it will be created.", LogLevel.Info);
-				Directory.CreateDirectory(tempDir);
-			}
-
-			var tempFile = Path.GetRandomFileName();
-			var tempPath = Path.Combine(tempDir, tempFile + Program.PlaintextFileExtension);
-			return tempPath;
-		}
-
-		private void EditWithTextEditor(PasswordFile selectedFile)
-		{
-			// Generate a random plaintext filename.
-			var plaintextFile = CreateTemporaryPlaintextFile();
-			try
-			{
-				var passwordFile = passwordManager.DecryptPassword(selectedFile, false);
-				File.WriteAllText(plaintextFile, passwordFile.Content);
-			}
-			catch (Exception e)
-			{
-				EnsureRemoval(plaintextFile);
-				notificationService.ShowErrorWindow($"Unable to edit your password (decryption failed): {e.Message}");
-				return;
-			}
-
-			// Open the file in the user's default editor
-			try
-			{
-				Process.Start(plaintextFile);
-			}
-			catch (Win32Exception e)
-			{
-				EnsureRemoval(plaintextFile);
-				notificationService.ShowErrorWindow($"Unable to open an editor to edit your password file ({e.Message}).");
-				return;
-			}
-
-			var result = MessageBox.Show(
-				"Please keep this window open until you're done editing the password file.\n" +
-				"Then click Yes to save your changes, or No to discard them.",
-				$"Save changes to {selectedFile.FileNameWithoutExtension}?",
-				MessageBoxButton.YesNo,
-				MessageBoxImage.Information);
-
-			if (result == MessageBoxResult.Yes)
-			{
-				// Fetch the content from the file, and delete it.
-				var content = File.ReadAllText(plaintextFile);
-				EnsureRemoval(plaintextFile);
-
-				var newPasswordFile = new DecryptedPasswordFile(selectedFile, content);
-				try
-				{
-					passwordManager.EncryptPassword(newPasswordFile);
-					syncService?.EditPassword(selectedFile.FullPath);
-
-					if (ConfigManager.Config.Notifications.Types.PasswordUpdated)
-					{
-						notificationService.Raise($"Password file \"{selectedFile}\" has been updated.", Severity.Info);
-					}
-				}
-				catch (GitException e)
-				{
-					notificationService.ShowErrorWindow($"Unable to commit your changes: {e.Message}");
-					EditWithTextEditor(newPasswordFile);
-				}
-				catch (Exception e)
-				{
-					notificationService.ShowErrorWindow($"Unable to save your password (encryption failed): {e.Message}");
-					EditWithTextEditor(newPasswordFile);
-				}
-			}
-			else
-			{
-				File.Delete(plaintextFile);
-			}
-		}
-	}
-
-	internal class PathDisplayHelper
-	{
-		private readonly string directorySeparator;
-
-		public PathDisplayHelper(string directorySeparator)
-		{
-			this.directorySeparator = directorySeparator;
-		}
-
-		public string GetDisplayPath(PasswordFile file)
-		{
-			var names = new List<string>
-			{
-				file.FileNameWithoutExtension
-			};
-
-			var current = file.Directory;
-			while (!current.PathEquals(file.PasswordStore))
-			{
-				names.Insert(0, current.Name);
-				current = current.Parent;
-			}
-
-			return string.Join(directorySeparator, names);
-		}
 	}
 }
