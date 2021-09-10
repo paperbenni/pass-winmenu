@@ -15,18 +15,15 @@ namespace PassWinmenu.Windows
 	{
 		private readonly INotificationService notificationService;
 		private readonly IPasswordManager passwordManager;
-		private readonly PasswordFileParser passwordFileParser;
 		private readonly PathDisplayHelper pathDisplayHelper;
 
 		public DialogCreator(
 			INotificationService notificationService,
 			IPasswordManager passwordManager,
-			PasswordFileParser passwordFileParser,
 			PathDisplayHelper pathDisplayHelper)
 		{
 			this.notificationService = notificationService ?? throw new ArgumentNullException(nameof(notificationService));
 			this.passwordManager = passwordManager ?? throw new ArgumentNullException(nameof(passwordManager));
-			this.passwordFileParser = passwordFileParser;
 			this.pathDisplayHelper = pathDisplayHelper;
 		}
 

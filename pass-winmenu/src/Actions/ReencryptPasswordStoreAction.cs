@@ -27,7 +27,6 @@ namespace PassWinmenu.Actions
 		public ReencryptPasswordStoreAction(
 			INotificationService notificationService,
 			IPasswordManager passwordManager,
-			PasswordStoreConfig passwordStoreConfig,
 			ICryptoService cryptoService,
 			IRecipientFinder recipientFinder,
 			DialogCreator dialogCreator)

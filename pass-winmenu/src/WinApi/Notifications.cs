@@ -124,19 +124,14 @@ namespace PassWinmenu.WinApi
 
 		private ToolTipIcon GetIconForSeverity(Severity severity)
 		{
-			switch (severity)
+			return severity switch
 			{
-				case Severity.None:
-					return ToolTipIcon.None;
-				case Severity.Info:
-					return ToolTipIcon.Info;
-				case Severity.Warning:
-					return ToolTipIcon.Warning;
-				case Severity.Error:
-					return ToolTipIcon.Error;
-				default:
-					throw new ArgumentOutOfRangeException(nameof(severity), severity, null);
-			}
+				Severity.None => ToolTipIcon.None,
+				Severity.Info => ToolTipIcon.Info,
+				Severity.Warning => ToolTipIcon.Warning,
+				Severity.Error => ToolTipIcon.Error,
+				_ => throw new ArgumentOutOfRangeException(nameof(severity), severity, null),
+			};
 		}
 
 		/// <summary>

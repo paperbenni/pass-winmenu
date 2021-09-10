@@ -157,19 +157,14 @@ namespace PassWinmenu
 
 		private static string GetLevelString(LogLevel level)
 		{
-			switch (level)
+			return level switch
 			{
-				case LogLevel.Debug:
-					return "DBG";
-				case LogLevel.Info:
-					return "INF";
-				case LogLevel.Warning:
-					return "WRN";
-				case LogLevel.Error:
-					return "ERR";
-				default:
-					return "UNKNOWN";
-			}
+				LogLevel.Debug => "DBG",
+				LogLevel.Info => "INF",
+				LogLevel.Warning => "WRN",
+				LogLevel.Error => "ERR",
+				_ => "UNKNOWN",
+			};
 		}
 	}
 }
