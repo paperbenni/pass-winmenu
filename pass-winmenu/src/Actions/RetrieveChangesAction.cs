@@ -8,14 +8,14 @@ namespace PassWinmenu.Actions
 {
 	class RetrieveChangesAction : IAction
 	{
-		private readonly ISyncService syncService;
+		private readonly ISyncService? syncService;
 		private readonly INotificationService notificationService;
 
 		public HotkeyAction ActionType => HotkeyAction.GitPull;
 
 		public RetrieveChangesAction(Option<ISyncService> syncService, INotificationService notificationService)
 		{
-			this.syncService = syncService.Value;
+			this.syncService = syncService.ValueOrDefault();
 			this.notificationService = notificationService;
 		}
 

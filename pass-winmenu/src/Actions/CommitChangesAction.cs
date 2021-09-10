@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using LibGit2Sharp;
 using PassWinmenu.Configuration;
 using PassWinmenu.ExternalPrograms;
@@ -10,14 +9,14 @@ namespace PassWinmenu.Actions
 {
 	class CommitChangesAction : IAction
 	{
-		private readonly ISyncService syncService;
+		private readonly ISyncService? syncService;
 		private readonly INotificationService notificationService;
 
 		public HotkeyAction ActionType => HotkeyAction.GitPush;
 
 		public CommitChangesAction(Option<ISyncService> syncService, INotificationService notificationService)
 		{
-			this.syncService = syncService.Value;
+			this.syncService = syncService.ValueOrDefault();
 			this.notificationService = notificationService;
 		}
 

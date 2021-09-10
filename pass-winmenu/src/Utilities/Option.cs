@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 
 namespace PassWinmenu.Utilities
 {
@@ -29,6 +28,19 @@ namespace PassWinmenu.Utilities
 			}
 		}
 
+		public bool Equals(Option<T> other)
+		{
+			if (!IsSome && !other.IsSome)
+			{
+				return true;
+			}
+			if (IsSome && other.IsSome)
+			{
+				return Value.Equals(other.Value);
+			}
+			return false;
+		}
+
 		public override int GetHashCode()
 		{
 			var hashCode = 1816676634;
@@ -45,19 +57,6 @@ namespace PassWinmenu.Utilities
 		public static bool operator !=(Option<T> left, Option<T> right)
 		{
 			return !(left == right);
-		}
-
-		public bool Equals(Option<T> other)
-		{
-			if (!IsSome && !other.IsSome)
-			{
-				return true;
-			}
-			if (IsSome && other.IsSome)
-			{
-				return Value.Equals(other.Value);
-			}
-			return false;
 		}
 		public static Option<T> None() => new Option<T>(default, false);
 	}
