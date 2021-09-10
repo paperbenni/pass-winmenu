@@ -225,7 +225,7 @@ namespace PassWinmenu
 			var notificationService = context.Resolve<INotificationService>();
 			var strategies = context.Resolve<GitSyncStrategies>();
 
-			var factory = new SyncServiceFactory(config, passwordStore.FullName, signService, strategies);
+			var factory = new SyncServiceFactory(config, passwordStore, signService, strategies);
 
 			var syncService = factory.BuildSyncService();
 			switch (factory.Status)

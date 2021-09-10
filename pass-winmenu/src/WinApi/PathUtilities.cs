@@ -48,6 +48,20 @@ namespace PassWinmenu.WinApi
 		/// paths are displayed to the user, so it produces UNIX-style
 		/// directory separators in its output.
 		/// </summary>
+		public static string MakeRelativePathForDisplay(IDirectoryInfo baseDir, string child)
+		{
+			var fileInfo = baseDir.FileSystem.FileInfo.FromFileName(child);
+			return MakeRelativePathForDisplay(baseDir, fileInfo);
+		}
+
+		/// <summary>
+		/// Reformats a file path as relative to the specified base directory.
+		/// If the path does not point to a child of the base directory,
+		/// the full path is returned.
+		/// This function is intended for usage in situations where relative
+		/// paths are displayed to the user, so it produces UNIX-style
+		/// directory separators in its output.
+		/// </summary>
 		public static string MakeRelativePathForDisplay(IDirectoryInfo baseDir, IFileInfo child)
 		{
 			if (!baseDir.IsChild(child))

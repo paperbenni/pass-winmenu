@@ -1,4 +1,5 @@
 using System;
+using System.IO.Abstractions;
 using LibGit2Sharp;
 
 using PassWinmenu.Configuration;
@@ -10,17 +11,17 @@ namespace PassWinmenu.ExternalPrograms
 	internal class SyncServiceFactory
 	{
 		private readonly GitConfig config;
-		private readonly string passwordStorePath;
+		private readonly IDirectoryInfo passwordStore;
 		private readonly ISignService signService;
 		private readonly GitSyncStrategies gitSyncStrategies;
 
 		public SyncServiceStatus Status { get; private set; }
 		public Exception Exception { get; private set; }
 
-		public SyncServiceFactory(GitConfig config, string passwordStorePath, ISignService signService, GitSyncStrategies gitSyncStrategies)
+		public SyncServiceFactory(GitConfig config, IDirectoryInfo passwordStore, ISignService signService, GitSyncStrategies gitSyncStrategies)
 		{
 			this.config = config;
-			this.passwordStorePath = passwordStorePath;
+			this.passwordStore = passwordStore;
 			this.signService = signService;
 			this.gitSyncStrategies = gitSyncStrategies;
 		}
@@ -31,10 +32,10 @@ namespace PassWinmenu.ExternalPrograms
 			{
 				try
 				{
-					var repository = new Repository(passwordStorePath);
+					var repository = new Repository(passwordStore.FullName);
 
-					var strategy = gitSyncStrategies.ChooseSyncStrategy(passwordStorePath, repository, config);
-					var git = new Git(repository, strategy, signService);
+					var strategy = gitSyncStrategies.ChooseSyncStrategy(passwordStore.FullName, repository, config);
+					var git = new Git(repository, passwordStore, strategy, signService);
 					Status = SyncServiceStatus.GitSupportEnabled;
 					return git;
 				}
