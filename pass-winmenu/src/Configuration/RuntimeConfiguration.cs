@@ -1,12 +1,12 @@
+#nullable enable
 namespace PassWinmenu.Configuration
 {
 	internal class RuntimeConfiguration
 	{
-		public string ConfigFileLocation { get; private set; }
+		public string? ConfigFileLocation { get; private set; }
 		
 		private RuntimeConfiguration()
 		{
-
 		}
 
 		internal static RuntimeConfiguration Parse(string[] args)

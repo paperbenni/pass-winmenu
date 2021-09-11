@@ -1,12 +1,13 @@
 using System;
 using PassWinmenu.WinApi;
 
+#nullable enable
 namespace PassWinmenu.Configuration
 {
 	internal class GpgConfig
 	{
-		private string gpgPath = @"C:\Program Files (x86)\GnuPG\bin\gpg.exe";
-		public string GpgPath
+		private string? gpgPath = @"C:\Program Files (x86)\GnuPG\bin\gpg.exe";
+		public string? GpgPath
 		{
 			get => gpgPath;
 			set
@@ -20,8 +21,8 @@ namespace PassWinmenu.Configuration
 			}
 		}
 
-		private string gnupghomeOverride;
-		public string GnupghomeOverride
+		private string? gnupghomeOverride;
+		public string? GnupghomeOverride
 		{
 			get => gnupghomeOverride;
 			set

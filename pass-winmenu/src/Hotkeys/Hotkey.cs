@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Windows.Input;
 
+#nullable enable
 namespace PassWinmenu.Hotkeys
 {
 	/// <summary>
@@ -14,6 +15,7 @@ namespace PassWinmenu.Hotkeys
 		/// A utility for building <see cref="Hotkey"/> instances.
 		/// </summary>
 		public sealed class Builder
+			: IDisposable
 		{
 
 			/// <summary>
@@ -68,7 +70,7 @@ namespace PassWinmenu.Hotkeys
 						modifierKeys: _modifierKeys,
 						key:           _key,
 						repeats:       _repeats,
-						firedHandler:  (s, e) => _hotkey._firedHandler(s, e)
+						firedHandler:  (s, e) => _hotkey?._firedHandler(s, e)
 						),
 					mods:    _modifierKeys,
 					key:     _key,
@@ -99,12 +101,12 @@ namespace PassWinmenu.Hotkeys
 				}
 			}
 
-			private Hotkey              _hotkey         = null;
+			private Hotkey?             _hotkey         = null;
 			private IHotkeyRegistrar    _registrar      = DefaultRegistrar;
 			private ModifierKeys        _modifierKeys   = ModifierKeys.None;
 			private Key                 _key            = Key.None;
 			private bool                _repeats        = false;
-			private EventHandler        _handlers       = null;
+			private EventHandler?       _handlers       = null;
 
 			internal Builder() { }
 
@@ -296,6 +298,11 @@ namespace PassWinmenu.Hotkeys
 			/// No value for <see cref="Hotkey.Key"/> was provided.
 			/// </exception>
 			public Hotkey Assemble() => _retrieve(out var hk) ? hk : _hotkey;
+
+			public void Dispose()
+			{
+				_hotkey?.Dispose();
+			}
 		}
 
 		/// <summary>

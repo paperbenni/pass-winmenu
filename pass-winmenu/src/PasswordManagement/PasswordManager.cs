@@ -9,6 +9,7 @@ using PassWinmenu.ExternalPrograms;
 using PassWinmenu.Utilities;
 using PassWinmenu.Utilities.ExtensionMethods;
 
+#nullable enable
 namespace PassWinmenu.PasswordManagement
 {
 	internal class PasswordManager : IPasswordManager

@@ -9,8 +9,8 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using PassWinmenu.Configuration;
 using PassWinmenu.Hotkeys;
-using PassWinmenu.Utilities;
 
+# nullable enable
 namespace PassWinmenu.Windows
 {
 	/// <summary>
@@ -22,9 +22,9 @@ namespace PassWinmenu.Windows
 	{
 		private readonly int scrollBoundary;
 		private readonly StyleConfig styleConfig;
+		private readonly bool tryRemainOnTop = true;
 		private int scrollOffset;
 		private bool isClosing;
-		private bool tryRemainOnTop = true;
 		private bool firstActivation = true;
 		private List<string> optionStrings = new List<string>();
 
@@ -32,12 +32,12 @@ namespace PassWinmenu.Windows
 		/// <summary>
 		/// The label that is currently selected.
 		/// </summary>
-		public SelectionLabel SelectedLabel { get; protected set; }
+		public SelectionLabel? SelectedLabel { get; protected set; }
 
 		/// <summary>
 		/// The text of the currently selected label.
 		/// </summary>
-		public string SelectionText => SelectedLabel.Text;
+		public string? SelectionText => SelectedLabel?.Text;
 
 		/// <summary>
 		/// True if the user has chosen one of the options, false otherwise.
@@ -55,7 +55,6 @@ namespace PassWinmenu.Windows
 		/// </summary>
 		protected SelectionWindow(SelectionWindowConfiguration configuration, string hint)
 		{
-			TimerHelper.Current.TakeSnapshot("mainwnd-creating");
 			HintText = hint;
 			styleConfig = ConfigManager.Config.Interface.Style;
 			scrollBoundary = ConfigManager.Config.Interface.Style.ScrollBoundary;
@@ -106,8 +105,6 @@ namespace PassWinmenu.Windows
 			Background = styleConfig.BackgroundColour;
 			BorderBrush = styleConfig.BorderColour;
 			BorderThickness = styleConfig.BorderWidth;
-
-			TimerHelper.Current.TakeSnapshot("mainwnd-created");
 		}
 
 
@@ -161,13 +158,6 @@ namespace PassWinmenu.Windows
 			return labelHeight;
 		}
 
-		protected override void OnInitialized(EventArgs e)
-		{
-			TimerHelper.Current.TakeSnapshot("mainwnd-oninitialized-start");
-			base.OnInitialized(e);
-			TimerHelper.Current.TakeSnapshot("mainwnd-oninitialized-base-end");
-		}
-
 		/// <summary>
 		/// Handles text input in the textbox.
 		/// </summary>
@@ -219,7 +209,7 @@ namespace PassWinmenu.Windows
 		/// Selects a label; deselecting the previously selected label.
 		/// </summary>
 		/// <param name="label">The label to be selected. If this value is null, the selected label will not be changed.</param>
-		protected void Select(SelectionLabel label)
+		protected void Select(SelectionLabel? label)
 		{
 			if (label == null) return;
 
@@ -311,7 +301,7 @@ namespace PassWinmenu.Windows
 		/// </summary>
 		/// <param name="index">The position in the label list where searching should begin.</param>
 		/// <returns>The first label matching this condition, or null if no matching labels were found.</returns>
-		private SelectionLabel FindPrevious(int index)
+		private SelectionLabel? FindPrevious(int index)
 		{
 			var previous = index - 1;
 			if (previous >= 0)
@@ -330,7 +320,7 @@ namespace PassWinmenu.Windows
 		/// </summary>
 		/// <param name="index">The position in the label list where searching should begin.</param>
 		/// <returns>The first label matching this condition, or null if no matching labels were found.</returns>
-		private SelectionLabel FindNext(int index)
+		private SelectionLabel? FindNext(int index)
 		{
 			var next = index + 1;
 			if (next < Options.Count)
@@ -368,7 +358,7 @@ namespace PassWinmenu.Windows
 
 		private void SelectNext()
 		{
-			var selectionIndex = Options.IndexOf(SelectedLabel);
+			var selectionIndex =  Options.IndexOf(SelectedLabel);
 			if (selectionIndex < Options.Count)
 			{
 				// Number of options that we're out of the scrolling bounds

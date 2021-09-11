@@ -1,10 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 
 using Helpers = PassWinmenu.Utilities.Helpers;
+using PassWinmenu.Utilities;
 
 namespace PassWinmenu.Hotkeys
 {
@@ -70,69 +71,10 @@ namespace PassWinmenu.Hotkeys
 				: IDisposable
 			{
 				private delegate IntPtr WndProc(
-					IntPtr hWnd, uint uMsg, UIntPtr wParam, IntPtr lParam
-					);
-
-				/// <summary>
-				/// Creates an overlapped, pop-up, or child window with an extended
-				/// window style (otherwise identical to CreateWindow).
-				/// </summary>
-				/// <param name="dwExtStyle">
-				/// The extended window styles to apply to the window.
-				/// </param>
-				/// <param name="lpClassName">
-				/// A pointer to the name of the class to use for the window, or an
-				/// atom returned by <see cref="RegisterClass(ref WindowClass)"/>.
-				/// </param>
-				/// <param name="lpWindowName">
-				/// The name of the window to create.
-				/// </param>
-				/// <param name="dwStyle">
-				/// The style values for the window to create.
-				/// </param>
-				/// <param name="x">
-				/// The horizontal position of the window.
-				/// </param>
-				/// <param name="y">
-				/// The vertical position of the window.
-				/// </param>
-				/// <param name="nWidth">
-				/// The width of the window in device units.
-				/// </param>
-				/// <param name="nHeight">
-				/// The height of the window in device units.
-				/// </param>
-				/// <param name="hWndParent">
-				/// The handle to the window that is to be the parent of the
-				/// created window.
-				/// </param>
-				/// <param name="hMenu">
-				/// The handle to a menu or child window.
-				/// </param>
-				/// <param name="hInstance">
-				/// The handle to an instance of the module to be associated
-				/// with the window.
-				/// </param>
-				/// <param name="lpParam">
-				/// A pointer to a value to be passed as the <c>lParam</c> of the
-				/// <c>WM_CREATE</c> message sent to the window on creation.
-				/// </param>
-				/// <returns></returns>
-				[DllImport("user32.dll", SetLastError = true)]
-				private static extern IntPtr CreateWindowEx(
-					uint    dwExtStyle,
-					UIntPtr lpClassName,
-					IntPtr  lpWindowName,
-					uint    dwStyle,
-					int     x,
-					int     y,
-					int     nWidth,
-					int     nHeight,
-					IntPtr  hWndParent,
-					IntPtr  hMenu,
-					IntPtr  hInstance,
-					IntPtr  lpParam
-					);
+					IntPtr hWnd,
+					uint uMsg,
+					UIntPtr wParam,
+					IntPtr lParam);
 
 				/// <summary>
 				/// The handle to specify as the parent of a window when creating
@@ -334,7 +276,7 @@ namespace PassWinmenu.Hotkeys
 						throw Helpers.LastWin32Exception();
 					}
 
-					this.Handle = CreateWindowEx(
+					this.Handle = NativeMethods.CreateWindowEx(
 						dwExtStyle:     0,
 						lpClassName:    (UIntPtr)_windowAtom,
 						lpWindowName:   IntPtr.Zero,

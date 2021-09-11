@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Windows.Input;
 using System.Runtime.InteropServices;
@@ -94,7 +94,7 @@ namespace PassWinmenu.Hotkeys
 			/// </returns>
 			public static WindowsHotkeyRegistrar Retrieve()
 			{
-				return _singleton ?? (_singleton = new WindowsHotkeyRegistrar());
+				return _singleton ??= new WindowsHotkeyRegistrar();
 			}
 
 

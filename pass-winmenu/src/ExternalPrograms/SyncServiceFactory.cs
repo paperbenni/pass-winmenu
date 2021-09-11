@@ -4,8 +4,8 @@ using LibGit2Sharp;
 
 using PassWinmenu.Configuration;
 using PassWinmenu.ExternalPrograms.Gpg;
-using PassWinmenu.WinApi;
 
+#nullable enable
 namespace PassWinmenu.ExternalPrograms
 {
 	internal class SyncServiceFactory
@@ -16,7 +16,6 @@ namespace PassWinmenu.ExternalPrograms
 		private readonly GitSyncStrategies gitSyncStrategies;
 
 		public SyncServiceStatus Status { get; private set; }
-		public Exception Exception { get; private set; }
 
 		public SyncServiceFactory(GitConfig config, IDirectoryInfo passwordStore, ISignService signService, GitSyncStrategies gitSyncStrategies)
 		{
@@ -26,7 +25,7 @@ namespace PassWinmenu.ExternalPrograms
 			this.gitSyncStrategies = gitSyncStrategies;
 		}
 		
-		public ISyncService BuildSyncService()
+		public ISyncService? BuildSyncService()
 		{
 			if (config.UseGit)
 			{
@@ -48,11 +47,6 @@ namespace PassWinmenu.ExternalPrograms
 				{
 					Status = SyncServiceStatus.GitLibraryNotFound;
 				}
-				catch (Exception e)
-				{
-					Exception = e;
-					Status = SyncServiceStatus.GitRepositoryNotFound;
-				}
 			}
 			else
 			{
@@ -67,7 +61,6 @@ namespace PassWinmenu.ExternalPrograms
 	{
 		GitSupportEnabled,
 		GitLibraryNotFound,
-		GitRepositoryNotFound,
 		GitSupportDisabled,
 	}
 }

@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
+#nullable enable
 namespace PassWinmenu.UpdateChecking.GitHub
 {
 	internal class GitHubUpdateSource : IUpdateSource
@@ -57,21 +58,21 @@ namespace PassWinmenu.UpdateChecking.GitHub
 			rq.ServerCertificateValidationCallback += ValidateCertificate;
 			rq.UserAgent = $"pass-winmenu/{Program.Version}";
 
-			using var response = rq.GetResponse();
-			using var stream = response.GetResponseStream();
+			using var stream = rq.GetResponse().GetResponseStream();
 			if (stream == null)
 			{
 				throw new UpdateException("Unable to fetch response stream.");
 			}
-			var responseText = new StreamReader(stream).ReadToEnd();
-			return JsonConvert.DeserializeObject<Release[]>(responseText, settings);
+			using var reader = new StreamReader(stream);
+			var responseText = reader.ReadToEnd();
+			return JsonConvert.DeserializeObject<Release[]>(responseText, settings) ?? Array.Empty<Release>();
 		}
 
 		private bool ValidateCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
 		{
 			if (sslPolicyErrors == SslPolicyErrors.None) return true;
 			
-			Log.Send($"Server certificate failed to validate: {sslPolicyErrors.ToString()}", LogLevel.Warning);
+			Log.Send($"Server certificate failed to validate: {sslPolicyErrors}", LogLevel.Warning);
 			return false;
 		}
 	}

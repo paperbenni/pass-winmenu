@@ -2,6 +2,7 @@ using System;
 using System.Timers;
 using PassWinmenu.Configuration;
 
+#nullable enable
 namespace PassWinmenu.ExternalPrograms
 {
 	internal class RemoteUpdateChecker: IDisposable
@@ -9,8 +10,8 @@ namespace PassWinmenu.ExternalPrograms
 		private readonly ISyncService syncService;
 		private readonly GitConfig gitConfig;
 		private readonly ISyncStateTracker syncStateTracker;
-		private Timer checkTimer;
-		private Timer fetchTimer;
+		private Timer? checkTimer;
+		private Timer? fetchTimer;
 		private TimeSpan CheckInterval { get; } = TimeSpan.FromSeconds(10);
 		private TimeSpan InitialFetchDelay { get; } = TimeSpan.FromMinutes(1);
 

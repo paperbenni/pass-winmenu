@@ -1,5 +1,6 @@
 using System;
 
+#nullable enable
 namespace PassWinmenu.Configuration
 {
 	internal class Config
@@ -49,7 +50,8 @@ namespace PassWinmenu.Configuration
 		/// This only happens when there are changes preventing users from re-using an older
 		/// configuration file for a newer version of pass-winmenu. In that case, the new
 		/// configuration file version will be set to the latest version of pass-winmenu.
+		/// If not set, it is assumed to be 1.7.
 		/// </summary>
-		public string ConfigVersion { get; set; }
+		public string ConfigVersion { get; set; } = "1.7";
 	}
 }

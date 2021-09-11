@@ -1,9 +1,10 @@
-﻿using System.Windows.Media;
+using System.Windows.Media;
 
+#nullable enable
 namespace PassWinmenu.Configuration
 {
 	internal class TextStyleConfig
 	{
-		public Brush TextColour { get; set; }
+		public Brush? TextColour { get; set; }
 	}
 }

@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Runtime.InteropServices;
 
+#nullable enable
 namespace PassWinmenu.WinApi
 {
 	internal class StartupLink
@@ -28,7 +29,7 @@ namespace PassWinmenu.WinApi
 		/// <param name="targetPath">The path to the application that should be executed.</param>
 		/// <param name="workingDirectory">The working directory in which the application should execute.
 		/// Leave at Null to use the directory containing the target application.</param>
-		public void Toggle(string targetPath, string workingDirectory = null)
+		public void Toggle(string targetPath, string? workingDirectory = null)
 		{
 			if (Exists)
 			{
@@ -46,7 +47,7 @@ namespace PassWinmenu.WinApi
 		/// <param name="targetPath">The path to the application that should be executed.</param>
 		/// <param name="workingDirectory">The working directory in which the application should execute.
 		/// Leave at Null to use the directory containing the target application.</param>
-		public void Create(string targetPath, string workingDirectory = null)
+		public void Create(string targetPath, string? workingDirectory = null)
 		{
 			if (workingDirectory == null)
 			{

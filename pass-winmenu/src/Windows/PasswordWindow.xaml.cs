@@ -6,6 +6,7 @@ using System.Windows.Input;
 using PassWinmenu.Configuration;
 using PassWinmenu.PasswordGeneration;
 
+#nullable enable
 namespace PassWinmenu.Windows
 {
 	internal sealed partial class PasswordWindow : IDisposable
@@ -66,7 +67,7 @@ namespace PassWinmenu.Windows
 		private void RegeneratePassword()
 		{
 			Password.Text = passwordGenerator.GeneratePassword();
-			Password.CaretIndex = Password.Text.Length;
+			Password.CaretIndex = Password.Text?.Length ?? 0;
 		}
 
 		private void Btn_Generate_Click(object sender, RoutedEventArgs e)

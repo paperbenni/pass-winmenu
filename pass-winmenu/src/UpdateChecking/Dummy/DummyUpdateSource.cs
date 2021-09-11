@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
+#nullable enable
 namespace PassWinmenu.UpdateChecking.Dummy
 {
 	internal sealed class DummyUpdateSource : IUpdateSource
 	{
-		public List<ProgramVersion> Versions { get; set; }
+		public List<ProgramVersion> Versions { get; set; } = new List<ProgramVersion>();
 
 		public bool RequiresConnectivity => false;
 

@@ -1,4 +1,5 @@
-﻿namespace PassWinmenu.Configuration
+#nullable enable
+namespace PassWinmenu.Configuration
 {
 	internal class HotkeyOptions
 	{
@@ -6,6 +7,6 @@
 		public bool TypeUsername { get; set; }
 		public bool TypePassword { get; set; }
 		public bool Type { get; set; }
-		public string FieldName { get; set; }
+		public string? FieldName { get; set; }
 	}
 }

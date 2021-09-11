@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 
+#nullable enable
 namespace PassWinmenu.ExternalPrograms.Gpg
 {
 	internal class StdErrResult
@@ -36,7 +36,7 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 			this.processes = processes;
 		}
 
-		public GpgResult CallGpg(string arguments, string input = null)
+		public GpgResult CallGpg(string arguments, string? input = null)
 		{
 			var gpgProc = CreateGpgProcess(arguments, input);
 
@@ -97,7 +97,7 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 		/// <summary>
 		/// Spawns a GPG process.
 		/// </summary>
-		private IProcess CreateGpgProcess(string arguments, string input = null)
+		private IProcess CreateGpgProcess(string arguments, string? input = null)
 		{
 			Log.Send($"Calling GPG with \"{arguments}\"");
 			// Only redirect stdin if we're going to send anything to it.
@@ -107,10 +107,8 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 			if (input != null)
 			{
 				// Explicitly define the encoding to not send a BOM, to ensure other platforms can handle our output.
-				using (var writer = new StreamWriter(gpgProc.StandardInput.BaseStream, new UTF8Encoding(false)))
-				{
-					writer.Write(input);
-				}
+				using var writer = new StreamWriter(gpgProc.StandardInput.BaseStream, new UTF8Encoding(false));
+				writer.Write(input);
 			}
 			return gpgProc;
 		}

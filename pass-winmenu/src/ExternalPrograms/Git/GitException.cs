@@ -1,5 +1,6 @@
 using System;
 
+#nullable enable
 namespace PassWinmenu.ExternalPrograms
 {
 	public class GitException : Exception
@@ -8,7 +9,7 @@ namespace PassWinmenu.ExternalPrograms
 		{
 		}
 
-		public string GitError { get; }
+		public string? GitError { get; }
 
 		public GitException(string message) : base(message)
 		{

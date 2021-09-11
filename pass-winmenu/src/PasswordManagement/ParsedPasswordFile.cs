@@ -1,3 +1,4 @@
+#nullable enable
 namespace PassWinmenu.PasswordManagement
 {
 	/// <summary>
@@ -9,10 +10,10 @@ namespace PassWinmenu.PasswordManagement
 		public string Password { get; }
 		public string Metadata { get; }
 
-		public ParsedPasswordFile(PasswordFile original, string password, string metadata) : base(original)
+		public ParsedPasswordFile(PasswordFile original, string password, string? metadata) : base(original)
 		{
 			Password = password;
-			Metadata = metadata;
+			Metadata = metadata ?? string.Empty;
 
 			if (string.IsNullOrEmpty(metadata))
 			{

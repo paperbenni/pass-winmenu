@@ -1,8 +1,8 @@
-using System;
 using System.IO;
 using System.IO.Abstractions;
 using PassWinmenu.WinApi;
 
+#nullable enable
 namespace PassWinmenu.ExternalPrograms.Gpg
 {
 	internal class GpgInstallationFinder
@@ -29,27 +29,22 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 		/// </summary>
 		/// <param name="gpgPathSpec">Path to the GPG executable. When set to null,
 		/// the default location will be used.</param>
-		public GpgInstallation FindGpgInstallation(string gpgPathSpec = null)
+		public GpgInstallation FindGpgInstallation(string? gpgPathSpec = null)
 		{
 			Log.Send("Attempting to detect the GPG installation directory");
-			if (gpgPathSpec == string.Empty)
-			{
-				throw new ArgumentException("The GPG installation path is invalid.");
-			}
-
-			if (gpgPathSpec == null)
+			if (string.IsNullOrEmpty(gpgPathSpec))
 			{
 				Log.Send("No GPG executable path set, assuming GPG to be in its default installation directory.");
 				return new GpgInstallation
-				{
-					InstallDirectory = gpgDefaultInstallDir,
-					GpgExecutable = ChildOf(gpgDefaultInstallDir, GpgExeName),
-					GpgAgentExecutable = ChildOf(gpgDefaultInstallDir, GpgAgentExeName),
-					GpgConnectAgentExecutable = ChildOf(gpgDefaultInstallDir, GpgConnectAgentExeName)
-				};
+				(
+					gpgDefaultInstallDir,
+					ChildOf(gpgDefaultInstallDir, GpgExeName),
+					ChildOf(gpgDefaultInstallDir, GpgAgentExeName),
+					ChildOf(gpgDefaultInstallDir, GpgConnectAgentExeName)
+				);
 			}
 
-			return ResolveFromPath(gpgPathSpec);
+			return ResolveFromPath(gpgPathSpec!);
 		}
 
 		private GpgInstallation ResolveFromPath(string gpgPathSpec)
@@ -68,12 +63,12 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 			Log.Send("GPG executable found at the configured path. Assuming installation dir to be " + executable.Directory);
 
 			return new GpgInstallation
-			{
-				InstallDirectory = executable.Directory,
-				GpgExecutable = executable,
-				GpgAgentExecutable = ChildOf(executable.Directory, GpgAgentExeName),
-				GpgConnectAgentExecutable = ChildOf(executable.Directory, GpgConnectAgentExeName)
-			};
+			(
+				executable.Directory,
+				executable,
+				ChildOf(executable.Directory, GpgAgentExeName),
+				ChildOf(executable.Directory, GpgConnectAgentExeName)
+			);
 		}
 
 		private IFileInfo ChildOf(IDirectoryInfo parent, string childName)
@@ -89,5 +84,13 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 		public IFileInfo GpgExecutable { get; set; }
 		public IFileInfo GpgAgentExecutable { get; set; }
 		public IFileInfo GpgConnectAgentExecutable { get; set; }
+
+		public GpgInstallation(IDirectoryInfo installDirectory, IFileInfo gpgExecutable, IFileInfo gpgAgentExecutable, IFileInfo gpgConnectAgentExecutable)
+		{
+			InstallDirectory = installDirectory;
+			GpgExecutable = gpgExecutable;
+			GpgAgentExecutable = gpgAgentExecutable;
+			GpgConnectAgentExecutable = gpgConnectAgentExecutable;
+		}
 	}
 }

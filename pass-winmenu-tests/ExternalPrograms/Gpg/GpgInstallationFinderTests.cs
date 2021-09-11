@@ -32,14 +32,20 @@ namespace PassWinmenuTests.ExternalPrograms.Gpg
 		}
 
 		[Fact, TestCategory(Category)]
-		public void FindGpgInstallation_EmptyPath_ThrowsArgumentException()
+		public void FindGpgInstallation_EmptyPath_ReturnsDefaultLocation()
 		{
 			var resolverMock = new Mock<IExecutablePathResolver>();
 			var fs = new MockFileSystem();
 			var finder = new GpgInstallationFinder(fs, resolverMock.Object);
 
-			Should.Throw<ArgumentException>(() =>finder.FindGpgInstallation(@""));
+			var installation = finder.FindGpgInstallation();
 
+			installation.ShouldSatisfyAllConditions(
+				() => installation.InstallDirectory.FullName.ShouldBe(@"C:\Program Files (x86)\gnupg\bin"),
+				() => installation.GpgExecutable.FullName.ShouldBe(@"C:\Program Files (x86)\gnupg\bin\gpg.exe"),
+				() => installation.GpgAgentExecutable.FullName.ShouldBe(@"C:\Program Files (x86)\gnupg\bin\gpg-agent.exe"),
+				() => installation.GpgConnectAgentExecutable.FullName.ShouldBe(@"C:\Program Files (x86)\gnupg\bin\gpg-connect-agent.exe")
+			);
 		}
 
 		[Fact, TestCategory(Category)]
@@ -67,7 +73,7 @@ namespace PassWinmenuTests.ExternalPrograms.Gpg
 				() => installation.GpgExecutable.FullName.ShouldBe(@"C:\Program Files (x86)\gnupg\bin\gpg.exe"),
 				() => installation.GpgAgentExecutable.FullName.ShouldBe(@"C:\Program Files (x86)\gnupg\bin\gpg-agent.exe"),
 				() => installation.GpgConnectAgentExecutable.FullName.ShouldBe(@"C:\Program Files (x86)\gnupg\bin\gpg-connect-agent.exe")
-				);
+			);
 		}
 	}
 }

@@ -5,6 +5,7 @@ using YamlDotNet.Core;
 using YamlDotNet.Core.Events;
 using YamlDotNet.Serialization;
 
+#nullable enable
 namespace PassWinmenu.Configuration
 {
 	internal class BrushConverter : IYamlTypeConverter
@@ -21,7 +22,7 @@ namespace PassWinmenu.Configuration
 			return Helpers.BrushFromColourString(value.Value);
 		}
 
-		public void WriteYaml(IEmitter emitter, object value, Type type)
+		public void WriteYaml(IEmitter emitter, object? value, Type type)
 		{
 			throw new NotImplementedException("Width serialisation is not supported yet.");
 		}

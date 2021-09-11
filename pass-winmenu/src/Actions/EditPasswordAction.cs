@@ -1,15 +1,12 @@
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Windows;
 using PassWinmenu.Configuration;
 using PassWinmenu.ExternalPrograms;
 using PassWinmenu.PasswordManagement;
 using PassWinmenu.Utilities;
-using PassWinmenu.Utilities.ExtensionMethods;
 using PassWinmenu.WinApi;
 using PassWinmenu.Windows;
 

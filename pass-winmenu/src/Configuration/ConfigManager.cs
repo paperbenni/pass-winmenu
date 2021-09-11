@@ -6,12 +6,13 @@ using System.Windows;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
+#nullable enable
 namespace PassWinmenu.Configuration
 {
 	internal class ConfigManager
 	{
 		public static Config Config { get; private set; } = new Config();
-		private static FileSystemWatcher watcher;
+		private static FileSystemWatcher? watcher;
 
 		~ConfigManager()
 		{
@@ -52,11 +53,9 @@ namespace PassWinmenu.Configuration
 			{
 				try
 				{
-					using (var defaultConfig = EmbeddedResources.DefaultConfig)
-					using (var configFile = File.Create(fileName))
-					{
-						defaultConfig.CopyTo(configFile);
-					}
+					using var defaultConfig = EmbeddedResources.DefaultConfig;
+					using var configFile = File.Create(fileName);
+					defaultConfig.CopyTo(configFile);
 				}
 				catch (Exception e) when (e is FileNotFoundException || e is FileLoadException || e is IOException)
 				{

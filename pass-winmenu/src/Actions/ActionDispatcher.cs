@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using PassWinmenu.Configuration;
 using PassWinmenu.Windows;
 
+#nullable enable
 namespace PassWinmenu.Actions
 {
 	class ActionDispatcher
@@ -34,7 +35,7 @@ namespace PassWinmenu.Actions
 			dialogCreator.DecryptMetadata(copyToClipboard, type);
 		}
 
-		public void DecryptPasswordField(bool copyToClipboard, bool type, string fieldName = null)
+		public void DecryptPasswordField(bool copyToClipboard, bool type, string? fieldName = null)
 		{
 			dialogCreator.GetKey(copyToClipboard, type, fieldName);
 		}

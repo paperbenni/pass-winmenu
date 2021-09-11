@@ -30,6 +30,10 @@ namespace PassWinmenu.Windows
 		public void DecryptMetadata(bool copyToClipboard, bool type)
 		{
 			var selectedFile = RequestPasswordFile();
+			if (selectedFile == null)
+			{
+				return;
+			}
 			KeyedPasswordFile passFile;
 			try
 			{
@@ -70,7 +74,7 @@ namespace PassWinmenu.Windows
 			}
 		}
 
-		public void GetKey(bool copyToClipboard, bool type, string key)
+		public void GetKey(bool copyToClipboard, bool type, string? key)
 		{
 			var selectedFile = RequestPasswordFile();
 			if (selectedFile == null) return;
@@ -220,7 +224,7 @@ namespace PassWinmenu.Windows
 			menu.ShowDialog();
 			if (menu.Success)
 			{
-				return Option.Some(menu.Selection);
+				return menu.Selection;
 			}
 
 			return Option<TEntry>.None();

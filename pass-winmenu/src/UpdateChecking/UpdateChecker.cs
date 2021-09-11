@@ -3,6 +3,7 @@ using System.Net;
 using System.Timers;
 using McSherry.SemanticVersioning;
 
+#nullable enable
 namespace PassWinmenu.UpdateChecking
 {
 	internal class UpdateChecker : IDisposable
@@ -15,7 +16,7 @@ namespace PassWinmenu.UpdateChecking
 		public TimeSpan InitialDelay { get; set; }
 		public bool AllowPrerelease { get; set; }
 
-		public event EventHandler<UpdateAvailableEventArgs> UpdateAvailable;
+		public event EventHandler<UpdateAvailableEventArgs>? UpdateAvailable;
 
 		private Timer? timer;
 

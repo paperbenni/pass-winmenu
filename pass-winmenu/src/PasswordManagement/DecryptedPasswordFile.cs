@@ -1,3 +1,4 @@
+#nullable enable
 namespace PassWinmenu.PasswordManagement
 {
 	/// <summary>
@@ -16,6 +17,8 @@ namespace PassWinmenu.PasswordManagement
 		// Only derived types may call this constructor, since they may want to determine the content themselves.
 		protected DecryptedPasswordFile(PasswordFile original) : base(original)
 		{
+			// As a fallback, always initialise the content.
+			Content = string.Empty;
 		}
 	}
 }

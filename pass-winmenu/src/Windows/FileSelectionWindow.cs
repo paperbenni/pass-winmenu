@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using PassWinmenu.Utilities;
 
+#nullable enable
 namespace PassWinmenu.Windows
 {
 	internal class FileSelectionWindow : SelectionWindow
@@ -35,10 +36,14 @@ namespace PassWinmenu.Windows
 
 		protected override void HandleSelect()
 		{
+			if (SelectedLabel == null) return;
+
+			var selection = SelectionText;
+			if (selection == null) return;
+
 			// If a suggestion is selected, put that suggestion in the searchbox.
 			if (Options.IndexOf(SelectedLabel) > 0 || string.IsNullOrEmpty(SearchBox.Text))
 			{
-				var selection = SelectionText;
 				if (selection.EndsWith(Program.EncryptedFileExtension, StringComparison.Ordinal))
 				{
 					selection = selection.Substring(0, selection.Length - 4);
@@ -51,7 +56,6 @@ namespace PassWinmenu.Windows
 				{
 					return;
 				}
-				var selection = SelectionText;
 				if (selection.EndsWith(Program.EncryptedFileExtension, StringComparison.Ordinal))
 				{
 					MessageBox.Show("A .gpg extension will be added automatically and does not need to be entered here.");

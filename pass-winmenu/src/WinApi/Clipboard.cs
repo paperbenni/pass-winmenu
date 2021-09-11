@@ -5,6 +5,7 @@ using System.Windows;
 using PassWinmenu.Configuration;
 using PassWinmenu.Utilities;
 
+#nullable enable
 namespace PassWinmenu.WinApi
 {
 	public static class ClipboardHelper
@@ -22,36 +23,38 @@ namespace PassWinmenu.WinApi
 			var clipboardBackup = MakeClipboardBackup();
 			Clipboard.SetDataObject(text);
 
-			Task.Delay(timeout).ContinueWith(_ =>
+			Task.Delay(timeout).ContinueWith(_ => PlaceInternal(text, clipboardBackup), TaskScheduler.Default);
+		}
+
+		private static void PlaceInternal(string text, Dictionary<string, object> clipboardBackup)
+		{
+			Application.Current.Dispatcher.Invoke(() =>
 			{
-				Application.Current.Dispatcher.Invoke(() =>
+				try
 				{
-					try
+					// Only reset the clipboard to its previous contents if it still contains the text we copied to it.
+					if (!Clipboard.ContainsText() || Clipboard.GetText() != text) return;
+
+					Clipboard.Clear();
+
+					if (!ConfigManager.Config.Interface.RestoreClipboard) return;
+
+					// Create a new DataObject into which we can restore our data.
+					var dataObject = new DataObject();
+					Log.Send($"Restoring previous clipboard contents:");
+					foreach (var pair in clipboardBackup)
 					{
-						// Only reset the clipboard to its previous contents if it still contains the text we copied to it.
-						if (!Clipboard.ContainsText() || Clipboard.GetText() != text) return;
-
-						Clipboard.Clear();
-
-						if (!ConfigManager.Config.Interface.RestoreClipboard) return;
-
-						// Create a new DataObject into which we can restore our data.
-						var dataObject = new DataObject();
-						Log.Send($"Restoring previous clipboard contents:");
-						foreach (var pair in clipboardBackup)
-						{
-							Log.Send($" - {pair.Key}");
-							dataObject.SetData(pair.Key, pair.Value);
-						}
-
-						// Now place it on the clipboard.
-						Clipboard.SetDataObject(dataObject, true);
+						Log.Send($" - {pair.Key}");
+						dataObject.SetData(pair.Key, pair.Value);
 					}
-					catch (Exception e)
-					{
-						Log.Send($"Failed to restore previous clipboard contents: An exception occurred ({e.GetType().Name}: {e.Message})", LogLevel.Error);
-					}
-				});
+
+					// Now place it on the clipboard.
+					Clipboard.SetDataObject(dataObject, true);
+				}
+				catch (Exception e)
+				{
+					Log.Send($"Failed to restore previous clipboard contents: An exception occurred ({e.GetType().Name}: {e.Message})", LogLevel.Error);
+				}
 			});
 		}
 
@@ -84,7 +87,7 @@ namespace PassWinmenu.WinApi
 		}
 
 
-		public static string GetText()
+		public static string? GetText()
 		{
 			return Clipboard.ContainsText() ? Clipboard.GetText() : null;
 		}

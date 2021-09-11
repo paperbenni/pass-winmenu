@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 
+#nullable enable
 namespace PassWinmenu
 {
 	enum LogLevel
@@ -23,6 +24,12 @@ namespace PassWinmenu
 		public DateTime DateTime { get; set; }
 		public string Message { get; set; }
 
+		public LogLine(DateTime dateTime, string message)
+		{
+			DateTime = dateTime;
+			Message = message;
+		}
+
 		public override string ToString()
 		{
 			var line = $"[{DateTime:HH:mm:ss.fff}] {Message}";
@@ -32,7 +39,7 @@ namespace PassWinmenu
 
 	static class Log
 	{
-		private static StreamWriter writer;
+		private static StreamWriter? writer;
 		public static List<LogLine> History { get; } = new List<LogLine>();
 
 		static Log()
@@ -84,8 +91,15 @@ namespace PassWinmenu
 
 		private static void ReportException(object sender, UnhandledExceptionEventArgs eventArgs)
 		{
-			SendRaw("An unhandled exception occurred. Stack trace:");
-			LogExceptionAsText(eventArgs.ExceptionObject as Exception, 0);
+			if (!(eventArgs.ExceptionObject is Exception exception))
+			{
+				SendRaw("An unhandled exception occurred.");
+			}
+			else
+			{
+				SendRaw("An unhandled exception occurred. Stack trace:");
+				LogExceptionAsText(exception, 0);
+			}
 		}
 
 		public static void ReportException(Exception e)
@@ -134,11 +148,7 @@ namespace PassWinmenu
 		private static void SendRaw(string message)
 		{
 			var submissionTime = DateTime.Now;
-			var line = new LogLine
-			{
-				DateTime = submissionTime,
-				Message = message
-			};
+			var line = new LogLine(submissionTime, message);
 
 			lock (History)
 			{
@@ -150,7 +160,7 @@ namespace PassWinmenu
 			writer?.WriteLine(line);
 		}
 
-		public static void Send([Localizable(false)]string message, LogLevel level = LogLevel.Debug)
+		public static void Send([Localizable(false)] string message, LogLevel level = LogLevel.Debug)
 		{
 			SendRaw($"[{GetLevelString(level)}] {message}");
 		}

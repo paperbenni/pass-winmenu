@@ -2,6 +2,7 @@ using System;
 using System.Windows;
 using PassWinmenu.Windows;
 
+#nullable enable
 namespace PassWinmenu
 {
 	/// <summary>
@@ -9,7 +10,7 @@ namespace PassWinmenu
 	/// </summary>
 	public sealed partial class App : Application, IDisposable
 	{
-		private static MainWindow mainWindow;
+		private static MainWindow? mainWindow;
 
 		private void App_Startup(object sender, StartupEventArgs e)
 		{
@@ -29,7 +30,7 @@ namespace PassWinmenu
 
 		public static new void Exit()
 		{
-			mainWindow.Close();
+			mainWindow?.Close();
 			DisposeApplication();
 			Environment.Exit(0);
 		}

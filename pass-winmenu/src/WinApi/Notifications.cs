@@ -13,6 +13,7 @@ using PassWinmenu.Utilities;
 using Application = System.Windows.Application;
 using MessageBox = System.Windows.MessageBox;
 
+#nullable enable
 namespace PassWinmenu.WinApi
 {
 	internal class Notifications : INotificationService, ISyncStateTracker
@@ -20,14 +21,24 @@ namespace PassWinmenu.WinApi
 		public NotifyIcon Icon { get; set; }
 
 		private readonly string downloadUpdateString = "https://github.com/geluk/pass-winmenu/releases";
-		private ToolStripMenuItem downloadUpdate;
-		private ToolStripSeparator downloadSeparator;
+		private readonly ToolStripMenuItem downloadUpdate;
+		private readonly ToolStripSeparator downloadSeparator;
 		private const int ToolTipTimeoutMs = 5000;
 
 		private Notifications(NotifyIcon icon)
 		{
 			Icon = icon ?? throw new ArgumentNullException(nameof(icon));
 			Icon.Click += HandleIconClick;
+
+			downloadUpdate = new ToolStripMenuItem("Download Update");
+			downloadUpdate.Click += HandleDownloadUpdateClick;
+			downloadUpdate.BackColor = Color.Beige;
+
+			downloadUpdate.Visible = false;
+			downloadSeparator = new ToolStripSeparator
+			{
+				Visible = false
+			};
 		}
 
 		public static Notifications Create()
@@ -37,6 +48,7 @@ namespace PassWinmenu.WinApi
 				Icon = EmbeddedResources.Icon,
 				Visible = true
 			};
+
 
 			return new Notifications(icon);
 		}
@@ -61,16 +73,6 @@ namespace PassWinmenu.WinApi
 			var menu = new ContextMenuStrip();
 			menu.Items.Add(new ToolStripLabel("pass-winmenu " + Program.Version));
 			menu.Items.Add(new ToolStripSeparator());
-
-			downloadUpdate = new ToolStripMenuItem("Download Update");
-			downloadUpdate.Click += HandleDownloadUpdateClick;
-			downloadUpdate.BackColor = Color.Beige;
-
-			downloadUpdate.Visible = false;
-			downloadSeparator = new ToolStripSeparator
-			{
-				Visible = false
-			};
 
 			menu.Items.Add(downloadUpdate);
 			menu.Items.Add(downloadSeparator);

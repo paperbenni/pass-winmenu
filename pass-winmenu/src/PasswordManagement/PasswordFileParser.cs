@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using PassWinmenu.Configuration;
 
+#nullable enable
 namespace PassWinmenu.PasswordManagement
 {
 	internal class PasswordFileParser
@@ -63,7 +64,7 @@ namespace PassWinmenu.PasswordManagement
 		/// <returns>
 		/// A string containing the username if the password file contains one, null if no username was found.
 		/// </returns>
-		public string GetUsername(ParsedPasswordFile passwordFile)
+		public string? GetUsername(ParsedPasswordFile passwordFile)
 		{
 			var options = usernameDetection.Options;
 			switch (usernameDetection.Method)
@@ -77,8 +78,8 @@ namespace PassWinmenu.PasswordManagement
 					return lineNumber < extraLines.Length ? extraLines[lineNumber] : null;
 				case UsernameDetectionMethod.Regex:
 					var rgxOptions = options.RegexOptions.IgnoreCase ? RegexOptions.IgnoreCase : RegexOptions.None;
-					rgxOptions = rgxOptions | (options.RegexOptions.Multiline ? RegexOptions.Multiline : RegexOptions.None);
-					rgxOptions = rgxOptions | (options.RegexOptions.Singleline ? RegexOptions.Singleline : RegexOptions.None);
+					rgxOptions |= options.RegexOptions.Multiline ? RegexOptions.Multiline : RegexOptions.None;
+					rgxOptions |= options.RegexOptions.Singleline ? RegexOptions.Singleline : RegexOptions.None;
 					var match = Regex.Match(passwordFile.Metadata, options.Regex, rgxOptions);
 					return match.Groups["username"].Success ? match.Groups["username"].Value : null;
 				default:

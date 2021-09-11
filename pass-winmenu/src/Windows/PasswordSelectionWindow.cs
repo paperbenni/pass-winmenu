@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Windows.Controls;
+using PassWinmenu.Utilities;
 
+#nullable enable
 namespace PassWinmenu.Windows
 {
 	internal class PasswordSelectionWindow<TEntry> : SelectionWindow
@@ -16,7 +18,7 @@ namespace PassWinmenu.Windows
 			ResetLabels(entries.Keys);
 		}
 
-		public TEntry Selection => entries[SelectedLabel.Text];
+		public Option<TEntry> Selection => SelectionText == null ? Option<TEntry>.None() : Option.Some(entries[SelectionText]);
 
 		protected override void OnSearchTextChanged(object sender, TextChangedEventArgs e)
 		{

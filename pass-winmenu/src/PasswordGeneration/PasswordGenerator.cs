@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using PassWinmenu.Configuration;
 
+#nullable enable
 namespace PassWinmenu.PasswordGeneration
 {
 	internal class PasswordGenerator : IDisposable
@@ -17,7 +18,7 @@ namespace PassWinmenu.PasswordGeneration
 			Options = options;
 		}
 
-		public string GeneratePassword()
+		public string? GeneratePassword()
 		{
 			if (!Options.CharacterGroups.Any(g => g.Enabled)) return null;
 

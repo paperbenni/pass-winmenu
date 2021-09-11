@@ -1,9 +1,9 @@
 using System;
-using System.Collections.Generic;
 
+#nullable enable
 namespace PassWinmenu.Utilities
 {
-	internal readonly struct Option<T> : IEquatable<Option<T>>
+	internal readonly struct Option<T>
 	{
 		public T Value { get; }
 		public bool IsSome { get; }
@@ -15,55 +15,13 @@ namespace PassWinmenu.Utilities
 			IsSome = hasValue;
 		}
 
-		public override bool Equals(object obj)
-		{
-			try
-			{
-				var converted = (Option<T>)obj;
-				return Equals(converted);
-			}
-			catch (InvalidCastException)
-			{
-				return false;
-			}
-		}
-
-		public bool Equals(Option<T> other)
-		{
-			if (!IsSome && !other.IsSome)
-			{
-				return true;
-			}
-			if (IsSome && other.IsSome)
-			{
-				return Value.Equals(other.Value);
-			}
-			return false;
-		}
-
-		public override int GetHashCode()
-		{
-			var hashCode = 1816676634;
-			hashCode = hashCode * -1521134295 + EqualityComparer<T>.Default.GetHashCode(Value);
-			hashCode = hashCode * -1521134295 + IsSome.GetHashCode();
-			return hashCode;
-		}
-
-		public static bool operator ==(Option<T> left, Option<T> right)
-		{
-			return left.Equals(right);
-		}
-
-		public static bool operator !=(Option<T> left, Option<T> right)
-		{
-			return !(left == right);
-		}
-		public static Option<T> None() => new Option<T>(default, false);
+		//  Bit of a hack, but we can't use nullable annotations until C# 9.
+		public static Option<T> None() => new Option<T>(default!, false);
 	}
 
 	internal static class Option
 	{
-		public static Option<T> FromNullable<T>(T value) => new Option<T>(value, value != null);
+		public static Option<T> FromNullable<T>(T? value) where T : class => new Option<T>(value!, value != null);
 
 		public static Option<T> Some<T>(T value) => new Option<T>(value, true);
 	}
@@ -76,7 +34,7 @@ namespace PassWinmenu.Utilities
 			{
 				return new Option<TDst>(valueMap(source.Value), true);
 			}
-			return new Option<TDst>(default, false);
+			return Option<TDst>.None();
 		}
 
 		public static void Apply<T>(this Option<T> source, Action<T> action)
@@ -93,7 +51,7 @@ namespace PassWinmenu.Utilities
 			{
 				return source.Value;
 			}
-			return default;
+			return default!;
 		}
 	}
 }

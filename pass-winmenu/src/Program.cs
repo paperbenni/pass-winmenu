@@ -24,6 +24,7 @@ using PassWinmenu.Windows;
 using YamlDotNet.Core;
 using IContainer = Autofac.IContainer;
 
+#nullable enable
 namespace PassWinmenu
 {
 	internal sealed class Program : IDisposable
@@ -35,11 +36,11 @@ namespace PassWinmenu
 		public const string PlaintextFileExtension = ".txt";
 		public const string ConfigFileName = "pass-winmenu.yaml";
 
-		private UpdateChecker updateChecker;
+		private UpdateChecker? updateChecker;
 		private Option<RemoteUpdateChecker> remoteUpdateChecker;
-		private Notifications notificationService;
+		private Notifications notificationService = null!;
 
-		private IContainer container;
+		private IContainer? container;
 
 		public void Start()
 		{
@@ -233,18 +234,20 @@ namespace PassWinmenu
 
 			var factory = new SyncServiceFactory(config, passwordStore, signService, strategies);
 
-			var syncService = factory.BuildSyncService();
-			switch (factory.Status)
+			try
 			{
-				case SyncServiceStatus.GitLibraryNotFound:
+				var syncService = factory.BuildSyncService();
+				if (factory.Status == SyncServiceStatus.GitLibraryNotFound)
+				{
 					notificationService.ShowErrorWindow("The git2 DLL could not be found. Git support will be disabled.");
-					break;
-				case SyncServiceStatus.GitRepositoryNotFound:
-					notificationService.ShowErrorWindow($"Failed to open the password store Git repository ({factory.Exception.GetType().Name}: {factory.Exception.Message}). Git support will be disabled.");
-					break;
+				}
+				return Option.FromNullable(syncService);
 			}
-
-			return Option.FromNullable(syncService);
+			catch (Exception e)
+			{
+				notificationService.ShowErrorWindow($"Failed to open the password store Git repository ({e.GetType().Name}: {e.Message}). Git support will be disabled.");
+			}
+			return Option<ISyncService>.None();
 		}
 
 		/// <summary>
@@ -360,16 +363,16 @@ namespace PassWinmenu
 					notificationService.Raise("A default configuration file was generated, but could not be saved.\nPass-winmenu will fall back to its default settings.", Severity.Error);
 					break;
 				case LoadResult.NewFileCreated:
-					var open = MessageBox.Show("A new configuration file has been generated. Please modify it according to your preferences and restart the application.\n\n" + 
-					                                          "Would you like to open it now?", "New configuration file created", MessageBoxButton.YesNo);
+					var open = MessageBox.Show("A new configuration file has been generated. Please modify it according to your preferences and restart the application.\n\n" +
+															  "Would you like to open it now?", "New configuration file created", MessageBoxButton.YesNo);
 					if (open == MessageBoxResult.Yes) Process.Start(ConfigFileName);
 					App.Exit();
 					return;
 				case LoadResult.NeedsUpgrade:
 					var backedUpFile = ConfigManager.Backup(ConfigFileName);
 					var openBoth = MessageBox.Show("The current configuration file is out of date. A new configuration file has been created, and the old file has been backed up.\n" +
-					                                              "Please edit the new configuration file according to your preferences and restart the application.\n\n" +
-					                                              "Would you like to open both files now?", "Configuration file out of date", MessageBoxButton.YesNo);
+																  "Please edit the new configuration file according to your preferences and restart the application.\n\n" +
+																  "Would you like to open both files now?", "Configuration file out of date", MessageBoxButton.YesNo);
 					if (openBoth == MessageBoxResult.Yes)
 					{
 						Process.Start(ConfigFileName);

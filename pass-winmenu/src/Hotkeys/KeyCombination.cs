@@ -33,13 +33,11 @@ namespace PassWinmenu.Hotkeys
 			var keys = Key.None;
 			foreach (var keyStr in combination)
 			{
-				ModifierKeys parsedMod;
-				Key parsedKey;
-				if (Enum.TryParse(keyStr, true, out parsedMod))
+				if (Enum.TryParse(keyStr, true, out ModifierKeys parsedMod))
 				{
 					mods |= parsedMod;
 				}
-				else if (Enum.TryParse(keyStr, true, out parsedKey))
+				else if (Enum.TryParse(keyStr, true, out Key parsedKey))
 				{
 					if (keys == Key.None)
 						keys = parsedKey;

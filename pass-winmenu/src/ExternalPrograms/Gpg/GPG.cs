@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.IO.Abstractions;
 using System.Linq;
 using PassWinmenu.Configuration;
 
+#nullable enable
 namespace PassWinmenu.ExternalPrograms.Gpg
 {
 	/// <summary>
@@ -116,7 +116,7 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 				.FirstOrDefault();
 		}
 
-		private GpgResult CallGpg(string arguments, string input = null, IDictionary<string, string> operationArguments = null)
+		private GpgResult CallGpg(string arguments, string? input = null, IDictionary<string, string>? operationArguments = null)
 		{
 			var allOptions = (additionalOptions.Always ?? new Dictionary<string, string>())
 				.Concat(operationArguments ?? new Dictionary<string, string>());

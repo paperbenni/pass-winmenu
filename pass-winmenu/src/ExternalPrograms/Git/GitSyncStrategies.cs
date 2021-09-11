@@ -1,12 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using LibGit2Sharp;
 using PassWinmenu.Configuration;
 using PassWinmenu.WinApi;
 
+#nullable enable
 namespace PassWinmenu.ExternalPrograms
 {
 	internal class GitSyncStrategies

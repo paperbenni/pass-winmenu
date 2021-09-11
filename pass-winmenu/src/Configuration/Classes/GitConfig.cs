@@ -3,6 +3,7 @@ using PassWinmenu.Utilities.ExtensionMethods;
 using PassWinmenu.WinApi;
 using YamlDotNet.Serialization;
 
+# nullable enable
 namespace PassWinmenu.Configuration
 {
 	internal class GitConfig
@@ -14,13 +15,16 @@ namespace PassWinmenu.Configuration
 		[YamlMember(Alias = "sync-mode")]
 		public string SyncModeString { get; set; } = "auto";
 
-		private string gitPath = @"git";
+		private string gitPath = "git";
 		public string GitPath
 		{
 			get => gitPath;
 			set
 			{
-				if (value == null) gitPath = null;
+				if (value == null)
+				{
+					gitPath = "git";
+				}
 				else
 				{
 					var expanded = Environment.ExpandEnvironmentVariables(value);
@@ -29,7 +33,7 @@ namespace PassWinmenu.Configuration
 			}
 		}
 
-		public string SshPath { get; set; } = null;
+		public string? SshPath { get; set; } = null;
 		public bool AutoFetch { get; set; } = true;
 		public double AutoFetchInterval { get; set; } = 3600;
 		[YamlIgnore]
