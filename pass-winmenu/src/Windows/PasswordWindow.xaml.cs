@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -59,8 +60,8 @@ namespace PassWinmenu.Windows
 			var now = DateTime.Now;
 			var extraContent = ConfigManager.Config.PasswordStore.PasswordGeneration.DefaultContent
 				.Replace("$filename", filename)
-				.Replace("$date", now.ToString("yyyy-MM-dd"))
-				.Replace("$time", now.ToString("HH:mm:ss"));
+				.Replace("$date", now.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture))
+				.Replace("$time", now.ToString("HH:mm:ss", CultureInfo.InvariantCulture));
 			ExtraContent.Text = extraContent;
 		}
 

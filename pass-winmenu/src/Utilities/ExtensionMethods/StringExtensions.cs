@@ -59,7 +59,7 @@ namespace PassWinmenu.Utilities.ExtensionMethods
 
 		public static string RemoveEnd(this string current, string toRemove)
 		{
-			if (!current.EndsWith(toRemove))
+			if (!current.EndsWith(toRemove, StringComparison.Ordinal))
 			{
 				throw new ArgumentException("The given string does not end with the string to be removed.");
 			}

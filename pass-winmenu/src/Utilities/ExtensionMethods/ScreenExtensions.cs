@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.Windows.Forms;
 
 namespace PassWinmenu.Utilities.ExtensionMethods
@@ -18,12 +19,12 @@ namespace PassWinmenu.Utilities.ExtensionMethods
 
 			if (value.EndsWith("%", StringComparison.Ordinal))
 			{
-				var percentage = double.Parse(value.Substring(0, value.Length - 1))/100.0;
+				var percentage = double.Parse(value.Substring(0, value.Length - 1), CultureInfo.InvariantCulture)/100.0;
 				return direction == Direction.Horizontal ? percentage * screen.Bounds.Width : percentage * screen.Bounds.Height;
 			}
 			else
 			{
-				return double.Parse(value);
+				return double.Parse(value, CultureInfo.InvariantCulture);
 			}
 		}
 	}
