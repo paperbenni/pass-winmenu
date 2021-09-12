@@ -1,4 +1,5 @@
 using PassWinmenuTests.Utilities;
+using Shouldly;
 using Xunit;
 
 namespace PassWinmenuTests.EmbeddedResources
@@ -11,7 +12,9 @@ namespace PassWinmenuTests.EmbeddedResources
 		public void EmbeddedResources_ContainsVersionString()
 		{
 			PassWinmenu.EmbeddedResources.Load();
-			Assert.False(string.IsNullOrWhiteSpace(PassWinmenu.EmbeddedResources.Version));
+			PassWinmenu.EmbeddedResources.Version.ShouldNotBeNullOrWhiteSpace();
+			PassWinmenu.EmbeddedResources.Version.ShouldNotBe("<unknown version>");
+			Assert.False(string.IsNullOrWhiteSpace(PassWinmenu.EmbeddedResources.UnknownVersion));
 		}
 	}
 }

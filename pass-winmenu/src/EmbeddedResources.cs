@@ -3,6 +3,7 @@ using System.Drawing;
 using System.IO;
 using System.Reflection;
 
+#nullable enable
 namespace PassWinmenu
 {
 	public static class EmbeddedResources
@@ -12,7 +13,9 @@ namespace PassWinmenu
 		public static Icon IconBehind => new Icon(Assembly.GetExecutingAssembly().GetManifestResourceStream("PassWinmenu.embedded.pass-winmenu-behind.ico"));
 		public static Icon IconDiverged => new Icon(Assembly.GetExecutingAssembly().GetManifestResourceStream("PassWinmenu.embedded.pass-winmenu-diverged.ico"));
 		public static Stream DefaultConfig => Assembly.GetExecutingAssembly().GetManifestResourceStream("PassWinmenu.embedded.default-config.yaml");
-		public static string Version { get; private set; }
+		public static string Version { get; private set; } = UnknownVersion;
+
+		public const string UnknownVersion = "<unknown version>";
 
 		public static void Load()
 		{

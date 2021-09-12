@@ -1,5 +1,6 @@
 using System;
 using McSherry.SemanticVersioning;
+using Newtonsoft.Json;
 
 namespace PassWinmenu.UpdateChecking.GitHub
 {

@@ -290,15 +290,6 @@ namespace PassWinmenu.Hotkeys
 				return this;
 			}
 
-			/// <summary>
-			/// Builds a <see cref="Hotkey"/>, or retrieves a hotkey already
-			/// built.
-			/// </summary>
-			/// <exception cref="InvalidOperationException">
-			/// No value for <see cref="Hotkey.Key"/> was provided.
-			/// </exception>
-			public Hotkey Assemble() => _retrieve(out var hk) ? hk : _hotkey;
-
 			public void Dispose()
 			{
 				_hotkey?.Dispose();
@@ -381,13 +372,7 @@ namespace PassWinmenu.Hotkeys
 		}
 
 
-		private static IHotkeyRegistrar _defaultRegistrar;
-
-
-		static Hotkey()
-		{
-			_defaultRegistrar = HotkeyRegistrars.Windows;
-		}
+		private static IHotkeyRegistrar _defaultRegistrar = HotkeyRegistrars.Windows;
 
 
 		/// <summary>

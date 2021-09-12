@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using Disposable = PassWinmenu.Utilities.Disposable;
 using Helpers = PassWinmenu.Utilities.Helpers;
 
+#nullable enable
 namespace PassWinmenu.Hotkeys
 {
 
@@ -83,7 +84,7 @@ namespace PassWinmenu.Hotkeys
 			private const ushort MOD_NOREPEAT = 0x4000;
 
 
-			private static WindowsHotkeyRegistrar _singleton = null;
+			private static WindowsHotkeyRegistrar? _singleton = null;
 
 			/// <summary>
 			/// Retrieves a <see cref="WindowsHotkeyRegistrar"/> instance,
@@ -131,15 +132,13 @@ namespace PassWinmenu.Hotkeys
 			private readonly MessageWindow _msgWindow;
 			// Event handlers for the hotkey being triggered, keyed by the ID
 			// provided when registering the hotkey.
-			private readonly IDictionary<int, EventHandler> _hotkeys;
+			private readonly IDictionary<int, EventHandler> _hotkeys = new Dictionary<int, EventHandler>();
 			// Whether we're disposed
 			private bool _disposed = false;
 
 			private WindowsHotkeyRegistrar()
 			{
 				_msgWindow = new MessageWindow(_windowProcedure);
-
-				_hotkeys = new Dictionary<int, EventHandler>();
 			}
 
 

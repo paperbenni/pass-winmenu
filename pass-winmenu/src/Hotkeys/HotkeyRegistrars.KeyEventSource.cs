@@ -150,13 +150,7 @@ namespace PassWinmenu.Hotkeys
 			// weak references to allow garbage collection if consuming code
 			// is no longer using the event source.
 			private static readonly IDictionary<object, WeakReference<KeyEventSource>>
-				_registrarCache;
-
-
-			static KeyEventSource()
-			{
 				_registrarCache = new Dictionary<object, WeakReference<KeyEventSource>>();
-			}
 
 
 			/// <summary>

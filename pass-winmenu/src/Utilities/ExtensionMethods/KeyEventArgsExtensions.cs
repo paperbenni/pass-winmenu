@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Reflection;
 using System.Windows.Input;
 
@@ -8,14 +8,7 @@ namespace PassWinmenu.Utilities.ExtensionMethods
 
 	public static class KeyEventArgsExtensions
 	{
-		private static readonly MethodInfo _setRepeatInfo;
-
-		static KeyEventArgsExtensions()
-		{
-			_setRepeatInfo = typeof(KeyEventArgs).GetMethod(
-				"SetRepeat", BindingFlags.NonPublic | BindingFlags.Instance
-				);
-		}
+		private static readonly MethodInfo _setRepeatInfo = GetRepeatInfo();
 
 		/// <summary>
 		/// Sets the value of the <see cref="KeyEventArgs.IsRepeat"/> property.
@@ -88,5 +81,9 @@ namespace PassWinmenu.Utilities.ExtensionMethods
 
 			return modifier != default(ModifierKeys);
 		}
+
+		private static MethodInfo GetRepeatInfo() =>
+			typeof(KeyEventArgs)
+				.GetMethod("SetRepeat", BindingFlags.NonPublic | BindingFlags.Instance);
 	}
 }

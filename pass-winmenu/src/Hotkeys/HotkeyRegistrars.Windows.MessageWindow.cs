@@ -55,7 +55,7 @@ namespace PassWinmenu.Hotkeys
 			/// null to defer to the next available window procedure (which is
 			/// the default procedure if no other procedure is registered).
 			/// </returns>
-			private delegate Nullable<IntPtr> WindowProcedure(
+			private delegate IntPtr? WindowProcedure(
 				IntPtr          handle,
 				WindowMessage   message,
 				UIntPtr         wParam,
