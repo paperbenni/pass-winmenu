@@ -51,6 +51,8 @@ namespace PassWinmenu.ExternalPrograms
 			};
 			if (!string.IsNullOrEmpty(Configuration.ConfigManager.Config.Git.SshPath))
 			{
+				// Remove is a no-op if the variable is not set.
+				psi.EnvironmentVariables.Remove("GIT_SSH");
 				psi.EnvironmentVariables.Add("GIT_SSH", Configuration.ConfigManager.Config.Git.SshPath);
 			}
 			Process gitProc;
