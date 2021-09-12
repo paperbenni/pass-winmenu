@@ -247,7 +247,7 @@ namespace PassWinmenu
 			{
 				notificationService.ShowErrorWindow($"Failed to open the password store Git repository ({e.GetType().Name}: {e.Message}). Git support will be disabled.");
 			}
-			return Option<ISyncService>.None();
+			return Option<ISyncService>.None;
 		}
 
 		/// <summary>
@@ -401,7 +401,7 @@ namespace PassWinmenu
 					actionDispatcher,
 					notificationService);
 			}
-			catch (Exception e) when (e is ArgumentException || e is HotkeyException)
+			catch (Exception e) when (e is HotkeyException)
 			{
 				Log.Send("Failed to register hotkeys", LogLevel.Error);
 				Log.ReportException(e);

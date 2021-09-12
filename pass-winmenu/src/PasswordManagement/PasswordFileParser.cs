@@ -83,7 +83,7 @@ namespace PassWinmenu.PasswordManagement
 					var match = Regex.Match(passwordFile.Metadata, options.Regex, rgxOptions);
 					return match.Groups["username"].Success ? match.Groups["username"].Value : null;
 				default:
-					throw new ArgumentOutOfRangeException("username-detection.method", "Invalid username detection method.");
+					throw new Exception("Invalid username detection method.");
 			}
 		}
 	}

@@ -66,7 +66,6 @@ namespace PassWinmenu.ExternalPrograms
 			}
 
 			gitProc.WaitForExit((int)gitCallTimeout.TotalMilliseconds);
-			var output = gitProc.StandardOutput.ReadToEnd();
 			var error = gitProc.StandardError.ReadToEnd();
 			if (gitProc.ExitCode != 0)
 			{

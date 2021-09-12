@@ -102,7 +102,7 @@ namespace PassWinmenuTests.ExternalPrograms.Gpg
 			Should.NotThrow(() => verifier.VerifyDecryption(result));
 		}
 
-		// Corner case: If GPG has warnings (for instance about the key store being of a newer version)
+		// Edge case: If GPG has warnings (for instance about the key store being of a newer version)
 		// but is still able to decrypt the data successfully, it may still exit with a non-zero exit code.
 		// Decryption should succeed here.
 		[Fact]

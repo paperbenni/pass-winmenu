@@ -1,5 +1,6 @@
 using System;
 
+#nullable enable
 namespace PassWinmenu.ExternalPrograms.Gpg
 {
 	internal class StatusMessage
@@ -8,10 +9,10 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 		public string RawStatusCode { get; }
 		public string Message { get; }
 
-		public StatusMessage(string rawStatusCode, string message)
+		public StatusMessage(string rawStatusCode, string? message)
 		{
 			RawStatusCode = rawStatusCode;
-			Message = message;
+			Message = message ?? string.Empty;
 			if (Enum.TryParse(rawStatusCode, false, out GpgStatusCode parsedStatusCode))
 			{
 				StatusCode = parsedStatusCode;

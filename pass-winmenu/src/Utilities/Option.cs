@@ -5,7 +5,7 @@ namespace PassWinmenu.Utilities
 {
 	internal readonly struct Option<T>
 	{
-		public T Value { get; }
+		private T Value { get; }
 		public bool IsSome { get; }
 		public bool IsNone => !IsSome;
 
@@ -16,7 +16,37 @@ namespace PassWinmenu.Utilities
 		}
 
 		//  Bit of a hack, but we can't use nullable annotations until C# 9.
-		public static Option<T> None() => new Option<T>(default!, false);
+		public static Option<T> None => new Option<T>(default!, false);
+
+		public Option<TDst> Select<TDst>(Func<T, TDst> valueMap)
+		{
+			if (IsSome)
+			{
+				return new Option<TDst>(valueMap(Value), true);
+			}
+			return Option<TDst>.None;
+		}
+
+		public TDst Match<TDst>(Func<T, TDst> some, Func<TDst> none)
+		{
+			if (IsSome)
+			{
+				return some(Value);
+			}
+			return none();
+		}
+
+		public void Match(Action<T>? some, Action? none)
+		{
+			if (IsSome)
+			{
+				some?.Invoke(Value);
+			}
+			else
+			{
+				none?.Invoke();
+			}
+		}
 	}
 
 	internal static class Option
@@ -28,30 +58,15 @@ namespace PassWinmenu.Utilities
 
 	internal static class OptionExtensions
 	{
-		public static Option<TDst> Select<TSrc, TDst>(this Option<TSrc> source, Func<TSrc, TDst> valueMap)
-		{
-			if (source.IsSome)
-			{
-				return new Option<TDst>(valueMap(source.Value), true);
-			}
-			return Option<TDst>.None();
-		}
 
 		public static void Apply<T>(this Option<T> source, Action<T> action)
 		{
-			if (source.IsSome)
-			{
-				action(source.Value);
-			}
+			source.Match(v => action(v), default);
 		}
 
 		public static T ValueOrDefault<T>(this Option<T> source)
 		{
-			if (source.IsSome)
-			{
-				return source.Value;
-			}
-			return default!;
+			return source.Match(v => v, () => default!);
 		}
 	}
 }

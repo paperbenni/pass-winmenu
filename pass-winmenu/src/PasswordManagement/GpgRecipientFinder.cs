@@ -3,6 +3,7 @@ using System.IO.Abstractions;
 using PassWinmenu.Utilities;
 using PassWinmenu.Utilities.ExtensionMethods;
 
+#nullable enable
 namespace PassWinmenu.PasswordManagement
 {
 	internal class GpgRecipientFinder : IRecipientFinder
@@ -24,7 +25,7 @@ namespace PassWinmenu.PasswordManagement
 		{
 			if (!string.IsNullOrWhiteSpace(environmentVariables.PasswordStoreKey))
 			{
-				return environmentVariables.PasswordStoreKey.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+				return environmentVariables.PasswordStoreKey!.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 			}
 
 			var current = file.Directory;

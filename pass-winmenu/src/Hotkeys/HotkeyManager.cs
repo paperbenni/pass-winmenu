@@ -82,7 +82,7 @@ namespace PassWinmenu.Hotkeys
 							AddHotKey(keys, () => actionDispatcher.Dispatch(action));
 							break;
 						default:
-							throw new ArgumentOutOfRangeException("Invalid hotkey action");
+							throw new HotkeyException("Invalid hotkey action");
 					}
 				}
 				catch (HotkeyException e) when (e.InnerException?.HResult == HResult.HotkeyAlreadyRegistered)

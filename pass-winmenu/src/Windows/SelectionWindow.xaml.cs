@@ -10,7 +10,7 @@ using System.Windows.Media;
 using PassWinmenu.Configuration;
 using PassWinmenu.Hotkeys;
 
-# nullable enable
+#nullable enable
 namespace PassWinmenu.Windows
 {
 	/// <summary>
@@ -236,13 +236,14 @@ namespace PassWinmenu.Windows
 			SelectedLabel.LabelBorder.BorderThickness = styleConfig.Options.BorderWidth;
 			SelectedLabel = null;
 		}
-		
+
 		protected SelectionLabel CreateLabel(string content)
 		{
-			var label = new SelectionLabel(content,
-			                               styleConfig.Options,
-			                               styleConfig.FontSize,
-			                               new FontFamily(styleConfig.FontFamily));
+			var label = new SelectionLabel(
+				content,
+				styleConfig.Options,
+				styleConfig.FontSize,
+				new FontFamily(styleConfig.FontFamily));
 
 			label.MouseLeftButtonUp += (sender, args) =>
 			{
@@ -358,7 +359,12 @@ namespace PassWinmenu.Windows
 
 		private void SelectNext()
 		{
-			var selectionIndex =  Options.IndexOf(SelectedLabel);
+			if (SelectedLabel == null)
+			{
+				SelectFirst();
+				return;
+			}
+			var selectionIndex = Options.IndexOf(SelectedLabel);
 			if (selectionIndex < Options.Count)
 			{
 				// Number of options that we're out of the scrolling bounds
@@ -367,8 +373,18 @@ namespace PassWinmenu.Windows
 				if (boundsOffset <= 0 || scrollOffset + Options.Count >= optionStrings.Count)
 				{
 					var label = FindNext(selectionIndex);
-					Select(label);
-					HandleSelectionChange(label);
+					if (label != null)
+					{
+						Select(label);
+						HandleSelectionChange(label);
+					}
+					else
+					{
+						// I have no idea if this branch is actually possible.
+						// Ideally I'd refactor this class, split off the label selection logic,
+						// and test it, but this will have to do...
+						Log.Send("Unable to find next label. If you ever see this message, please create a bug report for it.");
+					}
 				}
 				else
 				{
@@ -383,6 +399,11 @@ namespace PassWinmenu.Windows
 
 		private void SelectPrevious()
 		{
+			if (SelectedLabel == null)
+			{
+				SelectFirst();
+				return;
+			}
 			var selectionIndex = Options.IndexOf(SelectedLabel);
 			if (selectionIndex >= 0)
 			{
@@ -392,8 +413,16 @@ namespace PassWinmenu.Windows
 				if (boundsOffset <= 0 || scrollOffset - 1 < 0)
 				{
 					var label = FindPrevious(selectionIndex);
-					Select(label);
-					HandleSelectionChange(label);
+					if (label != null)
+					{
+						Select(label);
+						HandleSelectionChange(label);
+					}
+					else
+					{
+						// See SelectNext()
+						Log.Send("Unable to find previous label. If you ever see this message, please create a bug report for it.");
+					}
 				}
 				else
 				{

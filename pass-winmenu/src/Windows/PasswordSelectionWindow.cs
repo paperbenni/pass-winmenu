@@ -18,7 +18,7 @@ namespace PassWinmenu.Windows
 			ResetLabels(entries.Keys);
 		}
 
-		public Option<TEntry> Selection => SelectionText == null ? Option<TEntry>.None() : Option.Some(entries[SelectionText]);
+		public Option<TEntry> Selection => SelectionText == null ? Option<TEntry>.None : Option.Some(entries[SelectionText]);
 
 		protected override void OnSearchTextChanged(object sender, TextChangedEventArgs e)
 		{
