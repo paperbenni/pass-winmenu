@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 
@@ -57,7 +58,7 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 				return;
 			}
 
-			
+
 			// Now check what the process returns.
 			var readTask = proc.StandardError.ReadLineAsync();
 			// Give gpg-connect-agent a moment to see if it produces any output.
@@ -103,7 +104,7 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 			// Now try to find the correct gpg-agent process.
 			// We'll start by looking for a process whose filename matches the installation directory we're working with.
 			// This means that if there are several gpg-agents running, we will ignore those that our gpg process likely won't try to connect to.
-			var matches = processes.GetProcesses().Where(p => p.MainModuleName == gpgInstallation.GpgAgentExecutable.FullName).ToList();
+			var matches = processes.GetProcesses().Where(p => NameMatches(p, gpgInstallation.GpgAgentExecutable.FullName)).ToList();
 			if (matches.Any())
 			{
 				Log.Send($"Agent process(es) found (\"{gpgInstallation.InstallDirectory.FullName}\")");
@@ -124,6 +125,20 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 					Log.Send($" > killing gpg-agent {match.Id} (started {match.StartTime:G}), path: \"{match.MainModuleName}\"");
 					match.Kill();
 				}
+			}
+		}
+
+		private bool NameMatches(IProcess process, string name)
+		{
+			try
+			{
+				return process.MainModuleName == name;
+			}
+			catch (Win32Exception)
+			{
+				// This may happen when a 32-bit process attempts to request information about a 64-bit process.
+				// There may also be other cases where this exception can be raised when requesting the main module name.
+				return false;
 			}
 		}
 	}
