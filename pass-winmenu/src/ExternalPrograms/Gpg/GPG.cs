@@ -36,7 +36,7 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 		public string Decrypt(string file)
 		{
 			if (enablePinentryFix) pinentryWatcher.BumpPinentryWindow();
-			gpgAgent.EnsureAgentResponsive();
+			//gpgAgent.EnsureAgentResponsive();
 			var result = CallGpg($"--decrypt \"{file}\"", null, additionalOptions.Decrypt);
 			gpgResultVerifier.VerifyDecryption(result);
 			return result.RawStdout;
@@ -61,7 +61,7 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 
 		private void ListSecretKeys()
 		{
-			gpgAgent.EnsureAgentResponsive();
+			//gpgAgent.EnsureAgentResponsive();
 			var result = CallGpg("--list-secret-keys");
 			if (result.RawStdout.Length == 0)
 			{
@@ -89,7 +89,7 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 		public string[] Sign(string message, string keyId)
 		{
 			if (enablePinentryFix) pinentryWatcher.BumpPinentryWindow();
-			gpgAgent.EnsureAgentResponsive();
+			//gpgAgent.EnsureAgentResponsive();
 			var result = CallGpg($"--detach-sign --local-user {keyId} --armor", message, additionalOptions.Sign);
 			return result.StdoutMessages;
 		}
