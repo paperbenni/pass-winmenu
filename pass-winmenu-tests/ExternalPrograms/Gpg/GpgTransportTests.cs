@@ -52,7 +52,7 @@ namespace PassWinmenuTests.ExternalPrograms.Gpg
 				() => result.StatusMessages[0].StatusCode.ShouldBe(GpgStatusCode.ENC_TO),
 				() => result.StatusMessages[0].Message.ShouldBe("keyId"),
 				() => result.StatusMessages[1].StatusCode.ShouldBe(GpgStatusCode.DECRYPTION_OKAY),
-				() => result.StatusMessages[1].Message.ShouldBe(null)
+				() => result.StatusMessages[1].Message.ShouldBe("")
 			);
 		}
 

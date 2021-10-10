@@ -12,16 +12,14 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 	internal class GPG : ICryptoService, ISignService
 	{
 		private readonly IGpgTransport gpgTransport;
-		private readonly IGpgAgent gpgAgent;
 		private readonly IGpgResultVerifier gpgResultVerifier;
 		private readonly PinentryWatcher pinentryWatcher = new PinentryWatcher();
 		private readonly AdditionalOptionsConfig additionalOptions;
 		private readonly bool enablePinentryFix;
 
-		public GPG(IGpgTransport gpgTransport, IGpgAgent gpgAgent, IGpgResultVerifier gpgResultVerifier, GpgConfig gpgConfig)
+		public GPG(IGpgTransport gpgTransport, IGpgResultVerifier gpgResultVerifier, GpgConfig gpgConfig)
 		{
 			this.gpgTransport = gpgTransport;
-			this.gpgAgent = gpgAgent;
 			this.gpgResultVerifier = gpgResultVerifier;
 			this.enablePinentryFix = gpgConfig.PinentryFix;
 			this.additionalOptions = gpgConfig.AdditionalOptions;
@@ -36,7 +34,6 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 		public string Decrypt(string file)
 		{
 			if (enablePinentryFix) pinentryWatcher.BumpPinentryWindow();
-			//gpgAgent.EnsureAgentResponsive();
 			var result = CallGpg($"--decrypt \"{file}\"", null, additionalOptions.Decrypt);
 			gpgResultVerifier.VerifyDecryption(result);
 			return result.RawStdout;
@@ -61,7 +58,6 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 
 		private void ListSecretKeys()
 		{
-			//gpgAgent.EnsureAgentResponsive();
 			var result = CallGpg("--list-secret-keys");
 			if (result.RawStdout.Length == 0)
 			{
@@ -89,7 +85,6 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 		public string[] Sign(string message, string keyId)
 		{
 			if (enablePinentryFix) pinentryWatcher.BumpPinentryWindow();
-			//gpgAgent.EnsureAgentResponsive();
 			var result = CallGpg($"--detach-sign --local-user {keyId} --armor", message, additionalOptions.Sign);
 			return result.StdoutMessages;
 		}

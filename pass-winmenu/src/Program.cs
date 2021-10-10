@@ -152,7 +152,6 @@ namespace PassWinmenu
 					typeof(GpgAgentConfigReader),
 					typeof(GpgAgentConfigUpdater),
 					typeof(GpgTransport),
-					typeof(GpgAgent),
 					typeof(GpgResultVerifier),
 					typeof(GPG)
 				).AsImplementedInterfaces()

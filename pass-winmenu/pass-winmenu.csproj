@@ -129,7 +129,6 @@
     <Compile Include="src\ExternalPrograms\Gpg\GpgResultVerifier.cs" />
     <Compile Include="src\ExternalPrograms\Gpg\GpgStatusCode.cs" />
     <Compile Include="src\ExternalPrograms\Gpg\GpgTransport.cs" />
-    <Compile Include="src\ExternalPrograms\Gpg\IGpgAgent.cs" />
     <Compile Include="src\ExternalPrograms\Gpg\IGpgAgentConfigReader.cs" />
     <Compile Include="src\ExternalPrograms\Gpg\IGpgHomedirResolver.cs" />
     <Compile Include="src\ExternalPrograms\Gpg\IGpgResultVerifier.cs" />
@@ -190,7 +189,6 @@
     <Compile Include="src\WinApi\PathUtilities.cs" />
     <Compile Include="src\Windows\DialogCreator.cs" />
     <Compile Include="src\Utilities\DirectoryAutocomplete.cs" />
-    <Compile Include="src\ExternalPrograms\Gpg\GpgAgent.cs" />
     <Compile Include="src\ExternalPrograms\ICryptoService.cs" />
     <Compile Include="src\Hotkeys\Hotkey.cs" />
     <Compile Include="src\Hotkeys\HotkeyRegistrars.KeyEventSource.cs" />

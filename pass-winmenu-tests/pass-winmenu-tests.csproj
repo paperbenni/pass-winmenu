@@ -65,7 +65,6 @@
     <Compile Include="Utilities\FakeProcessBuilder.cs" />
     <Compile Include="ExternalPrograms\Gpg\GpgAgentConfigReaderTests.cs" />
     <Compile Include="ExternalPrograms\Gpg\GpgAgentConfigWriterTests.cs" />
-    <Compile Include="ExternalPrograms\Gpg\GpgAgentTests.cs" />
     <Compile Include="ExternalPrograms\Gpg\GpgHomedirResolverTests.cs" />
     <Compile Include="ExternalPrograms\Gpg\GpgInstallationFinderTests.cs" />
     <Compile Include="ExternalPrograms\Gpg\GpgTests.cs" />
