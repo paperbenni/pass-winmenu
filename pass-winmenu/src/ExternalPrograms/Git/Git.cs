@@ -172,17 +172,22 @@ namespace PassWinmenu.ExternalPrograms
 		private void UnstageAll()
 		{
 			var status = repo.RetrieveStatus();
-			var staged = status.Where(e => (e.State
-			                              & (FileStatus.DeletedFromIndex
-			                               | FileStatus.ModifiedInIndex
-			                               | FileStatus.NewInIndex
-			                               | FileStatus.RenamedInIndex
-			                               | FileStatus.TypeChangeInIndex)) > 0)
-			                   .ToList();
+			var staged = status.Where(IsStaged).ToList();
 			if (staged.Any())
 			{
 				Commands.Unstage(repo, staged.Select(entry => entry.FilePath));
 			}
+		}
+
+		private bool IsStaged(StatusEntry entry)
+		{
+			const FileStatus modified = FileStatus.DeletedFromIndex
+				| FileStatus.ModifiedInIndex
+				| FileStatus.NewInIndex
+				| FileStatus.RenamedInIndex
+				| FileStatus.TypeChangeInIndex;
+
+			return (entry.State & modified) > 0;
 		}
 
 		private Signature BuildSignature()
