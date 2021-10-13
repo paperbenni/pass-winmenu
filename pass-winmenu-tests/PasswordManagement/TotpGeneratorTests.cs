@@ -35,5 +35,18 @@ namespace PassWinmenuTests.PasswordManagement
 			code.ShouldBeSome("235025");
 		}
 
+		[Fact]
+		public void GenerateTotpCode_ValidOtpAuth_ValidCode()
+		{
+			var keys = new List<KeyValuePair<string, string>>() {
+				new KeyValuePair<string, string>("OTPAUTH", "otpauth://otp/account?secret=HELLOTHERE&digits=6")
+			};
+
+			var file = new KeyedPasswordFile(new PasswordFile(null, null), string.Empty, null, keys);
+			var code = TotpGenerator.GenerateTotpCode(file, new DateTime(2021, 10, 13, 20, 26, 30, DateTimeKind.Utc));
+
+			code.ShouldBeSome("514271");
+		}
+
 	}
 }
