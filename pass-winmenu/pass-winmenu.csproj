@@ -146,6 +146,7 @@
     <Compile Include="src\PasswordManagement\GpgRecipientFinder.cs" />
     <Compile Include="src\PasswordManagement\KeyedPasswordFile.cs" />
     <Compile Include="src\PasswordManagement\IPasswordManager.cs" />
+    <Compile Include="src\PasswordManagement\TotpGenerator.cs" />
     <Compile Include="src\PasswordManagement\ParsedPasswordFile.cs" />
     <Compile Include="src\PasswordManagement\PasswordFile.cs" />
     <Compile Include="src\ExternalPrograms\SyncServiceFactory.cs" />

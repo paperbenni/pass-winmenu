@@ -54,6 +54,8 @@ namespace PassWinmenu.Utilities
 		public static Option<T> FromNullable<T>(T? value) where T : class => new Option<T>(value!, value != null);
 
 		public static Option<T> Some<T>(T value) => new Option<T>(value, true);
+
+		public static Option<T> None<T>() => new Option<T>(default!, false);
 	}
 
 	internal static class OptionExtensions

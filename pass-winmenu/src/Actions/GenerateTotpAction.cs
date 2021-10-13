@@ -1,6 +1,4 @@
 using System;
-using System.Text.RegularExpressions;
-using OtpNet;
 using PassWinmenu.Configuration;
 using PassWinmenu.ExternalPrograms.Gpg;
 using PassWinmenu.PasswordManagement;
@@ -16,8 +14,6 @@ namespace PassWinmenu.Actions
 		private readonly INotificationService notificationService;
 		private readonly DialogCreator dialogCreator;
 		private readonly InterfaceConfig config;
-
-		private static readonly Regex OtpSecretRegex = new Regex("secret=([a-zA-Z0-9]+)&", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
 		public GenerateTotpAction(
 			IPasswordManager passwordManager,
@@ -57,48 +53,30 @@ namespace PassWinmenu.Actions
 				return;
 			}
 
-			string? secretKey = null;
-			foreach (var k in passwordFile.Keys)
-			{
-				// totp: Xxxx4
-				if (k.Key.ToUpperInvariant() == "TOTP")
+			var totp = TotpGenerator.GenerateTotpCode(passwordFile, DateTime.Now);
+			totp.Match(
+				code =>
 				{
-					secretKey = k.Value;
-				}
-
-				// otpauth: //totp/account?secret=FxxxX&digits=6
-				if (k.Key.ToUpperInvariant() == "OTPAUTH")
-				{
-					var match = OtpSecretRegex.Match(k.Value);
-					if (match.Success) {
-						secretKey = match.Groups[1].Value;
+					if (copyToClipboard)
+					{
+						ClipboardHelper.Place(code, TimeSpan.FromSeconds(config.ClipboardTimeout));
+						if (ConfigManager.Config.Notifications.Types.TotpCopied)
+						{
+							notificationService.Raise($"The totp code has been copied to your clipboard.\nIt will be cleared in {config.ClipboardTimeout:0.##} seconds.", Severity.Info);
+						}
 					}
-				}
-			}
 
-			if (secretKey == null)
-			{
-				notificationService.ShowErrorWindow($"TOTP decryption failed: Failed to find an OTP secret.");
-				return;
-			}
-
-			var secretKeyBytes = Base32Encoding.ToBytes(secretKey);
-			var totp = new Totp(secretKeyBytes);
-			var totpCode = totp.ComputeTotp();
-
-			if (copyToClipboard)
-			{
-				ClipboardHelper.Place(totpCode, TimeSpan.FromSeconds(config.ClipboardTimeout));
-				if (ConfigManager.Config.Notifications.Types.TotpCopied)
+					if (typeTotpCode)
+					{
+						KeyboardEmulator.EnterText(code);
+					}
+				},
+				() =>
 				{
-					notificationService.Raise($"The totp code has been copied to your clipboard.\nIt will be cleared in {config.ClipboardTimeout:0.##} seconds.", Severity.Info);
+					notificationService.ShowErrorWindow($"TOTP decryption failed: Failed to find an OTP secret.");
 				}
-			}
+			);
 
-			if (typeTotpCode)
-			{
-				KeyboardEmulator.EnterText(totpCode);
-			}
 		}
 	}
 }

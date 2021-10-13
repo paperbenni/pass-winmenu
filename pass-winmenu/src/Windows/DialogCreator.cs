@@ -1,10 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Windows;
-using OtpNet;
 using PassWinmenu.Configuration;
 using PassWinmenu.ExternalPrograms.Gpg;
 using PassWinmenu.PasswordManagement;
