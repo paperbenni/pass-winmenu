@@ -10,15 +10,18 @@ namespace PassWinmenu.Actions
 	{
 		private readonly DialogCreator dialogCreator;
 		private readonly DecryptPasswordAction decryptPasswordAction;
+		private readonly GenerateTotpAction generateTotpAction;
 		private readonly Dictionary<HotkeyAction, IAction> actions;
 
 		public ActionDispatcher(
 			DialogCreator dialogCreator,
 			DecryptPasswordAction decryptPasswordAction,
+			GenerateTotpAction generateTotpAction,
 			Dictionary<HotkeyAction, IAction> actions)
 		{
 			this.dialogCreator = dialogCreator;
 			this.decryptPasswordAction = decryptPasswordAction;
+			this.generateTotpAction = generateTotpAction;
 			this.actions = actions;
 		}
 
@@ -36,7 +39,7 @@ namespace PassWinmenu.Actions
 		/// </summary>
 		public void GenerateTotpCode(bool copyToClipboard, bool typeTotpCode)
 		{
-			dialogCreator.GenerateTotpCode(copyToClipboard, typeTotpCode);
+			generateTotpAction.GenerateTotpCode(copyToClipboard, typeTotpCode);
 		}
 
 		public void DecryptMetadata(bool copyToClipboard, bool type)

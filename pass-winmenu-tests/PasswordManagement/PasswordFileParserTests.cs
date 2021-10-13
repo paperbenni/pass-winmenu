@@ -124,67 +124,73 @@ namespace PassWinmenuTests.PasswordManagement
 			                     "Key: value\r";
 
 			var parsedCrlf = p.Parse(dummyFile, crlf, false);
-			Assert.True(parsedCrlf.Keys[0].Key == "Username");
-			Assert.True(parsedCrlf.Keys[0].Value == "user");
-			Assert.True(parsedCrlf.Keys[1].Key == "Key");
-			Assert.True(parsedCrlf.Keys[1].Value == "value");
+			parsedCrlf.Keys[0].Key.ShouldBe("Username");
+			parsedCrlf.Keys[0].Value.ShouldBe("user");
+			parsedCrlf.Keys[1].Key.ShouldBe("Key");
+			parsedCrlf.Keys[1].Value.ShouldBe("value");
 
 			var parsedCr = p.Parse(dummyFile, cr, false);
-			Assert.True(parsedCr.Keys[0].Key == "Username");
-			Assert.True(parsedCr.Keys[0].Value == "user");
-			Assert.True(parsedCr.Keys[1].Key == "Key");
-			Assert.True(parsedCr.Keys[1].Value == "value");
+			parsedCr.Keys[0].Key.ShouldBe("Username");
+			parsedCr.Keys[0].Value.ShouldBe("user");
+			parsedCr.Keys[1].Key.ShouldBe("Key");
+			parsedCr.Keys[1].Value.ShouldBe("value");
 
 			var parsedLf = p.Parse(dummyFile, lf, false);
-			Assert.True(parsedLf.Keys[0].Key == "Username");
-			Assert.True(parsedLf.Keys[0].Value == "user");
-			Assert.True(parsedLf.Keys[1].Key == "Key");
-			Assert.True(parsedLf.Keys[1].Value == "value");
+			parsedLf.Keys[0].Key.ShouldBe("Username");
+			parsedLf.Keys[0].Value.ShouldBe("user");
+			parsedLf.Keys[1].Key.ShouldBe("Key");
+			parsedLf.Keys[1].Value.ShouldBe("value");
 
 			var parsedMixed = p.Parse(dummyFile, mixed, false);
-			Assert.True(parsedMixed.Keys[0].Key == "Username");
-			Assert.True(parsedMixed.Keys[0].Value == "user");
-			Assert.True(parsedMixed.Keys[1].Key == "Key");
-			Assert.True(parsedMixed.Keys[1].Value == "value");
+			parsedMixed.Keys[0].Key.ShouldBe("Username");
+			parsedMixed.Keys[0].Value.ShouldBe("user");
+			parsedMixed.Keys[1].Key.ShouldBe("Key");
+			parsedMixed.Keys[1].Value.ShouldBe("value");
 		}
 
 		[Fact, TestCategory(Category)]
 		public void Test_Metadata_KeyFormat()
 		{
-			var duplicate = "password\r\n" +
-			                "Username: user\r\n" +
-			                "With-Dash: value\r\n" +
-			                "_WithUnderline: value2\r\n";
+			var content = "password\r\n" +
+				"Username: user\r\n" +
+				"With-Dash: value\r\n" +
+				"Without-Space:value2\r\n" +
+				"Multiple-Spaces:  value3\r\n" +
+				"_WithUnderline: value4\r\n";
 
-			var parsed = p.Parse(dummyFile, duplicate, false);
+			var parsed = p.Parse(dummyFile, content, false);
 
-			Assert.True(parsed.Keys[0].Key == "Username");
-			Assert.True(parsed.Keys[0].Value == "user");
-			Assert.True(parsed.Keys[1].Key == "With-Dash");
-			Assert.True(parsed.Keys[1].Value == "value");
-			Assert.True(parsed.Keys[2].Key == "_WithUnderline");
-			Assert.True(parsed.Keys[2].Value == "value2");
+			parsed.Keys[0].Key.ShouldBe("Username");
+			parsed.Keys[0].Value.ShouldBe("user");
+			parsed.Keys[1].Key.ShouldBe("With-Dash");
+			parsed.Keys[1].Value.ShouldBe("value");
+			parsed.Keys[2].Key.ShouldBe("Without-Space");
+			parsed.Keys[2].Value.ShouldBe("value2");
+			parsed.Keys[3].Key.ShouldBe("Multiple-Spaces");
+			parsed.Keys[3].Value.ShouldBe(" value3");
+			parsed.Keys[4].Key.ShouldBe("_WithUnderline");
+			parsed.Keys[4].Value.ShouldBe("value4");
 		}
 
 		[Fact, TestCategory(Category)]
 		public void Test_Metadata_Multiple_Keys()
 		{
-			var duplicate = "password\r\n" +
-			                "Username: user\r\n" +
-			                "Duplicate: value1\r\n" +
-			                "Duplicate: value2\r\n" +
-			                "Duplicate: value3\r\n";
+			var content = "password\r\n" +
+				"Username: user\r\n" +
+				"Duplicate: value1\r\n" +
+				"Duplicate: value2\r\n" +
+				"Duplicate: value3\r\n";
 
-			var parsed = p.Parse(dummyFile, duplicate, false);
+			var parsed = p.Parse(dummyFile, content, false);
 
-			Assert.True(parsed.Keys[0].Key == "Username");
-			Assert.True(parsed.Keys[0].Value == "user");
-			Assert.True(parsed.Keys[1].Key == "Duplicate");
-			Assert.True(parsed.Keys[1].Value == "value1");
-			Assert.True(parsed.Keys[2].Key == "Duplicate");
-			Assert.True(parsed.Keys[2].Value == "value2");
-			Assert.True(parsed.Keys[3].Key == "Duplicate");
-			Assert.True(parsed.Keys[3].Value == "value3");
+			parsed.Keys[0].Key.ShouldBe("Username");
+			parsed.Keys[0].Value.ShouldBe("user");
+			parsed.Keys[1].Key.ShouldBe("Duplicate");
+			parsed.Keys[1].Value.ShouldBe("value1");
+			parsed.Keys[2].Key.ShouldBe("Duplicate");
+			parsed.Keys[2].Value.ShouldBe("value2");
+			parsed.Keys[3].Key.ShouldBe("Duplicate");
+			parsed.Keys[3].Value.ShouldBe("value3");
 		}
 	}
 }

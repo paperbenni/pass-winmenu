@@ -89,6 +89,7 @@
     <Compile Include="src\Actions\AddPasswordAction.cs" />
     <Compile Include="src\Actions\DecryptPasswordAction.cs" />
     <Compile Include="src\Actions\EditPasswordAction.cs" />
+    <Compile Include="src\Actions\GenerateTotpAction.cs" />
     <Compile Include="src\Actions\IAction.cs" />
     <Compile Include="src\Actions\IParameterisedAction.cs" />
     <Compile Include="src\Actions\ReencryptPasswordStoreAction.cs" />
