@@ -53,7 +53,7 @@ namespace PassWinmenu.Actions
 				return;
 			}
 
-			var totp = TotpGenerator.GenerateTotpCode(passwordFile, DateTime.Now);
+			var totp = TotpGenerator.GenerateTotpCode(passwordFile, DateTime.UtcNow);
 			totp.Match(
 				code =>
 				{
