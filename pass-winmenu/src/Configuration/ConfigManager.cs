@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Windows;
-using YamlDotNet.Serialization;
-using YamlDotNet.Serialization.NamingConventions;
 
 #nullable enable
 namespace PassWinmenu.Configuration
@@ -34,12 +32,12 @@ namespace PassWinmenu.Configuration
 			watcher.Changed += (sender, args) =>
 			{
 				// Wait a moment to allow the writing process to close the file.
+				// This doesn't have to be exact, we can just cancel the reload if the file is still in use.
 				Thread.Sleep(500);
 				Log.Send($"Configuration file changed (change type: {args.ChangeType}), attempting reload.");
 
-				// This needs to be done on the main thread reloading the configuration file
-				// involves creating UI resources (Brush/Thickness) that need to be created
-				// on the same thread as the thread that will apply those resources to the interface.
+				// Reloading the configuration file involves creating UI resources
+				// (Brush/Thickness), which needs to be done on the main thread.
 				Application.Current.Dispatcher.Invoke(() =>
 				{
 					Reload(fileName);
@@ -65,11 +63,9 @@ namespace PassWinmenu.Configuration
 				return LoadResult.NewFileCreated;
 			}
 
-			var deserialiser = BuildDeserialiser();
-
 			using (var reader = File.OpenText(fileName))
 			{
-				var versionCheck = deserialiser.Deserialize<Dictionary<string, object>>(reader);
+				var versionCheck = ConfigurationDeserialiser.Deserialise<Dictionary<string, object>>(reader);
 				if (versionCheck == null || !versionCheck.ContainsKey("config-version"))
 				{
 					return LoadResult.NeedsUpgrade;
@@ -79,30 +75,19 @@ namespace PassWinmenu.Configuration
 
 			using (var reader = File.OpenText(fileName))
 			{
-				Config = deserialiser.Deserialize<Config>(reader);
+				Config = ConfigurationDeserialiser.Deserialise<Config>(reader);
 			}
 
 			return LoadResult.Success;
-		}
-
-		private static IDeserializer BuildDeserialiser()
-		{
-			var builder = new DeserializerBuilder()
-				.WithNamingConvention(HyphenatedNamingConvention.Instance)
-				.WithTypeConverter(new WidthConverter())
-				.WithTypeConverter(new BrushConverter());
-			return builder.Build();
 		}
 
 		public static void Reload(string fileName)
 		{
 			try
 			{
-				var deserialiser = BuildDeserialiser();
 				using (var reader = File.OpenText(fileName))
 				{
-					var newConfig = deserialiser.Deserialize<Config>(reader);
-					Config = newConfig;
+					Config = ConfigurationDeserialiser.Deserialise<Config>(reader);
 				}
 				Log.Send("Configuration file reloaded successfully.");
 

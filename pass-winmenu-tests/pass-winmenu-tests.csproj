@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Configuration\ConfigManagerTests.cs" />
+    <Compile Include="Configuration\ConfigurationDeserialiserTests.cs" />
     <Compile Include="Configuration\RuntimeConfigurationTests.cs" />
     <Compile Include="Configuration\WidthConverterTests.cs" />
     <Compile Include="EmbeddedResources\EmbeddedResourcesTests.cs" />
@@ -150,7 +151,7 @@
       <Version>0.3.18</Version>
     </PackageReference>
     <PackageReference Include="YamlDotNet">
-      <Version>8.1.0</Version>
+      <Version>11.2.1</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />

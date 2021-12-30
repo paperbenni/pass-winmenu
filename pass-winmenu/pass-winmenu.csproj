@@ -95,6 +95,7 @@
     <Compile Include="src\Actions\ReencryptPasswordStoreAction.cs" />
     <Compile Include="src\Configuration\Classes\AdditionalOptionsConfig.cs" />
     <Compile Include="src\Configuration\Classes\TextStyleConfig.cs" />
+    <Compile Include="src\Configuration\ConfigurationDeserialiser.cs" />
     <Compile Include="src\Configuration\RuntimeConfiguration.cs" />
     <Compile Include="src\Configuration\RuntimeConfigurationError.cs" />
     <Compile Include="src\Actions\ActionDispatcher.cs" />
@@ -370,7 +371,7 @@
       <Version>10.0.1</Version>
     </PackageReference>
     <PackageReference Include="YamlDotNet">
-      <Version>8.1.0</Version>
+      <Version>11.2.1</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -1,4 +1,7 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using YamlDotNet.Serialization;
 
 #nullable enable
 namespace PassWinmenu.Configuration
@@ -12,7 +15,8 @@ namespace PassWinmenu.Configuration
 			"configuration files to be deserialised successfully.", true)]
 		public object Output { get; set; } = new object();
 
-		public HotkeyConfig[] Hotkeys { get; set; } =
+		[YamlMember(Alias = "hotkeys")]
+		public HotkeyConfig[] UnfilteredHotkeys { get; set; } =
 		{
 			new HotkeyConfig
 			{
@@ -35,6 +39,9 @@ namespace PassWinmenu.Configuration
 				}
 			}
 		};
+
+		[YamlIgnore]
+		public IEnumerable<HotkeyConfig> Hotkeys => UnfilteredHotkeys.Where(h => h != null);
 
 		public NotificationConfig Notifications { get; set; } = new NotificationConfig();
 
