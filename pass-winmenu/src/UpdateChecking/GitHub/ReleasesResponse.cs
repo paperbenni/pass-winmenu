@@ -1,12 +1,12 @@
 using System;
 using McSherry.SemanticVersioning;
-using Newtonsoft.Json;
 
+#nullable enable
 namespace PassWinmenu.UpdateChecking.GitHub
 {
 	public class Release
 	{
-		public string HtmlUrl { get; set; }
+		public Uri HtmlUrl { get; set; }
 		public string TagName { get; set; }
 		public bool Prerelease { get; set; }
 		public DateTime PublishedAt { get; set; }

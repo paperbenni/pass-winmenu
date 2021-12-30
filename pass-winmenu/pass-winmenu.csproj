@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="16.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -152,6 +152,7 @@
     <Compile Include="src\ExternalPrograms\SyncServiceFactory.cs" />
     <Compile Include="src\PasswordManagement\IRecipientFinder.cs" />
     <Compile Include="src\UpdateChecking\Dummy\DummyUpdateSource.cs" />
+    <Compile Include="src\UpdateChecking\GitHub\GithubReleaseDeserialiser.cs" />
     <Compile Include="src\UpdateChecking\UpdateCheckerFactory.cs" />
     <Compile Include="src\UpdateChecking\UpdateSourceExtensions.cs" />
     <Compile Include="src\Utilities\EnvironmentVariables.cs" />

@@ -6,29 +6,15 @@ using System.Net;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 
 #nullable enable
 namespace PassWinmenu.UpdateChecking.GitHub
 {
 	internal class GitHubUpdateSource : IUpdateSource
 	{
-		private const string UpdateUrl = "https://api.github.com/repos/geluk/pass-winmenu/releases";
-		private readonly JsonSerializerSettings settings;
+		private static readonly Uri UpdateUrl = new Uri("https://api.github.com/repos/geluk/pass-winmenu/releases");
 
 		public bool RequiresConnectivity => true;
-
-		public GitHubUpdateSource()
-		{
-			settings = new JsonSerializerSettings
-			{
-				ContractResolver = new DefaultContractResolver
-				{
-					NamingStrategy = new SnakeCaseNamingStrategy()
-				}
-			};
-		}
 
 		private ProgramVersion ToProgramVersion(Release release)
 		{
@@ -38,9 +24,9 @@ namespace PassWinmenu.UpdateChecking.GitHub
 			return new ProgramVersion
 			{
 				VersionNumber = release.Version,
-				DownloadLink = new Uri(release.HtmlUrl),
+				DownloadLink = release.HtmlUrl,
 				ReleaseDate = release.PublishedAt,
-				ReleaseNotes = new Uri(release.HtmlUrl),
+				ReleaseNotes = release.HtmlUrl,
 				IsPrerelease = release.Prerelease,
 				Important = important,
 			};
@@ -65,7 +51,7 @@ namespace PassWinmenu.UpdateChecking.GitHub
 			}
 			using var reader = new StreamReader(stream);
 			var responseText = reader.ReadToEnd();
-			return JsonConvert.DeserializeObject<Release[]>(responseText, settings) ?? Array.Empty<Release>();
+			return GithubReleaseDeserialiser.DeserialiseReleases(responseText);
 		}
 
 		private bool ValidateCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)

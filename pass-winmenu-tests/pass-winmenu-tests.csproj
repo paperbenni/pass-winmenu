@@ -59,6 +59,7 @@
     <Compile Include="PasswordManagement\GpgRecipientFinderTests.cs" />
     <Compile Include="PasswordManagement\PasswordFileParserTests.cs" />
     <Compile Include="PasswordManagement\TotpGeneratorTests.cs" />
+    <Compile Include="UpdateChecking\GitHub\GithubReleaseDeserialiserTests.cs" />
     <Compile Include="Utilities\ExtensionMethods\DirectoryInfoExtensionsTests.cs" />
     <Compile Include="Utilities\ExtensionMethods\OptionExtensions.cs" />
     <Compile Include="Utilities\ExtensionMethods\StringExtensionsTests.cs" />
