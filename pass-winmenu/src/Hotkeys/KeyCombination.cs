@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Linq;
 using System.Windows.Input;
 
+# nullable enable
 namespace PassWinmenu.Hotkeys
 {
 	internal struct KeyCombination

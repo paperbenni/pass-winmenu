@@ -6,7 +6,7 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 {
 	class GpgAgentConfigReader : IGpgAgentConfigReader
 	{
-		private const string gpgAgentConfigFileName = "gpg-agent.conf";
+		private const string GpgAgentConfigFileName = "gpg-agent.conf";
 
 		private readonly IFileSystem fileSystem;
 		private readonly IGpgHomedirResolver homedirResolver;
@@ -20,7 +20,7 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 		public string[] ReadConfigLines()
 		{
 			var homeDir = GetHomeDir();
-			var agentConf = fileSystem.Path.Combine(homeDir, gpgAgentConfigFileName);
+			var agentConf = fileSystem.Path.Combine(homeDir, GpgAgentConfigFileName);
 
 			if (fileSystem.File.Exists(agentConf))
 			{
@@ -37,7 +37,7 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 		{
 			var homeDir = GetHomeDir();
 
-			var agentConf = fileSystem.Path.Combine(homeDir, gpgAgentConfigFileName);
+			var agentConf = fileSystem.Path.Combine(homeDir, GpgAgentConfigFileName);
 
 			fileSystem.File.WriteAllLines(agentConf, lines);
 		}

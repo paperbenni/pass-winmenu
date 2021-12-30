@@ -258,7 +258,7 @@ namespace PassWinmenu.Hotkeys
 
 
 			// Generic handler for events from the event source.
-			private void _onKey(Direction dir, object sender, KeyEventArgs eventArgs)
+			private void _onKey(Direction dir, KeyEventArgs eventArgs)
 			{
 				foreach (var cm in _combos)
 				{
@@ -268,12 +268,12 @@ namespace PassWinmenu.Hotkeys
 			// Relays [KeyDown] events from the event source
 			private void _onKeyDown(object sender, KeyEventArgs eventArgs)
 			{
-				_onKey(Direction.Down, sender, eventArgs);
+				_onKey(Direction.Down, eventArgs);
 			}
 			// Relays [KeyUp] events from the event source
 			private void _onKeyUp(object sender, KeyEventArgs eventArgs)
 			{
-				_onKey(Direction.Up, sender, eventArgs);
+				_onKey(Direction.Up, eventArgs);
 			}
 
 
