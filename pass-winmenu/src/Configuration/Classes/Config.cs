@@ -41,7 +41,9 @@ namespace PassWinmenu.Configuration
 		};
 
 		[YamlIgnore]
-		public IEnumerable<HotkeyConfig> Hotkeys => UnfilteredHotkeys?.Where(h => h != null) ?? Enumerable.Empty<HotkeyConfig>();
+		public IEnumerable<HotkeyConfig> Hotkeys => UnfilteredHotkeys
+			?.Where(h => h != null && h.Hotkey != null && h.Options != null)
+			?? Enumerable.Empty<HotkeyConfig>();
 
 		public NotificationConfig Notifications { get; set; } = new NotificationConfig();
 
