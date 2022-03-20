@@ -11,8 +11,6 @@ namespace PassWinmenuTests.Hotkeys
 	/// </summary>
 		public class HotkeyUnitTests
 	{
-		private const string Category = "Hotkeys: general";
-
 		private const ModifierKeys Modifiers = ModifierKeys.Control;
 		private const Key          KeyCode   = Key.A;
 		private const bool         Repeats   = false;
@@ -29,7 +27,7 @@ namespace PassWinmenuTests.Hotkeys
 			                .Register(Modifiers, KeyCode, Repeats);
 		}
 
-		[Fact, TestCategory(Category)]
+		[Fact]
 		public void DefaultRegistrar_FailsOnNull()
 		{
 			Assert.Throws<ArgumentNullException>(
@@ -37,7 +35,7 @@ namespace PassWinmenuTests.Hotkeys
 				);
 		}
 
-		[Fact, TestCategory(Category)]
+		[Fact]
 		public void Register_ReturnValue_ModifiersKeyRepeats()
 		{
 			var b = Hotkey.Register(Modifiers, KeyCode, Repeats);
@@ -46,7 +44,7 @@ namespace PassWinmenuTests.Hotkeys
 			Assert.Equal(KeyCode,   b.Key);
 			Assert.Equal(Repeats,   b.Repeats);
 		}
-		[Fact, TestCategory(Category)]
+		[Fact]
 		public void Register_ReturnValue_KeyRepeats()
 		{
 			var b = Hotkey.Register(KeyCode, Repeats);
@@ -56,7 +54,7 @@ namespace PassWinmenuTests.Hotkeys
 			Assert.Equal(Repeats, b.Repeats);
 		}
 
-		[Fact, TestCategory(Category)]
+		[Fact]
 		public void Register_DefaultRegistration()
 		{
 			Hotkey.DefaultRegistrar = _registrar;
@@ -67,7 +65,7 @@ namespace PassWinmenuTests.Hotkeys
 
 			Assert.Equal(hkCount + 1, _registrar.Hotkeys.Count);
 		}
-		[Fact, TestCategory(Category)]
+		[Fact]
 		public void Register_ExplicitRegistration()
 		{
 			Hotkey.DefaultRegistrar = HotkeyRegistrars.Windows;
@@ -79,7 +77,7 @@ namespace PassWinmenuTests.Hotkeys
 			Assert.Equal(hkCount + 1, _registrar.Hotkeys.Count);
 		}
 
-		[Fact, TestCategory(Category)]
+		[Fact]
 		public void Triggered_WhenEnabled()
 		{
 			_hotkey.Enabled = true;
@@ -93,7 +91,7 @@ namespace PassWinmenuTests.Hotkeys
 
 			Assert.True(fired);
 		}
-		[Fact, TestCategory(Category)]
+		[Fact]
 		public void Triggered_WhenNotEnabled()
 		{
 			_hotkey.Enabled = false;
@@ -108,7 +106,7 @@ namespace PassWinmenuTests.Hotkeys
 			Assert.False(fired);
 		}
 
-		[Fact, TestCategory(Category)]
+		[Fact]
 		public void Dispose_UnregistersWithRegistrar()
 		{
 			bool callsDispose = false;
@@ -125,7 +123,7 @@ namespace PassWinmenuTests.Hotkeys
 
 			Assert.True(callsDispose);
 		}
-		[Fact, TestCategory(Category)]
+		[Fact]
 		public void Dispose_CanMakeMultipleCalls()
 		{
 			_hotkey.Dispose();
@@ -133,7 +131,7 @@ namespace PassWinmenuTests.Hotkeys
 			_hotkey.Dispose();
 		}
 
-		[Fact, TestCategory(Category)]
+		[Fact]
 		public void _Properties_Initialised()
 		{
 			Assert.True(_hotkey.Enabled);

@@ -11,9 +11,7 @@ namespace PassWinmenuTests.ExternalPrograms.Gpg
 {
 	public class GpgInstallationFinderTests
 	{
-		private const string Category = "External Programs: Gpg";
-
-		[Fact, TestCategory(Category)]
+		[Fact]
 		public void FindGpgInstallation_AbsolutePath_FindsInstallation()
 		{
 			var resolverMock = new Mock<IExecutablePathResolver>();
@@ -31,7 +29,7 @@ namespace PassWinmenuTests.ExternalPrograms.Gpg
 			);
 		}
 
-		[Fact, TestCategory(Category)]
+		[Fact]
 		public void FindGpgInstallation_EmptyPath_ReturnsDefaultLocation()
 		{
 			var resolverMock = new Mock<IExecutablePathResolver>();
@@ -48,7 +46,7 @@ namespace PassWinmenuTests.ExternalPrograms.Gpg
 			);
 		}
 
-		[Fact, TestCategory(Category)]
+		[Fact]
 		public void FindGpgInstallation_FileNotFound_ThrowsGpgError()
 		{
 			var resolverMock = new Mock<IExecutablePathResolver>();
@@ -59,7 +57,7 @@ namespace PassWinmenuTests.ExternalPrograms.Gpg
 			Should.Throw<GpgError>(() => finder.FindGpgInstallation("C:\\Gpg\\gpg.exe"));
 		}
 
-		[Fact, TestCategory(Category)]
+		[Fact]
 		public void FindGpgInstallation_NullExePath_ReturnsDefaultLocation()
 		{
 			var resolverMock = new Mock<IExecutablePathResolver>();

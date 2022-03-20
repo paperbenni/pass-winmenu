@@ -9,9 +9,7 @@ namespace PassWinmenuTests.Utilities.ExtensionMethods
 {
 	public class KeyEventArgsExtensionsTests
 	{
-		private const string Category = "Utilities: KeyEventArgs extensions";
-
-		[StaFact, TestCategory(Category)]
+		[StaFact]
 		public void _KeyEventArgs_HasMethod_SetRepeat()
 		{
 			// The [KeyEventArgs] class has a private method used to set its
@@ -43,7 +41,7 @@ namespace PassWinmenuTests.Utilities.ExtensionMethods
 			Assert.True(keArgs.IsRepeat);
 		}
 
-		[StaFact, TestCategory(Category)]
+		[StaFact]
 		public void SetRepeat_ThrowsOnNull()
 		{
 			Assert.Throws<ArgumentNullException>(
@@ -55,7 +53,7 @@ namespace PassWinmenuTests.Utilities.ExtensionMethods
 			);
 		}
 
-		[StaFact, TestCategory(Category)]
+		[StaFact]
 		public void SetRepeat_SetsProperty()
 		{
 			var keArgs = new KeyEventArgs(
@@ -76,7 +74,7 @@ namespace PassWinmenuTests.Utilities.ExtensionMethods
 			Assert.False(keArgs.IsRepeat);
 		}
 
-		[StaFact, TestCategory(Category)]
+		[StaFact]
 		public void SetRepeat_ReturnsArg()
 		{
 			var keArgs = new KeyEventArgs(

@@ -8,9 +8,7 @@ namespace PassWinmenuTests.Configuration
 {
 	public class ConfigManagerTests
 	{
-		private const string Category = "Integration: Configuration File";
-
-		[Fact, TestCategory(Category)]
+		[Fact]
 		public void Load_EmptyFile_NeedsUpgrade()
 		{
 			var tempFile = Path.GetTempFileName();
@@ -20,7 +18,7 @@ namespace PassWinmenuTests.Configuration
 			result.ShouldBe(LoadResult.NeedsUpgrade);
 		}
 
-		[Fact, TestCategory((Category))]
+		[Fact]
 		public void Load_NonexistentFile_Created()
 		{
 			var tempFile = Path.GetTempFileName();

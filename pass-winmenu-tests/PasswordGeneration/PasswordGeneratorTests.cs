@@ -8,9 +8,7 @@ namespace PassWinmenuTests.PasswordGeneration
 {
 	public class PasswordGeneratorTests
 	{
-		private const string Category = "Core: Password Generation";
-
-		[Fact, TestCategory(Category)]
+		[Fact]
 		public void GeneratePassword_MatchesRequiredLength()
 		{
 			var options = new PasswordGenerationConfig
@@ -26,7 +24,7 @@ namespace PassWinmenuTests.PasswordGeneration
 
 		}
 
-		[Fact, TestCategory(Category)]
+		[Fact]
 		public void GeneratePassword_NoCharacterGroups_Null()
 		{
 			var options = new PasswordGenerationConfig
@@ -42,7 +40,7 @@ namespace PassWinmenuTests.PasswordGeneration
 			}
 		}
 
-		[Theory, TestCategory(Category)]
+		[Theory]
 		[InlineData("0123456789")]
 		[InlineData("abcABC")]
 		[InlineData("1")]

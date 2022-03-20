@@ -7,9 +7,7 @@ namespace PassWinmenuTests.Configuration
 {
 		public class ConfigFileTests
 	{
-		private const string Category = "External: Configuration File";
-
-		[Fact, TestCategory(Category)]
+		[Fact]
 		public void ConfigFile_IsValidYaml()
 		{
 			var des = new DeserializerBuilder()

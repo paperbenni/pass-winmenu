@@ -5,9 +5,7 @@ namespace PassWinmenuTests.WinApi
 {
 	public class ClipboardHelperTests
 	{
-		private const string Category = "Windows API: Clipboard Helper";
-
-		[Fact, TestCategory(Category)]
+		[Fact]
 		public void ClipboardHelper_PlacesText()
 		{
 			// TODO: Find a way to test this.
@@ -23,7 +21,7 @@ namespace PassWinmenuTests.WinApi
 			//Assert.Equal(clipboard.GetText(), content);
 		}
 
-		[Fact, TestCategory(Category)]
+		[Fact]
 		public void ClipboardHelper_RemovesText()
 		{
 			// TODO: Find a way to test this.

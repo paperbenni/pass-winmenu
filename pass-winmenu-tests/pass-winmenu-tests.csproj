@@ -89,7 +89,6 @@
     <Compile Include="PasswordGeneration\PasswordGeneratorTests.cs" />
     <Compile Include="PasswordManagement\PasswordManagerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Utilities\TestCategoryAttribute.cs" />
     <Compile Include="Utilities\HelpersTests.cs" />
     <Compile Include="WinApi\ClipboardHelperTests.cs" />
     <Compile Include="UpdateChecking\UpdateCheckerUnitTests.cs" />

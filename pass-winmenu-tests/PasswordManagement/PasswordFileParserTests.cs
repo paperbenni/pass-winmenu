@@ -9,7 +9,6 @@ namespace PassWinmenuTests.PasswordManagement
 {
 	public class PasswordFileParserTests
 	{
-		private const string Category = "Core: Password File Parsing";
 		private readonly PasswordFile dummyFile;
 		private PasswordFileParser p = new PasswordFileParser(new UsernameDetectionConfig());
 
@@ -52,7 +51,7 @@ namespace PassWinmenuTests.PasswordManagement
 			}
 		}
 
-		[Fact, TestCategory(Category)]
+		[Fact]
 		public void Test_EmptyFile()
 		{
 			var text = "";
@@ -62,7 +61,7 @@ namespace PassWinmenuTests.PasswordManagement
 			Assert.Equal(parsed.Metadata, string.Empty);
 		}
 
-		[Fact, TestCategory(Category)]
+		[Fact]
 		public void Test_LineEndings_Metadata()
 		{
 			var crlf = "password\r\nmeta-data";
@@ -82,7 +81,7 @@ namespace PassWinmenuTests.PasswordManagement
 			Assert.Equal("meta-data", parsedLf.Metadata);
 		}
 
-		[Fact, TestCategory(Category)]
+		[Fact]
 		public void Test_LineEndings_PasswordOnly()
 		{
 			var crlf = "password\r\n";
@@ -107,7 +106,7 @@ namespace PassWinmenuTests.PasswordManagement
 			Assert.Equal(parsedNone.Metadata, string.Empty);
 		}
 
-		[Fact, TestCategory(Category)]
+		[Fact]
 		public void Test_Metadata_LineEndings()
 		{
 			const string crlf = "password\r\n" +
@@ -148,7 +147,7 @@ namespace PassWinmenuTests.PasswordManagement
 			parsedMixed.Keys[1].Value.ShouldBe("value");
 		}
 
-		[Fact, TestCategory(Category)]
+		[Fact]
 		public void Test_Metadata_KeyFormat()
 		{
 			var content = "password\r\n" +
@@ -172,7 +171,7 @@ namespace PassWinmenuTests.PasswordManagement
 			parsed.Keys[4].Value.ShouldBe("value4");
 		}
 
-		[Fact, TestCategory(Category)]
+		[Fact]
 		public void Test_Metadata_Multiple_Keys()
 		{
 			var content = "password\r\n" +

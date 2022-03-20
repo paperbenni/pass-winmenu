@@ -11,8 +11,6 @@ namespace PassWinmenuTests.WinApi
 {
 	public class ExecutablePathResolverTests
 	{
-		private const string Category = "Windows API: Executable Path Resolver";
-
 		private readonly IFileSystem fileSystem;
 
 		public ExecutablePathResolverTests()
@@ -26,7 +24,7 @@ namespace PassWinmenuTests.WinApi
 			fileSystem = mockFs;
 		}
 
-		[Fact, TestCategory(Category)]
+		[Fact]
 		public void Resolve_WithDirectorySeparatorChar_UsesGivenLocation()
 		{
 			var environment = new Mock<IEnvironment>();
@@ -37,7 +35,7 @@ namespace PassWinmenuTests.WinApi
 			Assert.Equal("C:\\file.exe", location);
 		}
 
-		[Fact, TestCategory(Category)]
+		[Fact]
 		public void Resolve_WithRelativePath_ReturnsAbsolutePath()
 		{
 			var environment = new Mock<IEnvironment>();
@@ -48,7 +46,7 @@ namespace PassWinmenuTests.WinApi
 			Assert.Equal("C:\\file.exe", location);
 		}
 
-		[Fact, TestCategory(Category)]
+		[Fact]
 		public void Resolve_NonexistentFile_ThrowsExecutableNotFoundException()
 		{
 			var environment = new Mock<IEnvironment>();
@@ -57,7 +55,7 @@ namespace PassWinmenuTests.WinApi
 			Assert.Throws<ExecutableNotFoundException>(() => resolver.Resolve("C:\\non-existent-file.exe"));
 		}
 
-		[Fact, TestCategory(Category)]
+		[Fact]
 		public void Resolve_WithoutDirectorySeparators_GetsLocationFromPath()
 		{
 			var environment = new Mock<IEnvironment>();
@@ -70,7 +68,7 @@ namespace PassWinmenuTests.WinApi
 			Assert.Equal("C:\\bin\\file.exe", location);
 		}
 
-		[Fact, TestCategory(Category)]
+		[Fact]
 		public void Resolve_WithoutDirectorySeparatorsAndExtension_GetsLocationFromPath()
 		{
 			var environment = new Mock<IEnvironment>();
@@ -83,7 +81,7 @@ namespace PassWinmenuTests.WinApi
 			Assert.Equal("C:\\bin\\file.exe", location);
 		}
 
-		[Fact, TestCategory(Category)]
+		[Fact]
 		public void Resolve_NotInPath_ThrowsExecutableNotFoundException()
 		{
 			var environment = new Mock<IEnvironment>();
@@ -94,7 +92,7 @@ namespace PassWinmenuTests.WinApi
 			environment.Verify(e => e.GetEnvironmentVariable("PATH"), Times.Once);
 		}
 
-		[Fact, TestCategory(Category)]
+		[Fact]
 		public void Resolve_WithNullPath_ThrowsExecutableNotFoundException()
 		{
 			var environment = new Mock<IEnvironment>();
@@ -105,7 +103,7 @@ namespace PassWinmenuTests.WinApi
 			environment.Verify(e => e.GetEnvironmentVariable("PATH"), Times.Once);
 		}
 
-		[Fact, TestCategory(Category)]
+		[Fact]
 		public void Resolve_WithEmptyPath_ThrowsExecutableNotFoundException()
 		{
 			var environment = new Mock<IEnvironment>();
@@ -115,7 +113,7 @@ namespace PassWinmenuTests.WinApi
 			Assert.Throws<ExecutableNotFoundException>(() => resolver.Resolve("file.exe"));
 		}
 
-		[Fact, TestCategory(Category)]
+		[Fact]
 		public void Resolve_WithInvalidPathEntries_IgnoresThem()
 		{
 			var environment = new Mock<IEnvironment>();
@@ -128,7 +126,7 @@ namespace PassWinmenuTests.WinApi
 			Assert.Equal("C:\\bin\\file.exe", location);
 		}
 
-		[Fact, TestCategory(Category)]
+		[Fact]
 		public void Resolve_GetFullPathFails_IgnoresEntry()
 		{
 			var environment = new Mock<IEnvironment>();

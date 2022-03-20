@@ -11,9 +11,7 @@ namespace PassWinmenuTests.UpdateChecking
 {
 		public class UpdateCheckerUnitTests
 	{
-		private const string Category = "Updates: update sources";
-
-		[Fact, TestCategory(Category)]
+		[Fact]
 		public void UpdateChecker_TriggersOnNewerVersion()
 		{
 			var raisesMajor = RaisesEvent(new SemanticVersion(1, 1, 1), new SemanticVersion(2, 0, 0));
@@ -24,14 +22,14 @@ namespace PassWinmenuTests.UpdateChecking
 			Assert.True(raisesPatch);
 		}
 
-		[Fact, TestCategory(Category)]
+		[Fact]
 		public void UpdateChecker_IgnoresEqualVersion()
 		{
 			var raisesEqual = RaisesEvent(new SemanticVersion(1, 0, 0), new SemanticVersion(1, 0, 0));
 			Assert.False(raisesEqual);
 		}
 
-		[Fact, TestCategory(Category)]
+		[Fact]
 		public void UpdateChecker_IgnoresOlderVersion()
 		{
 			var raisesMajor = RaisesEvent(new SemanticVersion(2, 2, 2), new SemanticVersion(1, 3, 3));
@@ -42,7 +40,7 @@ namespace PassWinmenuTests.UpdateChecking
 			Assert.False(raisesPatch);
 		}
 
-		[Fact, TestCategory(Category)]
+		[Fact]
 		public void UpdateChecker_RaisesAfterSpecifiedTime()
 		{
 			const int checkBeforeMs = 800;
@@ -82,7 +80,7 @@ namespace PassWinmenuTests.UpdateChecking
 		}
 
 
-		[Fact, TestCategory(Category)]
+		[Fact]
 		public void UpdateChecker_UpdatesPreReleases()
 		{
 			var current = SemanticVersion.Parse("2.0.0-pre2", ParseMode.Lenient);
@@ -159,7 +157,7 @@ namespace PassWinmenuTests.UpdateChecking
 			}
 		}
 
-		[Fact, TestCategory(Category)]
+		[Fact]
 		public void UpdateChecker_ProvidesCorrectReleaseType()
 		{
 			var sourceWithNewerPrerelease = new DummyUpdateSource
