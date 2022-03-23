@@ -62,7 +62,7 @@ namespace PassWinmenu.Actions
 				{
 					if (copyToClipboard)
 					{
-						ClipboardHelper.Place(code, TimeSpan.FromSeconds(config.ClipboardTimeout));
+						TemporaryClipboard.Place(code, TimeSpan.FromSeconds(config.ClipboardTimeout));
 						if (ConfigManager.Config.Notifications.Types.TotpCopied)
 						{
 							notificationService.Raise($"The totp code has been copied to your clipboard.\nIt will be cleared in {config.ClipboardTimeout:0.##} seconds.", Severity.Info);

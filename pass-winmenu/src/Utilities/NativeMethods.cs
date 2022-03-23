@@ -220,6 +220,16 @@ namespace PassWinmenu.Utilities
 			IntPtr hWnd, WindowMessage uMsg, UIntPtr wParam, IntPtr lParam
 		);
 
+		/// <summary>
+		/// Retrieves an <see cref="Exception"/> representing the last Win32
+		/// error.
+		/// </summary>
+		internal static Exception LastWin32Exception()
+		{
+			return Marshal.GetExceptionForHR(
+				Marshal.GetHRForLastWin32Error()
+			);
+		}
 	}
 
 	[StructLayout(LayoutKind.Sequential)]

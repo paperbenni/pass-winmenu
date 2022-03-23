@@ -62,7 +62,7 @@ namespace PassWinmenu.Actions
 
 			if (copyToClipboard)
 			{
-				ClipboardHelper.Place(passFile.Password, TimeSpan.FromSeconds(interfaceConfig.ClipboardTimeout));
+				TemporaryClipboard.Place(passFile.Password, TimeSpan.FromSeconds(interfaceConfig.ClipboardTimeout));
 				if (ConfigManager.Config.Notifications.Types.PasswordCopied)
 				{
 					notificationService.Raise($"The password has been copied to your clipboard.\nIt will be cleared in {interfaceConfig.ClipboardTimeout:0.##} seconds.", Severity.Info);

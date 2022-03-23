@@ -96,7 +96,7 @@ namespace PassWinmenu.Hotkeys
 
 			if (windowAtom == 0)
 			{
-				throw Helpers.LastWin32Exception();
+				throw NativeMethods.LastWin32Exception();
 			}
 
 			Handle = NativeMethods.CreateWindowEx(
@@ -116,7 +116,7 @@ namespace PassWinmenu.Hotkeys
 
 			if (Handle == IntPtr.Zero)
 			{
-				throw Helpers.LastWin32Exception();
+				throw NativeMethods.LastWin32Exception();
 			}
 		}
 		/// <summary>

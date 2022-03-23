@@ -122,7 +122,7 @@ namespace PassWinmenu.Hotkeys
 				{
 					throw new HotkeyException(
 						message: "An error occured in registering the hotkey.",
-						innerException: Helpers.LastWin32Exception()
+						innerException: NativeMethods.LastWin32Exception()
 						);
 				}
 			}
@@ -143,7 +143,7 @@ namespace PassWinmenu.Hotkeys
 
 					if (!unregistered)
 					{
-						throw Helpers.LastWin32Exception();
+						throw NativeMethods.LastWin32Exception();
 					}
 
 					hotkeys.Remove(hotkeyId);
@@ -162,7 +162,7 @@ namespace PassWinmenu.Hotkeys
 			// Attempt to unregister all of our hotkeys
 			if (!hotkeys.All(hk => NativeMethods.UnregisterHotKey(msgWindow.Handle, hk.Key)))
 			{
-				throw Helpers.LastWin32Exception();
+				throw NativeMethods.LastWin32Exception();
 			}
 
 			hotkeys.Clear();

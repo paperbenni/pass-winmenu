@@ -88,7 +88,6 @@
     <Compile Include="PasswordManagement\PasswordManagerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\HelpersTests.cs" />
-    <Compile Include="WinApi\ClipboardHelperTests.cs" />
     <Compile Include="UpdateChecking\UpdateCheckerUnitTests.cs" />
     <Compile Include="UpdateChecking\UpdateSourceUnitTests.cs" />
     <Compile Include="Utilities\DisposableTests.cs" />

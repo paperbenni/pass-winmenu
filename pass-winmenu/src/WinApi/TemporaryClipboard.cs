@@ -8,7 +8,7 @@ using PassWinmenu.Utilities;
 #nullable enable
 namespace PassWinmenu.WinApi
 {
-	public static class ClipboardHelper
+	public static class TemporaryClipboard
 	{
 		/// <summary>
 		/// Copies a string to the clipboard. If it still exists on the clipboard after the amount of time

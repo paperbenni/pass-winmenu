@@ -62,7 +62,7 @@ namespace PassWinmenu.Windows
 
 			if (copyToClipboard)
 			{
-				ClipboardHelper.Place(passFile.Metadata, TimeSpan.FromSeconds(ConfigManager.Config.Interface.ClipboardTimeout));
+				TemporaryClipboard.Place(passFile.Metadata, TimeSpan.FromSeconds(ConfigManager.Config.Interface.ClipboardTimeout));
 				if (ConfigManager.Config.Notifications.Types.PasswordCopied)
 				{
 					notificationService.Raise($"The key has been copied to your clipboard.\nIt will be cleared in {ConfigManager.Config.Interface.ClipboardTimeout:0.##} seconds.", Severity.Info);
@@ -141,7 +141,7 @@ namespace PassWinmenu.Windows
 
 			if (copyToClipboard)
 			{
-				ClipboardHelper.Place(chosenValue, TimeSpan.FromSeconds(ConfigManager.Config.Interface.ClipboardTimeout));
+				TemporaryClipboard.Place(chosenValue, TimeSpan.FromSeconds(ConfigManager.Config.Interface.ClipboardTimeout));
 				if (ConfigManager.Config.Notifications.Types.PasswordCopied)
 				{
 					notificationService.Raise($"The key has been copied to your clipboard.\nIt will be cleared in {ConfigManager.Config.Interface.ClipboardTimeout:0.##} seconds.", Severity.Info);

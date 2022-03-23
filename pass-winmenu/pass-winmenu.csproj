@@ -163,7 +163,7 @@
     <Compile Include="src\Utilities\ExtensionMethods\EnumerableExtensions.cs" />
     <Compile Include="src\Utilities\ExtensionMethods\FileSystemInfoExtensions.cs" />
     <Compile Include="src\Utilities\Option.cs" />
-    <Compile Include="src\WinApi\Clipboard.cs" />
+    <Compile Include="src\WinApi\TemporaryClipboard.cs" />
     <Compile Include="src\Configuration\Classes\GitConfig.cs" />
     <Compile Include="src\Configuration\Classes\GpgAgentConfig.cs" />
     <Compile Include="src\Configuration\Classes\GpgAgentConfigFile.cs" />

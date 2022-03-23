@@ -77,7 +77,7 @@ namespace PassWinmenu.Actions
 				return;
 			}
 			// Copy the newly generated password.
-			ClipboardHelper.Place(password, TimeSpan.FromSeconds(ConfigManager.Config.Interface.ClipboardTimeout));
+			TemporaryClipboard.Place(password, TimeSpan.FromSeconds(ConfigManager.Config.Interface.ClipboardTimeout));
 
 			if (ConfigManager.Config.Notifications.Types.PasswordGenerated)
 			{
