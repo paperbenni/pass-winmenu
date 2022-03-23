@@ -32,10 +32,5 @@ namespace PassWinmenuTests.Utilities
 		{
 			return new List<string>();
 		}
-
-		public string GetVersion()
-		{
-			return "FakeCryptoService";
-		}
 	}
 }
