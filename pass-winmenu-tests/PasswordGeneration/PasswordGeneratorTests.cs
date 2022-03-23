@@ -1,6 +1,5 @@
 using PassWinmenu.Configuration;
 using PassWinmenu.PasswordGeneration;
-using PassWinmenuTests.Utilities;
 using Shouldly;
 using Xunit;
 

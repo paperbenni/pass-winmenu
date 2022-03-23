@@ -5,6 +5,7 @@ using PassWinmenu.ExternalPrograms;
 using PassWinmenu.Utilities;
 using PassWinmenu.WinApi;
 
+#nullable enable
 namespace PassWinmenu.Actions
 {
 	class CommitChangesAction : IAction
