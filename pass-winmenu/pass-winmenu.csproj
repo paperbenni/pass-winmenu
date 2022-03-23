@@ -125,7 +125,7 @@
     <Compile Include="src\ExternalPrograms\Gpg\GpgAgentConfigUpdater.cs" />
     <Compile Include="src\ExternalPrograms\Gpg\GpgError.cs" />
     <Compile Include="src\ExternalPrograms\Gpg\GpgException.cs" />
-    <Compile Include="src\ExternalPrograms\Gpg\GpgHomedirResolver.cs" />
+    <Compile Include="src\ExternalPrograms\Gpg\GpgHomeDirResolver.cs" />
     <Compile Include="src\ExternalPrograms\Gpg\GpgInstallationFinder.cs" />
     <Compile Include="src\ExternalPrograms\Gpg\GpgResult.cs" />
     <Compile Include="src\ExternalPrograms\Gpg\GpgResultVerifier.cs" />

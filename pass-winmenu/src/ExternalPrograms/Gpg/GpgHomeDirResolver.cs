@@ -5,16 +5,16 @@ using PassWinmenu.WinApi;
 
 namespace PassWinmenu.ExternalPrograms.Gpg
 {
-	class GpgHomedirResolver : IGpgHomedirResolver
+	internal class GpgHomeDirResolver : IGpgHomedirResolver
 	{
-		private const string defaultHomeDirName = "gnupg";
-		private const string homedirEnvironmentVariableName = "GNUPGHOME";
+		private const string DefaultHomeDirName = "gnupg";
+		private const string HomeDirEnvironmentVariableName = "GNUPGHOME";
 
 		private readonly GpgConfig config;
 		private readonly IEnvironment environment;
 		private readonly IFileSystem fileSystem;
 
-		public GpgHomedirResolver(GpgConfig config, IEnvironment environment, IFileSystem fileSystem)
+		public GpgHomeDirResolver(GpgConfig config, IEnvironment environment, IFileSystem fileSystem)
 		{
 			this.config = config;
 			this.environment = environment;
@@ -37,7 +37,7 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 			{
 				return config.GnupghomeOverride;
 			}
-			return environment.GetEnvironmentVariable(homedirEnvironmentVariableName);
+			return environment.GetEnvironmentVariable(HomeDirEnvironmentVariableName);
 		}
 
 		/// <summary>
@@ -47,7 +47,7 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 		public string GetDefaultHomeDir()
 		{
 			var appData = environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-			return fileSystem.Path.Combine(appData, defaultHomeDirName);
+			return fileSystem.Path.Combine(appData, DefaultHomeDirName);
 		}
 	}
 }

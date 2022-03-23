@@ -10,7 +10,7 @@ namespace PassWinmenu.Actions
 	/// <summary>
 	/// Asks the user to choose a password file, decrypts it, and copies the resulting value to the clipboard.
 	/// </summary>
-	class DecryptPasswordAction : IParameterisedAction
+	internal class DecryptPasswordAction : IParameterisedAction
 	{
 		private readonly IPasswordManager passwordManager;
 		private readonly INotificationService notificationService;
@@ -39,7 +39,10 @@ namespace PassWinmenu.Actions
 		{
 			var selectedFile = dialogCreator.RequestPasswordFile();
 			// If the user cancels their selection, the password decryption should be cancelled too.
-			if (selectedFile == null) return;
+			if (selectedFile == null)
+			{
+				return;
+			}
 
 			KeyedPasswordFile passFile;
 			try
@@ -86,7 +89,10 @@ namespace PassWinmenu.Actions
 			if (typePassword)
 			{
 				// If a username has also been entered, press Tab to switch to the password field.
-				if (usernameEntered) KeyboardEmulator.EnterTab();
+				if (usernameEntered)
+				{
+					KeyboardEmulator.EnterTab();
+				}
 
 				KeyboardEmulator.EnterText(passFile.Password);
 			}

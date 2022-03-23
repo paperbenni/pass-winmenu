@@ -8,7 +8,7 @@ using PassWinmenu.WinApi;
 #nullable enable
 namespace PassWinmenu.Actions
 {
-	class CommitChangesAction : IAction
+	internal class CommitChangesAction : IAction
 	{
 		private readonly ISyncService? syncService;
 		private readonly INotificationService notificationService;
@@ -107,7 +107,10 @@ namespace PassWinmenu.Actions
 				syncService.Push();
 			}
 
-			if (!ConfigManager.Config.Notifications.Types.GitPush) return;
+			if (!ConfigManager.Config.Notifications.Types.GitPush)
+			{
+				return;
+			}
 			if (local > 0 && remote > 0)
 			{
 				notificationService.Raise(

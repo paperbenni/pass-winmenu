@@ -5,7 +5,7 @@ using PassWinmenu.Utilities;
 
 namespace PassWinmenu.WinApi
 {
-	static class KeyboardEmulator
+	internal static class KeyboardEmulator
 	{
 		/// <summary>
 		/// Sends text directly to the topmost window, as if it was entered by the user.

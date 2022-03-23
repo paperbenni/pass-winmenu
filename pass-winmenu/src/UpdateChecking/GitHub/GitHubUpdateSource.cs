@@ -56,8 +56,11 @@ namespace PassWinmenu.UpdateChecking.GitHub
 
 		private bool ValidateCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
 		{
-			if (sslPolicyErrors == SslPolicyErrors.None) return true;
-			
+			if (sslPolicyErrors == SslPolicyErrors.None)
+			{
+				return true;
+			}
+
 			Log.Send($"Server certificate failed to validate: {sslPolicyErrors}", LogLevel.Warning);
 			return false;
 		}

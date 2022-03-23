@@ -211,7 +211,10 @@ namespace PassWinmenu.Windows
 		/// <param name="label">The label to be selected. If this value is null, the selected label will not be changed.</param>
 		protected void Select(SelectionLabel? label)
 		{
-			if (label == null) return;
+			if (label == null)
+			{
+				return;
+			}
 
 			if (SelectedLabel != null)
 			{
@@ -229,7 +232,11 @@ namespace PassWinmenu.Windows
 
 		private void UnselectCurrent()
 		{
-			if (SelectedLabel == null) return;
+			if (SelectedLabel == null)
+			{
+				return;
+			}
+
 			SelectedLabel.Background = styleConfig.Options.BackgroundColour;
 			SelectedLabel.Foreground = styleConfig.Options.TextColour;
 			SelectedLabel.LabelBorder.BorderBrush = styleConfig.Options.BorderColour;
@@ -280,7 +287,10 @@ namespace PassWinmenu.Windows
 			base.OnActivated(e);
 
 			// Whenever the window is activated, the search box should gain focus.
-			if (!isClosing) SearchBox.Focus();
+			if (!isClosing)
+			{
+				SearchBox.Focus();
+			}
 		}
 
 		// Whenever the window loses focus, we reactivate it so it's brought to the front again, allowing it
@@ -288,7 +298,10 @@ namespace PassWinmenu.Windows
 		protected override void OnLostKeyboardFocus(KeyboardFocusChangedEventArgs e)
 		{
 			base.OnLostKeyboardFocus(e);
-			if (!isClosing && tryRemainOnTop) Activate();
+			if (!isClosing && tryRemainOnTop)
+			{
+				Activate();
+			}
 		}
 
 		protected override void OnClosing(CancelEventArgs e)
@@ -348,13 +361,17 @@ namespace PassWinmenu.Windows
 
 		protected bool IsPressed(HotkeyConfig hotkey)
 		{
+			// TODO: Don't parse the key combination on every key event
 			var combination = KeyCombination.Parse(hotkey.Hotkey);
 
 			if (combination.Key != Key.None)
 			{
-				if (!Keyboard.IsKeyDown(combination.Key)) return false;
+				if (!Keyboard.IsKeyDown(combination.Key))
+				{
+					return false;
+				}
 			}
-			return (Keyboard.Modifiers == combination.ModifierKeys);
+			return Keyboard.Modifiers == combination.ModifierKeys;
 		}
 
 		private void SelectNext()
@@ -437,7 +454,11 @@ namespace PassWinmenu.Windows
 
 		private void SelectFirst()
 		{
-			if (!Options.Any()) return;
+			if (!Options.Any())
+			{
+				return;
+			}
+
 			var label = Options.First();
 			Select(label);
 			HandleSelectionChange(label);
@@ -445,7 +466,11 @@ namespace PassWinmenu.Windows
 
 		private void SelectLast()
 		{
-			if (!Options.Any()) return;
+			if (!Options.Any())
+			{
+				return;
+			}
+
 			var label = Options.Last();
 			Select(label);
 			HandleSelectionChange(label);

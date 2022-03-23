@@ -129,7 +129,8 @@ namespace PassWinmenu.Hotkeys
 
 			return new Disposable(() =>
 			{
-				var handler = hotkeys[hotkeyId] -= firedHandler;
+				var handler = hotkeys[hotkeyId];
+				handler -= firedHandler;
 
 				// A multicast delegate becomes null when all of its member
 				// delegates are removed. If there are no handlers, we want

@@ -77,7 +77,10 @@ namespace PassWinmenu.Windows
 		public void GetKey(bool copyToClipboard, bool type, string? key)
 		{
 			var selectedFile = RequestPasswordFile();
-			if (selectedFile == null) return;
+			if (selectedFile == null)
+			{
+				return;
+			}
 
 			KeyedPasswordFile passFile;
 			try

@@ -6,7 +6,7 @@ using PassWinmenu.ExternalPrograms.Gpg;
 
 namespace PassWinmenu.Actions
 {
-	class OpenPasswordShellAction : IAction
+	internal class OpenPasswordShellAction : IAction
 	{
 		private readonly GpgInstallation installation;
 		private readonly PasswordStoreConfig passwordStore;

@@ -61,7 +61,9 @@ namespace PassWinmenu.Utilities
 		public void Dispose()
 		{
 			if (!allowMultipleDispose && disposed)
+			{
 				return;
+			}
 
 			dispose();
 			disposed = true;

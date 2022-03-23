@@ -226,7 +226,7 @@ namespace PassWinmenu.WinApi
 		}
 	}
 
-	enum Severity
+	internal enum Severity
 	{
 		None,
 		Info,

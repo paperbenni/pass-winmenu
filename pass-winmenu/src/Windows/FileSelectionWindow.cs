@@ -36,10 +36,16 @@ namespace PassWinmenu.Windows
 
 		protected override void HandleSelect()
 		{
-			if (SelectedLabel == null) return;
+			if (SelectedLabel == null)
+			{
+				return;
+			}
 
 			var selection = SelectionText;
-			if (selection == null) return;
+			if (selection == null)
+			{
+				return;
+			}
 
 			// If a suggestion is selected, put that suggestion in the searchbox.
 			if (Options.IndexOf(SelectedLabel) > 0 || string.IsNullOrEmpty(SearchBox.Text))

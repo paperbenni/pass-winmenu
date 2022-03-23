@@ -33,11 +33,17 @@ namespace PassWinmenu.WinApi
 				try
 				{
 					// Only reset the clipboard to its previous contents if it still contains the text we copied to it.
-					if (!Clipboard.ContainsText() || Clipboard.GetText() != text) return;
+					if (!Clipboard.ContainsText() || Clipboard.GetText() != text)
+					{
+						return;
+					}
 
 					Clipboard.Clear();
 
-					if (!ConfigManager.Config.Interface.RestoreClipboard) return;
+					if (!ConfigManager.Config.Interface.RestoreClipboard)
+					{
+						return;
+					}
 
 					// Create a new DataObject into which we can restore our data.
 					var dataObject = new DataObject();

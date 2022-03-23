@@ -34,11 +34,17 @@ namespace PassWinmenu.Windows
 					// Perform case-sensitive matching if the user entered an uppercase character.
 					if (term.Any(char.IsUpper))
 					{
-						if (key.Contains(term)) return true;
+						if (key.Contains(term))
+						{
+							return true;
+						}
 					}
 					else
 					{
-						if (lcOption.Contains(term)) return true;
+						if (lcOption.Contains(term))
+						{
+							return true;
+						}
 					}
 					return false;
 				});

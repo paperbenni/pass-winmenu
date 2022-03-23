@@ -10,7 +10,7 @@ using PassWinmenu.WinApi;
 
 namespace PassWinmenu.UpdateChecking
 {
-	static class UpdateCheckerFactory
+	internal static class UpdateCheckerFactory
 	{
 		public static UpdateChecker CreateUpdateChecker(UpdateCheckingConfig updateCfg, INotificationService notificationService)
 		{

@@ -14,12 +14,12 @@ namespace PassWinmenu.Utilities
 
 		public DirectoryAutocomplete(IDirectoryInfo baseDirectory)
 		{
-			this.baseDirectoryInfo = baseDirectory;
+			baseDirectoryInfo = baseDirectory;
 			// Ensure consistency of directory separators.
 			// We can't use Path.Combine() here because it doesn't concatenate drive letters properly.
 			this.baseDirectory = string.Join(Path.DirectorySeparatorChar.ToString(CultureInfo.InvariantCulture), baseDirectoryInfo.FullName.Split(new[] { '/', '\\' }, StringSplitOptions.RemoveEmptyEntries));
 			// Append a directory separator so Path.GetDirectoryName(baseDirectory) will correctly return the full base directory, instead of its parent directory.
-			this.baseDirectory = this.baseDirectory + Path.DirectorySeparatorChar;
+			this.baseDirectory += Path.DirectorySeparatorChar;
 		}
 
 		public string[] GetCompletionList(string input)

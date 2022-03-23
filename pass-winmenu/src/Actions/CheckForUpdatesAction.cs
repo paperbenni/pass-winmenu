@@ -4,7 +4,7 @@ using PassWinmenu.WinApi;
 
 namespace PassWinmenu.Actions
 {
-	class CheckForUpdatesAction : IAction
+	internal class CheckForUpdatesAction : IAction
 	{
 		private readonly UpdateChecker updateChecker;
 		private readonly INotificationService notificationService;

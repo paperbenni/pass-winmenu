@@ -59,7 +59,7 @@ namespace PassWinmenu
 				{
 					e = de.InnerException;
 				}
-				string errorMessage = $"pass-winmenu failed to start ({e.GetType().Name}: {e.Message})";
+				var errorMessage = $"pass-winmenu failed to start ({e.GetType().Name}: {e.Message})";
 				if (notificationService == null)
 				{
 					// We have no notification service yet. Instantiating one is risky,
@@ -148,7 +148,7 @@ namespace PassWinmenu
 			// Register GPG types
 			builder.RegisterTypes(
 					typeof(GpgInstallationFinder),
-					typeof(GpgHomedirResolver),
+					typeof(GpgHomeDirResolver),
 					typeof(GpgAgentConfigReader),
 					typeof(GpgAgentConfigUpdater),
 					typeof(GpgTransport),
@@ -364,7 +364,11 @@ namespace PassWinmenu
 				case LoadResult.NewFileCreated:
 					var open = MessageBox.Show("A new configuration file has been generated. Please modify it according to your preferences and restart the application.\n\n" +
 															  "Would you like to open it now?", "New configuration file created", MessageBoxButton.YesNo);
-					if (open == MessageBoxResult.Yes) Process.Start(ConfigFileName);
+					if (open == MessageBoxResult.Yes)
+					{
+						Process.Start(ConfigFileName);
+					}
+
 					App.Exit();
 					return;
 				case LoadResult.NeedsUpgrade:

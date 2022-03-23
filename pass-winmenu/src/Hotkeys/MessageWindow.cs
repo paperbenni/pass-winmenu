@@ -16,20 +16,10 @@ namespace PassWinmenu.Hotkeys
 		: IDisposable
 	{
 
-
-		/// <summary>
-		/// The default window procedure.
-		/// </summary>
-		[DllImport("user32.dll", SetLastError = true)]
-		private static extern IntPtr DefWindowProc(
-			IntPtr hWnd, WindowMessage uMsg, UIntPtr wParam, IntPtr lParam
-		);
-
-
 		// Internal window procedure
 		private IntPtr _proc(IntPtr hWnd, WindowMessage uMsg, UIntPtr wp, IntPtr lp)
 		{
-			IntPtr ret = IntPtr.Zero;
+			var ret = IntPtr.Zero;
 			foreach (var wndProc in Procedures)
 			{
 				ret = wndProc(hWnd, uMsg, wp, lp);
@@ -49,7 +39,7 @@ namespace PassWinmenu.Hotkeys
 			// want to defer to the default window procedure.
 			if (ret == IntPtr.Zero)
 			{
-				return DefWindowProc(hWnd, uMsg, wp, lp);
+				return NativeMethods.DefWindowProc(hWnd, uMsg, wp, lp);
 			}
 
 			return ret;
@@ -59,8 +49,6 @@ namespace PassWinmenu.Hotkeys
 		private bool disposed = false;
 		// Atom representing our window class
 		private readonly ushort windowAtom;
-		// Guid used for the window class name.
-		private readonly Guid _windowClassName;
 		// A reference to our window procedure delegate. Required to prevent
 		// the GC collecting the delegate we pass to unmanaged code.
 		private readonly NativeMethods.WindowProcedure procRef;
@@ -87,7 +75,8 @@ namespace PassWinmenu.Hotkeys
 			// on creation and an NRE will result if this is not set.
 			Procedures = procs.ToList();
 
-			_windowClassName = Guid.NewGuid();
+			// Guid used for the window class name.
+			var windowClassName = Guid.NewGuid();
 
 			var hInstance = Process.GetCurrentProcess().Handle;
 
@@ -99,7 +88,7 @@ namespace PassWinmenu.Hotkeys
 			{
 				// Always use [_procRef] and not [_proc]; see above.
 				WindowProcedure = procRef,
-				ClassName = _windowClassName.ToString(),
+				ClassName = windowClassName.ToString(),
 				Instance = hInstance,
 			};
 

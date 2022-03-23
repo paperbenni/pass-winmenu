@@ -20,7 +20,10 @@ namespace PassWinmenu.PasswordGeneration
 
 		public string? GeneratePassword()
 		{
-			if (!Options.CharacterGroups.Any(g => g.Enabled)) return null;
+			if (!Options.CharacterGroups.Any(g => g.Enabled))
+			{
+				return null;
+			}
 
 			// Build a complete set of all characters in all enabled groups
 			var completeCharSet = new HashSet<int>();

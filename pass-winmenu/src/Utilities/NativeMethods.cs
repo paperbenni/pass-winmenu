@@ -26,7 +26,7 @@ namespace PassWinmenu.Utilities
 
 		public static Process GetWindowProcess(IntPtr hWnd)
 		{
-			GetWindowThreadProcessId(hWnd, out uint pid);
+			GetWindowThreadProcessId(hWnd, out var pid);
 			return Process.GetProcessById((int)pid);
 		}
 
@@ -211,6 +211,15 @@ namespace PassWinmenu.Utilities
 		[DllImport("user32.dll", SetLastError = true)]
 		[return: MarshalAs(UnmanagedType.Bool)]
 		public static extern bool UnregisterClass(IntPtr lpClassName, IntPtr hInstance);
+
+		/// <summary>
+		/// The default window procedure.
+		/// </summary>
+		[DllImport("user32.dll", SetLastError = true)]
+		public static extern IntPtr DefWindowProc(
+			IntPtr hWnd, WindowMessage uMsg, UIntPtr wParam, IntPtr lParam
+		);
+
 	}
 
 	[StructLayout(LayoutKind.Sequential)]

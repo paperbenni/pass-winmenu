@@ -100,7 +100,10 @@ namespace PassWinmenu.UpdateChecking
 			}
 
 			LatestVersion = UpdateSource.GetLatestVersion(AllowPrerelease);
-			if (LatestVersion == null) return null;
+			if (LatestVersion == null)
+			{
+				return null;
+			}
 
 			if (LatestVersion.Value.VersionNumber > CurrentVersion)
 			{

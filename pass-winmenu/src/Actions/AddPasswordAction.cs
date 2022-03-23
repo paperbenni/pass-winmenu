@@ -15,7 +15,7 @@ namespace PassWinmenu.Actions
 	/// <summary>
 	/// Adds a new password to the password store.
 	/// </summary>
-	class AddPasswordAction : IAction
+	internal class AddPasswordAction : IAction
 	{
 		private readonly DialogCreator dialogCreator;
 		private readonly IPasswordManager passwordManager;
@@ -42,7 +42,10 @@ namespace PassWinmenu.Actions
 
 			var passwordFilePath = dialogCreator.ShowFileSelectionWindow();
 			// passwordFileName will be null if no file was selected
-			if (passwordFilePath == null) return;
+			if (passwordFilePath == null)
+			{
+				return;
+			}
 
 			// Display the password generation window.
 			string password;
