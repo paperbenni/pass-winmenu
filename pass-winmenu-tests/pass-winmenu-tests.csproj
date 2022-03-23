@@ -84,9 +84,6 @@
     <Compile Include="Utilities\StubEnvironment.cs" />
     <Compile Include="Configuration\ConfigFileTests.cs" />
     <Compile Include="Hotkeys\DummyHotkeyRegistrar.cs" />
-    <Compile Include="Hotkeys\DummyKeyEventSource.cs" />
-    <Compile Include="Hotkeys\HotkeyUnitTests.cs" />
-    <Compile Include="Hotkeys\KeyEventSourceRegistrarTests.cs" />
     <Compile Include="PasswordGeneration\PasswordGeneratorTests.cs" />
     <Compile Include="PasswordManagement\PasswordManagerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -95,7 +92,6 @@
     <Compile Include="UpdateChecking\UpdateCheckerUnitTests.cs" />
     <Compile Include="UpdateChecking\UpdateSourceUnitTests.cs" />
     <Compile Include="Utilities\DisposableTests.cs" />
-    <Compile Include="Utilities\ExtensionMethods\KeyEventArgsExtensionsTests.cs" />
     <Compile Include="WinApi\ExecutablePathResolverTests.cs" />
     <Compile Include="WinApi\PathUtilitiesTests.cs" />
   </ItemGroup>

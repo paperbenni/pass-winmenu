@@ -1,10 +1,11 @@
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using PassWinmenu.Hotkeys;
 
 namespace PassWinmenu.Utilities
 {
-	internal class NativeMethods
+	internal partial class NativeMethods
 	{
 		[DllImport("user32.dll", SetLastError = true)]
 		public static extern bool SetForegroundWindow(IntPtr hWnd);
@@ -87,8 +88,129 @@ namespace PassWinmenu.Utilities
 			IntPtr hWndParent,
 			IntPtr hMenu,
 			IntPtr hInstance,
-			IntPtr lpParam
-		);
+			IntPtr lpParam);
+
+		/// <summary>
+		/// Registers a system-wide hotkey.
+		/// </summary>
+		/// <param name="hWnd">
+		/// The handle to the window that is to receive notification of
+		/// the hotkey being triggered.
+		/// </param>
+		/// <param name="id">
+		/// A handle-unique identifier for the hotkey.
+		/// </param>
+		/// <param name="fsModifiers">
+		/// The modifier keys to be pressed with the hotkey, and other
+		/// behavioural flags.
+		/// </param>
+		/// <param name="vk">
+		/// The virtual-key code of the hotkey to be pressed with the
+		/// modifier keys.
+		/// </param>
+		/// <returns>
+		/// True if the hotkey was registered, false if otherwise.
+		/// </returns>
+		[DllImport("user32.dll", SetLastError = true)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		public static extern bool RegisterHotKey(
+			IntPtr hWnd,
+			int id,
+			uint fsModifiers,
+			uint vk);
+
+		/// <summary>
+		/// Unregisters a hotkey registered through the
+		/// <see cref="RegisterHotKey(IntPtr, int, uint, uint)"/> function.
+		/// </summary>
+		/// <param name="hWnd">
+		/// The handle to the window that receives notifications of the
+		/// triggering of the hotkey to unregister.
+		/// </param>
+		/// <param name="id">
+		/// The handle-unique identifier of the hotkey to unregister.
+		/// </param>
+		/// <returns>
+		/// True if the hotkey was unregistered, false if otherwise.
+		/// </returns>
+		[DllImport("user32.dll", SetLastError = true)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		public static extern bool UnregisterHotKey(IntPtr hWnd, int id);
+
+		/// <summary>
+		/// A procedure for handling messages received by the window.
+		/// </summary>
+		/// <param name="handle">
+		/// A handle to the window receiving the message.
+		/// </param>
+		/// <param name="message">
+		/// The type of message received.
+		/// </param>
+		/// <param name="wParam">
+		/// Additional information dependent on the value of
+		/// <paramref name="message"/>.
+		/// </param>
+		/// <param name="lParam">
+		/// Additional information dependent on the value of
+		/// <paramref name="message"/>.
+		/// </param>
+		/// <returns>
+		/// A value which depends on the value of <paramref name="message"/>
+		/// and which indicates the result of processing the message. Return
+		/// null to defer to the next available window procedure (which is
+		/// the default procedure if no other procedure is registered).
+		/// </returns>
+		public delegate IntPtr WindowProcedure(
+			IntPtr handle,
+			WindowMessage message,
+			UIntPtr wParam,
+			IntPtr lParam);
+
+		/// <summary>
+		/// Destroys a window.
+		/// </summary>
+		/// <param name="hWnd">
+		/// The handle to the window to destroy.
+		/// </param>
+		/// <returns>
+		/// True if the window was successfully destroyed, false if
+		/// otherwise.
+		/// </returns>
+		[DllImport("user32.dll", SetLastError = true)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		public static extern bool DestroyWindow(IntPtr hWnd);
+
+		/// <summary>
+		/// Registers a window class for use in creating a window.
+		/// </summary>
+		/// <param name="wndClass">
+		/// A description of the class to be created.
+		/// </param>
+		/// <returns>
+		/// Zero if the operation does not succeed, or an atom uniquely
+		/// identifying the registered class otherwise.
+		/// </returns>
+		[DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+		public static extern ushort RegisterClass(ref WindowClass wndClass);
+
+		/// <summary>
+		/// Unregisters a class registered using
+		/// <see cref="RegisterClass(ref WindowClass)"/>.
+		/// </summary>
+		/// <param name="lpClassName">
+		/// A pointer to the name of the class, or an atom returned
+		/// by <see cref="RegisterClass(ref WindowClass)"/>.
+		/// </param>
+		/// <param name="hInstance">
+		/// A handle to the instance of the module that created the
+		/// class.
+		/// </param>
+		/// <returns>
+		/// True if the class was unregistered, false if otherwise.
+		/// </returns>
+		[DllImport("user32.dll", SetLastError = true)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		public static extern bool UnregisterClass(IntPtr lpClassName, IntPtr hInstance);
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
@@ -193,8 +315,8 @@ namespace PassWinmenu.Utilities
 		internal KeyEventFlags Flags;
 		internal uint Time;
 		internal IntPtr ExtraInfo;
-		private uint padding;
-		private uint padding_;
+		private readonly uint padding;
+		private readonly uint padding_;
 	}
 
 	[Flags]

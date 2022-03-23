@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using PassWinmenu.Actions;
 using PassWinmenu.Configuration;
 using PassWinmenu.WinApi;
@@ -17,7 +16,7 @@ namespace PassWinmenu.Hotkeys
 		/// </summary>
 		public HotkeyManager()
 		{
-			registrar = HotkeyRegistrars.Windows;
+			registrar = WindowsHotkeyRegistrar.Retrieve();
 		}
 
 		/// <summary>
@@ -27,7 +26,7 @@ namespace PassWinmenu.Hotkeys
 		/// <param name="action">The action to be executed when the hotkey is pressed.</param>
 		public void AddHotKey(KeyCombination keys, Action action)
 		{
-			var reg = registrar.Register(keys.ModifierKeys, keys.Key, false, (sender, args) =>
+			var reg = registrar.Register(keys.ModifierKeys, keys.Key, (sender, args) =>
 			{
 				action.Invoke();
 			});

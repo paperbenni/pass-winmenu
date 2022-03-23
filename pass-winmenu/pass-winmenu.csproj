@@ -143,6 +143,9 @@
     <Compile Include="src\ExternalPrograms\Processes.cs" />
     <Compile Include="src\ExternalPrograms\ProcessWrapper.cs" />
     <Compile Include="src\ExternalPrograms\TrackingDetails.cs" />
+    <Compile Include="src\Hotkeys\MessageWindow.cs" />
+    <Compile Include="src\Hotkeys\WindowClass.cs" />
+    <Compile Include="src\Hotkeys\WindowMessage.cs" />
     <Compile Include="src\PasswordManagement\DecryptedPasswordFile.cs" />
     <Compile Include="src\PasswordManagement\GpgRecipientFinder.cs" />
     <Compile Include="src\PasswordManagement\KeyedPasswordFile.cs" />
@@ -194,11 +197,7 @@
     <Compile Include="src\Windows\DialogCreator.cs" />
     <Compile Include="src\Utilities\DirectoryAutocomplete.cs" />
     <Compile Include="src\ExternalPrograms\ICryptoService.cs" />
-    <Compile Include="src\Hotkeys\Hotkey.cs" />
-    <Compile Include="src\Hotkeys\HotkeyRegistrars.KeyEventSource.cs" />
-    <Compile Include="src\Hotkeys\HotkeyRegistrars.cs" />
-    <Compile Include="src\Hotkeys\HotkeyRegistrars.Windows.cs" />
-    <Compile Include="src\Hotkeys\HotkeyRegistrars.Windows.MessageWindow.cs" />
+    <Compile Include="src\Hotkeys\WindowsHotkeyRegistrar.cs" />
     <Compile Include="src\Hotkeys\IHotkeyRegistrar.cs" />
     <Compile Include="src\WinApi\INotificationService.cs" />
     <Compile Include="src\Logger.cs" />
@@ -216,7 +215,6 @@
     <Compile Include="src\UpdateChecking\UpdateException.cs" />
     <Compile Include="src\Utilities\Disposable.cs" />
     <Compile Include="src\Utilities\ExtensionMethods\DirectoryInfoExtensions.cs" />
-    <Compile Include="src\Utilities\ExtensionMethods\KeyEventArgsExtensions.cs" />
     <Compile Include="src\Utilities\ExtensionMethods\StringExtensions.cs" />
     <Compile Include="src\Hotkeys\HotkeyException.cs" />
     <Compile Include="src\Hotkeys\HotkeyManager.cs" />
