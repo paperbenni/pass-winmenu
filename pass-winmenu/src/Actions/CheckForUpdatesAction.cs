@@ -19,13 +19,6 @@ namespace PassWinmenu.Actions
 
 		public void Execute()
 		{
-			if (updateChecker == null)
-			{
-				notificationService.Raise($"Update checking is disabled in the configuration file.",
-					Severity.Info);
-				return;
-			}
-
 			if (!updateChecker.CheckForUpdates())
 			{
 				var latest = updateChecker.LatestVersion;

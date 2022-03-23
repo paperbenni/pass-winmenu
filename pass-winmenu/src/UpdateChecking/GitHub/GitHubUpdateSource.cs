@@ -23,7 +23,7 @@ namespace PassWinmenu.UpdateChecking.GitHub
 
 			return new ProgramVersion
 			{
-				VersionNumber = release.Version,
+				VersionNumber = release.ParseVersion(),
 				DownloadLink = release.HtmlUrl,
 				ReleaseDate = release.PublishedAt,
 				ReleaseNotes = release.HtmlUrl,

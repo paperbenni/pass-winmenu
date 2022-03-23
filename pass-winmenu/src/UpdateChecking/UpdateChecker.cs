@@ -20,11 +20,12 @@ namespace PassWinmenu.UpdateChecking
 
 		private Timer? timer;
 
-		public UpdateChecker(IUpdateSource   updateSource,
-		                     SemanticVersion currentVersion,
-		                     bool            allowPrerelease,
-		                     TimeSpan        checkInterval,
-		                     TimeSpan        initialDelay)
+		public UpdateChecker(
+			IUpdateSource updateSource,
+			SemanticVersion currentVersion,
+			bool allowPrerelease,
+			TimeSpan checkInterval,
+			TimeSpan initialDelay)
 		{
 			UpdateSource = updateSource;
 			CurrentVersion = currentVersion;
@@ -33,10 +34,11 @@ namespace PassWinmenu.UpdateChecking
 			InitialDelay = initialDelay;
 		}
 
-		public UpdateChecker(IUpdateSource   updateSource,
-		                     SemanticVersion currentVersion,
-		                     bool            allowPrerelease,
-		                     TimeSpan        checkInterval)
+		public UpdateChecker(
+			IUpdateSource updateSource,
+			SemanticVersion currentVersion,
+			bool allowPrerelease,
+			TimeSpan checkInterval)
 			: this(updateSource, currentVersion, allowPrerelease, checkInterval, checkInterval)
 		{
 		}
