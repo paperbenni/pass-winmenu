@@ -201,9 +201,9 @@ namespace PassWinmenu.WinApi
 
 		public void Dispose()
 		{
-			Icon?.Dispose();
-			downloadUpdate?.Dispose();
-			downloadSeparator?.Dispose();
+			Icon.Dispose();
+			downloadUpdate.Dispose();
+			downloadSeparator.Dispose();
 		}
 
 		public void SetSyncState(SyncState state)

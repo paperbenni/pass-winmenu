@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.IO.Abstractions;
@@ -22,7 +23,7 @@ namespace PassWinmenu.Utilities
 			this.baseDirectory += Path.DirectorySeparatorChar;
 		}
 
-		public string[] GetCompletionList(string input)
+		public List<string> GetCompletionList(string input)
 		{
 			// Ensure the directory separators in the input string are correct
 			input = Path.Combine(input.Split(new[] { '/', '\\' }, StringSplitOptions.RemoveEmptyEntries));
@@ -34,32 +35,49 @@ namespace PassWinmenu.Utilities
 			// If the directory to look in doesn't exist, we can't suggest anything for it.
 			if (!Directory.Exists(directory))
 			{
-				return Array.Empty<string>();
+				return new List<string>();
 			}
-			
-			// Dotfiles should be filtered out.
-			var suggestions = Directory.GetFileSystemEntries(directory, file + "*")
-				.Where(suggestion => !Path.GetFileName(suggestion).StartsWith(".", StringComparison.Ordinal));
+
+			var suggestions = SuggestionsFor(directory, file + "*");
 
 			// If we have no suggestions, try showing suggestions for just the parent directory.
 			if (!suggestions.Any())
 			{
-				suggestions = Directory.GetFileSystemEntries(directory, "*")
-					.Where(suggestion => !Path.GetFileName(suggestion).StartsWith(".", StringComparison.Ordinal));
+				suggestions = SuggestionsFor(directory, "*");
 			}
 			// If we have only one suggestion and that suggestion is a directory, 
 			// add suggestions for the files inside that directory.
-			else if (suggestions.Count() == 1 && Directory.Exists(suggestions.First()))
+			else if (suggestions.Count == 1 && Directory.Exists(suggestions.First()))
 			{
-				// Again, ignoring dotfiles.
-				suggestions = suggestions.Concat(Directory.GetFileSystemEntries(suggestions.First())
-					.Where(suggestion => !Path.GetFileName(suggestion).StartsWith(".", StringComparison.Ordinal)));
+				suggestions.AddRange(SuggestionsFor(suggestions.First(), "*"));
 			}
-			// Append a directory separator char to all directories to make it clear we're suggesting a directory, not a file.
-			suggestions = suggestions.Select(suggestion => Directory.Exists(suggestion) ? suggestion + Path.DirectorySeparatorChar : suggestion);
 
-			// Finally, transform directory suggestions to relative paths for convenience.
-			return suggestions.Select(suggestion => PathUtilities.MakeRelativePathForDisplay(baseDirectoryInfo, suggestion)).ToArray();
+			// Append a directory separator char to all directories to make it clear we're suggesting a directory, not a file,
+			// and transform directory suggestions to relative paths for convenience.
+			return suggestions.Select(AddSeparatorCharIfDirectory).Select(MakeRelative).ToList();
+		}
+
+		private string MakeRelative(string suggestion)
+		{
+			return PathUtilities.MakeRelativePathForDisplay(baseDirectoryInfo, suggestion);
+		}
+
+		private string AddSeparatorCharIfDirectory(string suggestion)
+		{
+			if (Directory.Exists(suggestion))
+			{
+				return suggestion + Path.DirectorySeparatorChar;
+			}
+
+			return suggestion;
+		}
+
+		private List<string> SuggestionsFor(string directory, string searchPattern)
+		{
+			return Directory.GetFileSystemEntries(directory, searchPattern)
+				// Dotfiles should be filtered out.
+				.Where(suggestion => !Path.GetFileName(suggestion).StartsWith(".", StringComparison.Ordinal))
+				.ToList();
 		}
 	}
 }

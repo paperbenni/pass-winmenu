@@ -243,6 +243,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\Windows\PathDisplayHelper.cs" />
+    <Compile Include="src\Windows\ScrollableView.cs" />
     <Compile Include="src\Windows\SelectionLabel.xaml.cs">
       <DependentUpon>SelectionLabel.xaml</DependentUpon>
     </Compile>

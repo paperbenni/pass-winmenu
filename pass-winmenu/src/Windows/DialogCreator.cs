@@ -227,7 +227,7 @@ namespace PassWinmenu.Windows
 			menu.ShowDialog();
 			if (menu.Success)
 			{
-				return menu.Selection;
+				return Option.Some(menu.Selection);
 			}
 
 			return default;
