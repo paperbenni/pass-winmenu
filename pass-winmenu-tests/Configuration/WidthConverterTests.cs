@@ -1,6 +1,5 @@
 using System.Windows;
 using PassWinmenu.Configuration;
-using PassWinmenuTests.Utilities;
 using Shouldly;
 using Xunit;
 using YamlDotNet.Core;

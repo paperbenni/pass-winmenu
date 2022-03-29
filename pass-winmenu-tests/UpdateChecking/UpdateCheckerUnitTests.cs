@@ -4,7 +4,6 @@ using System.Threading;
 using McSherry.SemanticVersioning;
 using PassWinmenu.UpdateChecking;
 using PassWinmenu.UpdateChecking.Dummy;
-using PassWinmenuTests.Utilities;
 using Xunit;
 
 namespace PassWinmenuTests.UpdateChecking
@@ -71,7 +70,7 @@ namespace PassWinmenuTests.UpdateChecking
 
 			// Validate that the event has been raised now.
 			Thread.Sleep(checkAgainMs);
-			for (int i = 0; i < checkAttempts && !raised; i++)
+			for (var i = 0; i < checkAttempts && !raised; i++)
 			{
 				Thread.Sleep(checkAgainMs);
 			}
@@ -239,7 +238,10 @@ namespace PassWinmenuTests.UpdateChecking
 			for (var i = 0; i < 20; i++)
 			{
 				Thread.Sleep(50);
-				if (raised) break;
+				if (raised)
+				{
+					break;
+				}
 			}
 
 			Assert.True(raised, "Update checker did not raise event.");
@@ -275,7 +277,10 @@ namespace PassWinmenuTests.UpdateChecking
 			for (var i = 0; i < 20; i++)
 			{
 				Thread.Sleep(50);
-				if (raised) return true;
+				if (raised)
+				{
+					return true;
+				}
 			}
 
 			return raised;

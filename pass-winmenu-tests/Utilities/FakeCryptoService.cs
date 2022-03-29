@@ -4,7 +4,7 @@ using PassWinmenu.ExternalPrograms;
 
 namespace PassWinmenuTests.Utilities
 {
-	class FakeCryptoService : ICryptoService
+	internal class FakeCryptoService : ICryptoService
 	{
 		private readonly IFileSystem fileSystem;
 

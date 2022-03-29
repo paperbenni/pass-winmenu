@@ -1,9 +1,7 @@
-using System;
 using System.IO.Abstractions.TestingHelpers;
 using Moq;
 using PassWinmenu.ExternalPrograms.Gpg;
 using PassWinmenu.WinApi;
-using PassWinmenuTests.Utilities;
 using Shouldly;
 using Xunit;
 

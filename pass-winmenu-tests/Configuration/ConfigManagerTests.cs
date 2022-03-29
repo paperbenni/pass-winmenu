@@ -1,6 +1,5 @@
 using System.IO;
 using PassWinmenu.Configuration;
-using PassWinmenuTests.Utilities;
 using Shouldly;
 using Xunit;
 

@@ -1,7 +1,6 @@
 using System.IO.Abstractions.TestingHelpers;
 using PassWinmenu.Configuration;
 using PassWinmenu.PasswordManagement;
-using PassWinmenuTests.Utilities;
 using Shouldly;
 using Xunit;
 
@@ -10,7 +9,7 @@ namespace PassWinmenuTests.PasswordManagement
 	public class PasswordFileParserTests
 	{
 		private readonly PasswordFile dummyFile;
-		private PasswordFileParser p = new PasswordFileParser(new UsernameDetectionConfig());
+		private PasswordFileParser parser = new PasswordFileParser(new UsernameDetectionConfig());
 
 		public PasswordFileParserTests()
 		{
@@ -32,7 +31,7 @@ namespace PassWinmenuTests.PasswordManagement
 		public void GetUsername_LineNumberInvalid_ThrowsException(int lineNumber, bool isValid)
 		{
 			var passwordFile = new ParsedPasswordFile(new PasswordFile(null, null), "password", "username");
-			var parser = new PasswordFileParser(new UsernameDetectionConfig
+			parser = new PasswordFileParser(new UsernameDetectionConfig
 			{
 				MethodString = "line-number",
 				Options = new UsernameDetectionOptions
@@ -55,7 +54,7 @@ namespace PassWinmenuTests.PasswordManagement
 		public void Test_EmptyFile()
 		{
 			var text = "";
-			var parsed = p.Parse(dummyFile, text, false);
+			var parsed = parser.Parse(dummyFile, text, false);
 
 			Assert.Equal(parsed.Password, string.Empty);
 			Assert.Equal(parsed.Metadata, string.Empty);
@@ -68,15 +67,15 @@ namespace PassWinmenuTests.PasswordManagement
 			var cr = "password\rmeta-data";
 			var lf = "password\nmeta-data";
 
-			var parsedCrlf = p.Parse(dummyFile, crlf, false);
+			var parsedCrlf = parser.Parse(dummyFile, crlf, false);
 			Assert.Equal("password", parsedCrlf.Password);
 			Assert.Equal("meta-data", parsedCrlf.Metadata);
 
-			var parsedCr = p.Parse(dummyFile, cr, false);
+			var parsedCr = parser.Parse(dummyFile, cr, false);
 			Assert.Equal("password", parsedCr.Password);
 			Assert.Equal("meta-data", parsedCr.Metadata);
 
-			var parsedLf = p.Parse(dummyFile, lf, false);
+			var parsedLf = parser.Parse(dummyFile, lf, false);
 			Assert.Equal("password", parsedLf.Password);
 			Assert.Equal("meta-data", parsedLf.Metadata);
 		}
@@ -89,19 +88,19 @@ namespace PassWinmenuTests.PasswordManagement
 			var lf = "password\n";
 			var none = "password";
 
-			var parsedCrlf = p.Parse(dummyFile, crlf, false);
+			var parsedCrlf = parser.Parse(dummyFile, crlf, false);
 			Assert.Equal("password", parsedCrlf.Password);
 			Assert.Equal(parsedCrlf.Metadata, string.Empty);
 
-			var parsedCr = p.Parse(dummyFile, cr, false);
+			var parsedCr = parser.Parse(dummyFile, cr, false);
 			Assert.Equal("password", parsedCr.Password);
 			Assert.Equal(parsedCr.Metadata, string.Empty);
 
-			var parsedLf = p.Parse(dummyFile, lf, false);
+			var parsedLf = parser.Parse(dummyFile, lf, false);
 			Assert.Equal("password", parsedLf.Password);
 			Assert.Equal(parsedLf.Metadata, string.Empty);
 
-			var parsedNone = p.Parse(dummyFile, none, false);
+			var parsedNone = parser.Parse(dummyFile, none, false);
 			Assert.Equal("password", parsedNone.Password);
 			Assert.Equal(parsedNone.Metadata, string.Empty);
 		}
@@ -122,25 +121,25 @@ namespace PassWinmenuTests.PasswordManagement
 			                     "Username: user\n" +
 			                     "Key: value\r";
 
-			var parsedCrlf = p.Parse(dummyFile, crlf, false);
+			var parsedCrlf = parser.Parse(dummyFile, crlf, false);
 			parsedCrlf.Keys[0].Key.ShouldBe("Username");
 			parsedCrlf.Keys[0].Value.ShouldBe("user");
 			parsedCrlf.Keys[1].Key.ShouldBe("Key");
 			parsedCrlf.Keys[1].Value.ShouldBe("value");
 
-			var parsedCr = p.Parse(dummyFile, cr, false);
+			var parsedCr = parser.Parse(dummyFile, cr, false);
 			parsedCr.Keys[0].Key.ShouldBe("Username");
 			parsedCr.Keys[0].Value.ShouldBe("user");
 			parsedCr.Keys[1].Key.ShouldBe("Key");
 			parsedCr.Keys[1].Value.ShouldBe("value");
 
-			var parsedLf = p.Parse(dummyFile, lf, false);
+			var parsedLf = parser.Parse(dummyFile, lf, false);
 			parsedLf.Keys[0].Key.ShouldBe("Username");
 			parsedLf.Keys[0].Value.ShouldBe("user");
 			parsedLf.Keys[1].Key.ShouldBe("Key");
 			parsedLf.Keys[1].Value.ShouldBe("value");
 
-			var parsedMixed = p.Parse(dummyFile, mixed, false);
+			var parsedMixed = parser.Parse(dummyFile, mixed, false);
 			parsedMixed.Keys[0].Key.ShouldBe("Username");
 			parsedMixed.Keys[0].Value.ShouldBe("user");
 			parsedMixed.Keys[1].Key.ShouldBe("Key");
@@ -157,7 +156,7 @@ namespace PassWinmenuTests.PasswordManagement
 				"Multiple-Spaces:  value3\r\n" +
 				"_WithUnderline: value4\r\n";
 
-			var parsed = p.Parse(dummyFile, content, false);
+			var parsed = parser.Parse(dummyFile, content, false);
 
 			parsed.Keys[0].Key.ShouldBe("Username");
 			parsed.Keys[0].Value.ShouldBe("user");
@@ -180,7 +179,7 @@ namespace PassWinmenuTests.PasswordManagement
 				"Duplicate: value2\r\n" +
 				"Duplicate: value3\r\n";
 
-			var parsed = p.Parse(dummyFile, content, false);
+			var parsed = parser.Parse(dummyFile, content, false);
 
 			parsed.Keys[0].Key.ShouldBe("Username");
 			parsed.Keys[0].Value.ShouldBe("user");

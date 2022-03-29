@@ -230,7 +230,7 @@ namespace PassWinmenu.Windows
 				return menu.Selection;
 			}
 
-			return Option<TEntry>.None;
+			return default;
 		}
 
 	}

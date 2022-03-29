@@ -4,7 +4,6 @@ using System.IO.Abstractions;
 using System.IO.Abstractions.TestingHelpers;
 using Moq;
 using PassWinmenu.WinApi;
-using PassWinmenuTests.Utilities;
 using Xunit;
 
 namespace PassWinmenuTests.WinApi
