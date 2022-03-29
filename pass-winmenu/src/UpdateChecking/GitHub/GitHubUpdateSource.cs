@@ -13,6 +13,7 @@ namespace PassWinmenu.UpdateChecking.GitHub
 	internal class GitHubUpdateSource : IUpdateSource
 	{
 		private static readonly Uri UpdateUrl = new Uri("https://api.github.com/repos/geluk/pass-winmenu/releases");
+		private static readonly Uri DefaultDownloadUrl = new Uri("https://github.com/geluk/pass-winmenu/releases");
 
 		public bool RequiresConnectivity => true;
 
@@ -24,9 +25,9 @@ namespace PassWinmenu.UpdateChecking.GitHub
 			return new ProgramVersion
 			{
 				VersionNumber = release.ParseVersion(),
-				DownloadLink = release.HtmlUrl,
+				DownloadLink = release.HtmlUrl ?? DefaultDownloadUrl,
 				ReleaseDate = release.PublishedAt,
-				ReleaseNotes = release.HtmlUrl,
+				ReleaseNotes = release.HtmlUrl ?? DefaultDownloadUrl,
 				IsPrerelease = release.Prerelease,
 				Important = important,
 			};
