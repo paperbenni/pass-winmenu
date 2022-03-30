@@ -97,7 +97,7 @@
     <Compile Include="src\Configuration\Classes\TextStyleConfig.cs" />
     <Compile Include="src\Configuration\ConfigurationDeserialiser.cs" />
     <Compile Include="src\Configuration\RuntimeConfiguration.cs" />
-    <Compile Include="src\Configuration\RuntimeConfigurationError.cs" />
+    <Compile Include="src\Configuration\RuntimeConfigurationException.cs" />
     <Compile Include="src\Actions\ActionDispatcher.cs" />
     <Compile Include="src\Actions\CheckForUpdatesAction.cs" />
     <Compile Include="src\Actions\CommitChangesAction.cs" />

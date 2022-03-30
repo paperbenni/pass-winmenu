@@ -3,6 +3,7 @@ using System.IO.Abstractions;
 using PassWinmenu.Configuration;
 using PassWinmenu.WinApi;
 
+#nullable enable
 namespace PassWinmenu.ExternalPrograms.Gpg
 {
 	internal class GpgHomeDirResolver : IGpgHomedirResolver
@@ -24,26 +25,19 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 		/// <summary>
 		/// Returns the path GPG will use as its home directory.
 		/// </summary>
-		/// <returns></returns>
 		public string GetHomeDir() => GetConfiguredHomeDir() ?? GetDefaultHomeDir();
 
 		/// <summary>
 		/// Returns the home directory as configured by the user, or null if no home directory has been defined.
 		/// </summary>
-		/// <returns></returns>
-		public string GetConfiguredHomeDir()
+		public string? GetConfiguredHomeDir()
 		{
-			if (config.GnupghomeOverride != null)
-			{
-				return config.GnupghomeOverride;
-			}
-			return environment.GetEnvironmentVariable(HomeDirEnvironmentVariableName);
+			return config.GnupghomeOverride ?? environment.GetEnvironmentVariable(HomeDirEnvironmentVariableName);
 		}
 
 		/// <summary>
 		/// Returns the default home directory used by GPG when no user-defined home directory is available.
 		/// </summary>
-		/// <returns></returns>
 		public string GetDefaultHomeDir()
 		{
 			var appData = environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
