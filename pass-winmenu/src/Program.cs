@@ -128,8 +128,9 @@ namespace PassWinmenu
 				.Except<ActionDispatcher>()
 				.AsImplementedInterfaces()
 				.AsSelf();
-			builder.RegisterType<HotkeyManager>()
+			builder.RegisterType<HotkeyService>()
 				.AsSelf();
+			builder.Register(_ => WindowsHotkeyRegistrar.Retrieve()).As<IHotkeyRegistrar>();
 
 			builder.RegisterType<ActionDispatcher>()
 				.WithParameter(
@@ -398,8 +399,8 @@ namespace PassWinmenu
 		{
 			try
 			{
-				var hotkeyManager = container.Resolve<HotkeyManager>();
-				hotkeyManager.AssignHotkeys(
+				var hotkeyService = container.Resolve<HotkeyService>();
+				hotkeyService.AssignHotkeys(
 					ConfigManager.Config.Hotkeys ?? Array.Empty<HotkeyConfig>(),
 					actionDispatcher,
 					notificationService);

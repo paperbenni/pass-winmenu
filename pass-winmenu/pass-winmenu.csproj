@@ -145,7 +145,6 @@
     <Compile Include="src\ExternalPrograms\TrackingDetails.cs" />
     <Compile Include="src\Hotkeys\MessageWindow.cs" />
     <Compile Include="src\Hotkeys\WindowClass.cs" />
-    <Compile Include="src\Hotkeys\WindowMessage.cs" />
     <Compile Include="src\PasswordManagement\DecryptedPasswordFile.cs" />
     <Compile Include="src\PasswordManagement\GpgRecipientFinder.cs" />
     <Compile Include="src\PasswordManagement\KeyedPasswordFile.cs" />
@@ -217,7 +216,7 @@
     <Compile Include="src\Utilities\ExtensionMethods\DirectoryInfoExtensions.cs" />
     <Compile Include="src\Utilities\ExtensionMethods\StringExtensions.cs" />
     <Compile Include="src\Hotkeys\HotkeyException.cs" />
-    <Compile Include="src\Hotkeys\HotkeyManager.cs" />
+    <Compile Include="src\Hotkeys\HotkeyService.cs" />
     <Compile Include="src\Hotkeys\KeyCombination.cs" />
     <Compile Include="src\Configuration\Classes\Config.cs" />
     <Compile Include="src\Configuration\ConfigManager.cs" />
@@ -365,6 +364,9 @@
     </PackageReference>
     <PackageReference Include="Otp.NET">
       <Version>1.2.2</Version>
+    </PackageReference>
+    <PackageReference Include="PInvoke.User32">
+      <Version>0.7.104</Version>
     </PackageReference>
     <PackageReference Include="System.IO.Abstractions">
       <Version>10.0.1</Version>

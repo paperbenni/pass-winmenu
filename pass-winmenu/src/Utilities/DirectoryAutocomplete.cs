@@ -72,7 +72,7 @@ namespace PassWinmenu.Utilities
 			return suggestion;
 		}
 
-		private List<string> SuggestionsFor(string directory, string searchPattern)
+		private static List<string> SuggestionsFor(string directory, string searchPattern)
 		{
 			return Directory.GetFileSystemEntries(directory, searchPattern)
 				// Dotfiles should be filtered out.

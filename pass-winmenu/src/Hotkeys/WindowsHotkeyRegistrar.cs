@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
 using PassWinmenu.Utilities;
+using PInvoke;
 using Disposable = PassWinmenu.Utilities.Disposable;
 using Helpers = PassWinmenu.Utilities.Helpers;
 
@@ -23,7 +24,7 @@ namespace PassWinmenu.Hotkeys
 		/// </summary>
 		private const ushort ModNoRepeat = 0x4000;
 
-		private static WindowsHotkeyRegistrar? _singleton;
+		private static WindowsHotkeyRegistrar? singleton;
 
 		/// <summary>
 		/// Retrieves a <see cref="WindowsHotkeyRegistrar"/> instance,
@@ -34,16 +35,16 @@ namespace PassWinmenu.Hotkeys
 		/// </returns>
 		public static WindowsHotkeyRegistrar Retrieve()
 		{
-			return _singleton ??= new WindowsHotkeyRegistrar();
+			return singleton ??= new WindowsHotkeyRegistrar();
 		}
 
 		// The window procedure for handling hotkey messages.
 		private IntPtr _windowProcedure(
-			IntPtr hWnd, WindowMessage msg, UIntPtr wParam, IntPtr lParam
+			IntPtr hWnd, User32.WindowMessage msg, IntPtr wParam, IntPtr lParam
 			)
 		{
 			// We only care about hotkey messages
-			if (msg == WindowMessage.Hotkey)
+			if (msg == User32.WindowMessage.WM_HOTKEY)
 			{
 				// If we don't recognise the hotkey ID, ignore it.
 				if (!hotkeys.TryGetValue((int)wParam, out var handler))
@@ -93,9 +94,7 @@ namespace PassWinmenu.Hotkeys
 			// ID mirrors the [lParam] for the [WM_HOTKEY] message, but with
 			// the [MOD_NOREPEAT] flag bit included where appropriate.
 			var virtualKey = KeyInterop.VirtualKeyFromKey(key);
-			var hotkeyId = (int)modifierKeys << 16 |
-						   (ModNoRepeat << 16) |
-						   virtualKey;
+			var hotkeyId = ((int) modifierKeys << 16) | (ModNoRepeat << 16) | virtualKey;
 
 			// If a hotkey for this combination is already registered, then
 			// we can use a multicast delegate instead of re-registering.
@@ -170,7 +169,7 @@ namespace PassWinmenu.Hotkeys
 			msgWindow.Dispose();
 
 			// Next call to [Retrieve] will create a new registrar.
-			_singleton = null;
+			singleton = null;
 
 			disposed = true;
 		}

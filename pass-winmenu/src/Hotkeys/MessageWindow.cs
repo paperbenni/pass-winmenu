@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using PassWinmenu.Utilities;
+using PInvoke;
 
 namespace PassWinmenu.Hotkeys
 {
@@ -17,7 +18,7 @@ namespace PassWinmenu.Hotkeys
 	{
 
 		// Internal window procedure
-		private IntPtr _proc(IntPtr hWnd, WindowMessage uMsg, UIntPtr wp, IntPtr lp)
+		private IntPtr _proc(IntPtr hWnd, User32.WindowMessage uMsg, IntPtr wp, IntPtr lp)
 		{
 			var ret = IntPtr.Zero;
 			foreach (var wndProc in Procedures)
@@ -39,7 +40,7 @@ namespace PassWinmenu.Hotkeys
 			// want to defer to the default window procedure.
 			if (ret == IntPtr.Zero)
 			{
-				return NativeMethods.DefWindowProc(hWnd, uMsg, wp, lp);
+				return User32.DefWindowProc(hWnd, uMsg, wp, lp);
 			}
 
 			return ret;
@@ -161,7 +162,7 @@ namespace PassWinmenu.Hotkeys
 				return;
 			}
 
-			NativeMethods.DestroyWindow(Handle);
+			User32.DestroyWindow(Handle);
 			NativeMethods.UnregisterClass((IntPtr)windowAtom, IntPtr.Zero);
 
 			Procedures.Clear();
