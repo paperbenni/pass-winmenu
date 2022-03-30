@@ -37,7 +37,7 @@ password-store:
             # set to unchecked by default.
             enabled: true
           - 
-            name: Numeric
+            name: Numbers
             characters: '0123456789'
             enabled: true
           - 
@@ -48,10 +48,10 @@ password-store:
             name: Uppercase
             characters: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
             enabled: true
-          - 
-            name: Whitespace
-            characters: ' '
-            enabled: false
+#          - 
+#            name: Whitespace
+#            characters: ' '
+#            enabled: false
         # This template allows you to alter the default metadata that's
         # added to new password files. Note that this is a multiline string;
         # any leading spaces will be ignored.
