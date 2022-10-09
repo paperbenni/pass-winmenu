@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IO.Abstractions;
 using System.Linq;
 
@@ -31,6 +32,16 @@ namespace PassWinmenu.Utilities.ExtensionMethods
 		internal static bool IsChild(this IDirectoryInfo directory, IFileInfo child)
 		{
 			return IsChildOrSelf(directory, child.Directory);
+		}
+
+		public static IEnumerable<IDirectoryInfo> EnumerateParentsUpTo(this IDirectoryInfo directory, IDirectoryInfo parent)
+		{
+			var current = directory;
+			while (!current.PathEquals(parent))
+			{
+				yield return current;
+				current = current.Parent;
+			}
 		}
 	}
 }

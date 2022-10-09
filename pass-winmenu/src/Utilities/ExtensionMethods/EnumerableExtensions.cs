@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace PassWinmenu.Utilities.ExtensionMethods
 {
@@ -15,6 +16,11 @@ namespace PassWinmenu.Utilities.ExtensionMethods
 					yield return item;
 				}
 			}
+		}
+
+		public static IEnumerable<TSource> ConcatSingle<TSource>(this IEnumerable<TSource> source, TSource element)
+		{
+			return source.Concat(new[] {element});
 		}
 	}
 }

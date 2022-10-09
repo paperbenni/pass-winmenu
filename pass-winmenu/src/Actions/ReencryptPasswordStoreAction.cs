@@ -1,9 +1,7 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
-using PassWinmenu.Actions;
 using PassWinmenu.Configuration;
 using PassWinmenu.ExternalPrograms;
 using PassWinmenu.PasswordManagement;
@@ -55,17 +53,16 @@ namespace PassWinmenu.Actions
 				return;
 			}
 
-			var files = passwordManager.GetPasswordFiles();
+			var files = passwordManager.GetPasswordFiles().ToList();
 			var directories = files
-				.Select(f => new
-				{
-					f.Directory,
-					f.PasswordStore,
-				})
-				.DistinctBy(d => d.Directory.FullName);
+				.SelectMany(f => f.Directory.EnumerateParentsUpTo(passwordManager.PasswordStore))
+				.DistinctBy(d => d.FullName)
+				.ConcatSingle(passwordManager.PasswordStore)
+				.OrderBy(p => p.FullName)
+				.ToList();
 
 			var selection = dialogCreator
-				.ShowPasswordMenu(directories, k => PathUtilities.MakeRelativePathForDisplay(k.PasswordStore, k.Directory), "Select a directory to re-encrypt...")
+				.ShowPasswordMenu(directories, k => PathUtilities.MakeRelativePathForDisplay(passwordManager.PasswordStore, k), "Select a directory to re-encrypt...")
 				.ValueOrDefault();
 			if (selection == null)
 			{
@@ -76,30 +73,11 @@ namespace PassWinmenu.Actions
 			viewer.Show();
 			Task.Run(() =>
 			{
-				foreach (var file in files.Where(f => selection.Directory.IsChild(f.FileInfo)))
+				foreach (var file in files.Where(f => selection.IsChild(f.FileInfo)))
 				{
 					try
 					{
-						var existingRecipients = cryptoService.GetRecipients(file.FullPath);
-						var requestedRecipients = recipientFinder.FindRecipients(file)
-							.Select(cryptoService.FindShortKeyId)
-							.Where(i => i != null);
-
-						var removed = existingRecipients.Except(requestedRecipients);
-						var added = requestedRecipients.Except(existingRecipients);
-						if (removed.Any() || added.Any())
-						{
-							var removedKeys = string.Join(", ", removed);
-							var addedKeys = string.Join(", ", added);
-							var decrypted = passwordManager.DecryptPassword(file, false);
-							passwordManager.EncryptPassword(decrypted);
-							viewer.AddMessage($"Re-encrypted {file.FullPath} (removed: [{removedKeys}], added: [{addedKeys}])");
-						}
-						else
-						{
-							viewer.AddMessage($"Skipped {file.FullPath} (file already encrypted to required recipients)");
-						}
-
+						ReencryptSingleFile(file, viewer);
 					}
 					catch (Exception e)
 					{
@@ -115,6 +93,30 @@ namespace PassWinmenu.Actions
 				}
 				viewer.AddMessage("Re-encryption finished.");
 			});
+		}
+
+		private void ReencryptSingleFile(PasswordFile file, LogViewer viewer)
+		{
+			var existingRecipients = cryptoService.GetRecipients(file.FullPath);
+			var requestedRecipients = recipientFinder.FindRecipients(file)
+				.Select(cryptoService.FindShortKeyId)
+				.Where(i => i != null)
+				.ToList();
+
+			var removed = existingRecipients.Except(requestedRecipients).ToList();
+			var added = requestedRecipients.Except(existingRecipients).ToList();
+			if (removed.Any() || added.Any())
+			{
+				var removedKeys = string.Join(", ", removed);
+				var addedKeys = string.Join(", ", added);
+				var decrypted = passwordManager.DecryptPassword(file, false);
+				passwordManager.EncryptPassword(decrypted);
+				viewer.AddMessage($"Re-encrypted {file.FullPath} (removed: [{removedKeys}], added: [{addedKeys}])");
+			}
+			else
+			{
+				viewer.AddMessage($"Skipped {file.FullPath} (file already encrypted to required recipients)");
+			}
 		}
 	}
 }
