@@ -9,8 +9,6 @@ namespace PassWinmenu.PasswordManagement
 
 		IEnumerable<PasswordFile> GetPasswordFiles();
 
-		IEnumerable<PasswordFile> GetPasswordFiles(IDirectoryInfo subDirectory);
-
 		KeyedPasswordFile DecryptPassword(PasswordFile file, bool passwordOnFirstLine);
 
 		PasswordFile EncryptPassword(DecryptedPasswordFile file);

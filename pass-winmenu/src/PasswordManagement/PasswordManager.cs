@@ -6,8 +6,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using PassWinmenu.Configuration;
 using PassWinmenu.ExternalPrograms;
-using PassWinmenu.Utilities;
-using PassWinmenu.Utilities.ExtensionMethods;
 
 #nullable enable
 namespace PassWinmenu.PasswordManagement
@@ -98,25 +96,6 @@ namespace PassWinmenu.PasswordManagement
 			var patternRegex = new Regex(configuration.PasswordFileMatch);
 
 			var files = PasswordStore.EnumerateFiles("*", SearchOption.AllDirectories);
-			var matchingFiles = files.Where(f => patternRegex.IsMatch(f.Name));
-			var passwordFiles = matchingFiles.Select(CreatePasswordFile);
-
-			return passwordFiles;
-		}
-
-		/// <summary>
-		/// Returns all password files in a subdirectory of the password store
-		/// </summary>
-		public IEnumerable<PasswordFile> GetPasswordFiles(IDirectoryInfo subDirectory)
-		{
-			if (!subDirectory.IsChildOrSelf(PasswordStore))
-			{
-				throw new InvalidOperationException("The given directory is not located in the password store.");
-			}
-
-			var patternRegex = new Regex(configuration.PasswordFileMatch);
-
-			var files = subDirectory.EnumerateFiles("*", SearchOption.AllDirectories);
 			var matchingFiles = files.Where(f => patternRegex.IsMatch(f.Name));
 			var passwordFiles = matchingFiles.Select(CreatePasswordFile);
 
