@@ -28,7 +28,7 @@ namespace PassWinmenu
 			mainWindow?.Dispose();
 		}
 
-		public static new void Exit()
+		public new static void Exit()
 		{
 			mainWindow?.Close();
 			DisposeApplication();

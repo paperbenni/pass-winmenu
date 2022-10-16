@@ -112,6 +112,7 @@
     <Compile Include="src\Configuration\Classes\UpdateSource.cs" />
     <Compile Include="src\Configuration\WidthConverter.cs" />
     <Compile Include="src\Configuration\LoadResult.cs" />
+    <Compile Include="src\Dependencies.cs" />
     <Compile Include="src\ExternalPrograms\Git\GitSyncStrategies.cs" />
     <Compile Include="src\ExternalPrograms\Git\GitException.cs" />
     <Compile Include="src\ExternalPrograms\Gpg\GpgHomeDirectory.cs" />
@@ -165,6 +166,7 @@
     <Compile Include="src\Utilities\ExtensionMethods\ProcessExtensions.cs" />
     <Compile Include="src\Utilities\ExtensionMethods\StreamExtensions.cs" />
     <Compile Include="src\Utilities\Option.cs" />
+    <Compile Include="src\WinApi\INotifyIcon.cs" />
     <Compile Include="src\WinApi\TemporaryClipboard.cs" />
     <Compile Include="src\Configuration\Classes\GitConfig.cs" />
     <Compile Include="src\Configuration\Classes\GpgAgentConfig.cs" />

@@ -1,6 +1,7 @@
 using System;
 using System.Windows;
 
+#nullable enable
 namespace PassWinmenu.Windows
 {
 	/// <summary>
@@ -8,7 +9,7 @@ namespace PassWinmenu.Windows
 	/// </summary>
 	public sealed partial class MainWindow : Window, IDisposable
 	{
-		private Program program = new Program();
+		private IDisposable? program;
 
 		public MainWindow()
 		{
@@ -17,7 +18,7 @@ namespace PassWinmenu.Windows
 
 		public void Start()
 		{
-			program.Start();
+			program = new Program().Start();
 		}
 
 		public void Dispose()

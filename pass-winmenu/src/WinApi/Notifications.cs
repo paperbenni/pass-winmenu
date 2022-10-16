@@ -16,7 +16,7 @@ using MessageBox = System.Windows.MessageBox;
 #nullable enable
 namespace PassWinmenu.WinApi
 {
-	internal class Notifications : INotificationService, ISyncStateTracker
+	internal class Notifications : INotificationService, INotifyIcon, ISyncStateTracker
 	{
 		public NotifyIcon Icon { get; set; }
 

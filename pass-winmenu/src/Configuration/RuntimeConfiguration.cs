@@ -1,17 +1,26 @@
+using System.IO;
+using System.Reflection;
+
 #nullable enable
 namespace PassWinmenu.Configuration
 {
 	internal class RuntimeConfiguration
 	{
-		public string? ConfigFileLocation { get; private set; }
-		
+		public string ConfigFileLocation { get; private set; } = "pass-winmenu.yaml";
+
 		private RuntimeConfiguration()
 		{
 		}
 
 		internal static RuntimeConfiguration Parse(string[] args)
 		{
-			var configuration = new RuntimeConfiguration();
+			var executableDirectory = Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location);
+			var defaultConfigPath = Path.Combine(executableDirectory!, "pass-winmenu.yaml");
+
+			var configuration = new RuntimeConfiguration
+			{
+				ConfigFileLocation = defaultConfigPath,
+			};
 
 			if (args.Length > 1)
 			{
