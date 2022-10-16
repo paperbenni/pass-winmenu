@@ -250,7 +250,7 @@ namespace PassWinmenu
 															  "Would you like to open it now?", "New configuration file created", MessageBoxButton.YesNo);
 					if (open == MessageBoxResult.Yes)
 					{
-						Process.Start(runtimeConfig.ConfigFileLocation);
+						Process.Start("explorer", runtimeConfig.ConfigFileLocation);
 					}
 
 					App.Exit();
@@ -262,7 +262,7 @@ namespace PassWinmenu
 																  "Would you like to open both files now?", "Configuration file out of date", MessageBoxButton.YesNo);
 					if (openBoth == MessageBoxResult.Yes)
 					{
-						Process.Start(runtimeConfig.ConfigFileLocation);
+						Process.Start("explorer", runtimeConfig.ConfigFileLocation);
 						Process.Start(backedUpFile);
 					}
 					App.Exit();

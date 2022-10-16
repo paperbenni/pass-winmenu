@@ -45,7 +45,12 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 		/// </summary>
 		private string GetDefaultHomeDir()
 		{
-			var psi = new ProcessStartInfo(installation.GpgConfExecutable.FullName, "--list-dirs");
+			var psi = new ProcessStartInfo(installation.GpgConfExecutable.FullName, "--list-dirs")
+			{
+				RedirectStandardOutput = true,
+				UseShellExecute = false,
+			};
+
 			var gpgConf = processes.Start(psi);
 
 			var lines = gpgConf.StandardOutput.ReadAllLines();

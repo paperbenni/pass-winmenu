@@ -7,11 +7,11 @@ namespace PassWinmenuTests.Configuration
 	public class RuntimeConfigurationTests
 	{
 		[Fact]
-		public void Parse_NoArgs_ConfigFileLocationIsNull()
+		public void Parse_NoArgs_SetsDefaultLocation()
 		{
 			var config = RuntimeConfiguration.Parse(new[] { "app.exe" });
 
-			config.ConfigFileLocation.ShouldBeNull();
+			config.ConfigFileLocation.ShouldEndWith("pass-winmenu.yaml");
 		}
 
 		[Fact]

@@ -1,5 +1,5 @@
+using System;
 using System.IO;
-using System.Reflection;
 
 #nullable enable
 namespace PassWinmenu.Configuration
@@ -14,8 +14,8 @@ namespace PassWinmenu.Configuration
 
 		internal static RuntimeConfiguration Parse(string[] args)
 		{
-			var executableDirectory = Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location);
-			var defaultConfigPath = Path.Combine(executableDirectory!, "pass-winmenu.yaml");
+			var executableDirectory = AppDomain.CurrentDomain.BaseDirectory;
+			var defaultConfigPath = Path.Combine(executableDirectory, "pass-winmenu.yaml");
 
 			var configuration = new RuntimeConfiguration
 			{
