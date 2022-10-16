@@ -13,15 +13,12 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 	{
 		private readonly IGpgTransport gpgTransport;
 		private readonly IGpgResultVerifier gpgResultVerifier;
-		private readonly PinentryWatcher pinentryWatcher = new PinentryWatcher();
 		private readonly AdditionalOptionsConfig additionalOptions;
-		private readonly bool enablePinentryFix;
 
 		public GPG(IGpgTransport gpgTransport, IGpgResultVerifier gpgResultVerifier, GpgConfig gpgConfig)
 		{
 			this.gpgTransport = gpgTransport;
 			this.gpgResultVerifier = gpgResultVerifier;
-			enablePinentryFix = gpgConfig.PinentryFix;
 			additionalOptions = gpgConfig.AdditionalOptions;
 		}
 
@@ -33,11 +30,6 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 		/// <exception cref="GpgException">Thrown when decryption fails.</exception>
 		public string Decrypt(string file)
 		{
-			if (enablePinentryFix)
-			{
-				pinentryWatcher.BumpPinentryWindow();
-			}
-
 			var result = CallGpg($"--decrypt \"{file}\"", null, additionalOptions.Decrypt);
 			gpgResultVerifier.VerifyDecryption(result);
 			return result.RawStdout;
@@ -92,11 +84,6 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 
 		public string[] Sign(string message, string keyId)
 		{
-			if (enablePinentryFix)
-			{
-				pinentryWatcher.BumpPinentryWindow();
-			}
-
 			var result = CallGpg($"--detach-sign --local-user {keyId} --armor", message, additionalOptions.Sign);
 			return result.StdoutMessages;
 		}
@@ -111,7 +98,7 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 			return recipients.ToList();
 		}
 
-		public string FindShortKeyId(string target)
+		public string? FindShortKeyId(string target)
 		{
 			var result = CallGpg($"--list-keys \"{target}\"");
 

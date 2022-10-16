@@ -43,6 +43,8 @@ namespace PassWinmenu.Configuration
 			}
 		}
 
+		[Obsolete("This key is no longer used, but it is still present to allow older" +
+			"configuration files to be deserialised successfully.", true)]
 		public bool PinentryFix { get; set; } = false;
 
 		public AdditionalOptionsConfig AdditionalOptions { get; set; } = new AdditionalOptionsConfig();

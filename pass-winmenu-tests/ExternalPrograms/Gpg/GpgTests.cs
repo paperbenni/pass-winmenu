@@ -22,21 +22,6 @@ namespace PassWinmenuTests.ExternalPrograms.Gpg
 			transportMock.Verify(t => t.CallGpg(It.IsAny<string>(), null), Times.Once);
 		}
 
-		[Fact]
-		public void Decrypt_PinentryFixEnabled_DoesNotThrow()
-		{
-			var transportMock = new Mock<IGpgTransport>();
-			transportMock.Setup(t => t.CallGpg(It.IsAny<string>(), null)).Returns(GetSuccessResult);
-			var gpg = new GPG(transportMock.Object, StubGpgResultVerifier.AlwaysValid, new GpgConfig
-			{
-				PinentryFix = true,
-			});
-
-			gpg.Decrypt("file");
-
-			transportMock.Verify(t => t.CallGpg(It.IsAny<string>(), null), Times.Once);
-		}
-
 		[Theory]
 		[InlineData("password")]
 		[InlineData("password\nline2")]

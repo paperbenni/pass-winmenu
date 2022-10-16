@@ -144,11 +144,6 @@ gpg:
     # This normally shouldn't be necessary.
     # The GNUPGHOME environment variable is not overridden when the value is null.
     gnupghome-override: null
-    # On multi-monitor screens, pinentry often fails to make itself the foreground
-    # window when it asks for your password. When enabled, this option will allow
-    # pass-winmenu to detect when this happens, and force the pinentry window to the
-    # foreground.
-    pinentry-fix: false
 
     # If you wish to pass custom options to gpg.exe, you can add them here.
     # A full list of available options can be found here:

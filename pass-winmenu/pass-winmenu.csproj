@@ -207,7 +207,6 @@
     <Compile Include="src\PasswordManagement\PasswordFileParser.cs" />
     <Compile Include="src\PasswordGeneration\PasswordGenerator.cs" />
     <Compile Include="src\PasswordManagement\PasswordManager.cs" />
-    <Compile Include="src\ExternalPrograms\Gpg\PinentryWatcher.cs" />
     <Compile Include="src\UpdateChecking\Chocolatey\ChocolateyUpdateSource.cs" />
     <Compile Include="src\UpdateChecking\GitHub\GitHubUpdateSource.cs" />
     <Compile Include="src\UpdateChecking\GitHub\ReleasesResponse.cs" />

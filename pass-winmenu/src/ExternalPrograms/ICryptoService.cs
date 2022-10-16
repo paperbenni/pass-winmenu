@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 
+#nullable enable
 namespace PassWinmenu.ExternalPrograms
 {
 	internal interface ICryptoService
@@ -7,6 +8,6 @@ namespace PassWinmenu.ExternalPrograms
 		string Decrypt(string file);
 		void Encrypt(string data, string outputFile, bool overwrite, params string[] recipients);
 		List<string> GetRecipients(string file);
-		string FindShortKeyId(string target);
+		string? FindShortKeyId(string target);
 	}
 }
