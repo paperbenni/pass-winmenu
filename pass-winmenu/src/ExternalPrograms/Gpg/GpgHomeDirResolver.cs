@@ -38,7 +38,7 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 		/// <summary>
 		/// Returns the default home directory used by GPG when no user-defined home directory is available.
 		/// </summary>
-		public string GetDefaultHomeDir()
+		private string GetDefaultHomeDir()
 		{
 			var appData = environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
 			return fileSystem.Path.Combine(appData, DefaultHomeDirName);

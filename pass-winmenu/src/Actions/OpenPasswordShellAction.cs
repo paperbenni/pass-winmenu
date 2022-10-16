@@ -1,8 +1,10 @@
 using System.Diagnostics;
 using System.IO.Abstractions;
+using System.Linq;
 using PassWinmenu.Configuration;
 using PassWinmenu.ExternalPrograms;
 using PassWinmenu.ExternalPrograms.Gpg;
+using PassWinmenu.Utilities.ExtensionMethods;
 
 namespace PassWinmenu.Actions
 {
@@ -31,28 +33,40 @@ namespace PassWinmenu.Actions
 			{
 				FileName = "powershell",
 				WorkingDirectory = passwordStore.Location,
-				UseShellExecute = false
+				UseShellExecute = false,
 			};
 
 			var gpgExe = installation.GpgExecutable.FullName;
 
-			var homeDir = string.Empty;
-			if (homedirResolver.GetConfiguredHomeDir() != null)
+			string gpgInvocation;
+			var homeDir = homedirResolver.GetConfiguredHomeDir();
+			if (homeDir == null)
 			{
-				homeDir = $" --homedir \"{fileSystem.Path.GetFullPath(homedirResolver.GetConfiguredHomeDir())}\"";
+				gpgInvocation = FormatPowerShellArguments(gpgExe);
+			}else
+			{
+				gpgInvocation  = FormatPowerShellArguments(gpgExe, "--homedir", fileSystem.Path.GetFullPath(homeDir));
 			}
-			powerShell.Arguments =
-				$"-NoExit -Command \"function gpg() {{ & '{gpgExe}'{homeDir} $args }};" +
-				$"echo '\n" +
-				$"    ╔══════════════════════════════════════════════════════════╗\n" +
-				$"    ║ In this shell, you can run  GPG commands  in your store. ║\n" +
-				$"    ║ The ''gpg'' command  has been aliased  to the same version ║\n" +
-				$"    ║ of GPG  used by pass-winmenu, and configured to make use ║\n" +
-				$"    ║ of the  same  home  directory, so  you can  access  your ║\n" +
-				$"    ║ password store GPG keys from here.                       ║\n" +
-				$"    ╚══════════════════════════════════════════════════════════╝\n" +
-				$"'\"";
+
+			powerShell.FormatArguments(
+				"-NoExit",
+				"-Command",
+				$"function gpg() {{ & {gpgInvocation} $args }};"
+				+ "echo '\n"
+				+ "    ╔══════════════════════════════════════════════════════════╗\n"
+				+ "    ║ In this shell, you can run  GPG commands  in your store. ║\n"
+				+ "    ║ The ''gpg'' command  has been aliased  to the same version ║\n"
+				+ "    ║ of GPG  used by pass-winmenu, and configured to make use ║\n"
+				+ "    ║ of the  same  home  directory, so  you can  access  your ║\n"
+				+ "    ║ password store GPG keys from here.                       ║\n"
+				+ "    ╚══════════════════════════════════════════════════════════╝\n"
+				+ "'");
 			processes.Start(powerShell);
+		}
+
+		private static string FormatPowerShellArguments(params string[] args)
+		{
+			return string.Join(" ", args.Select(a => $"'{a.Replace("'", "''")}'"));
 		}
 	}
 }

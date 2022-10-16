@@ -12,10 +12,5 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 		/// Returns the home directory as configured by the user, or null if no home directory has been defined.
 		/// </summary>
 		string? GetConfiguredHomeDir();
-
-		/// <summary>
-		/// Returns the default home directory used by GPG when no user-defined home directory is available.
-		/// </summary>
-		string GetDefaultHomeDir();
 	}
 }
