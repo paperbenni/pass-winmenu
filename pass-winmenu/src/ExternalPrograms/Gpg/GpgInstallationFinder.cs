@@ -14,6 +14,7 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 		public const string GpgExeName = "gpg.exe";
 		public const string GpgAgentExeName = "gpg-agent.exe";
 		public const string GpgConnectAgentExeName = "gpg-connect-agent.exe";
+		public const string GpgConfExeName = "gpgconf.exe";
 
 
 		public GpgInstallationFinder(IFileSystem fileSystem, IExecutablePathResolver executablePathResolver)
@@ -40,7 +41,8 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 					gpgDefaultInstallDir,
 					ChildOf(gpgDefaultInstallDir, GpgExeName),
 					ChildOf(gpgDefaultInstallDir, GpgAgentExeName),
-					ChildOf(gpgDefaultInstallDir, GpgConnectAgentExeName)
+					ChildOf(gpgDefaultInstallDir, GpgConnectAgentExeName),
+					ChildOf(gpgDefaultInstallDir, GpgConfExeName)
 				);
 			}
 
@@ -67,11 +69,12 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 				executable.Directory,
 				executable,
 				ChildOf(executable.Directory, GpgAgentExeName),
-				ChildOf(executable.Directory, GpgConnectAgentExeName)
+				ChildOf(executable.Directory, GpgConnectAgentExeName),
+				ChildOf(executable.Directory, GpgConfExeName)
 			);
 		}
 
-		private IFileInfo ChildOf(IDirectoryInfo parent, string childName)
+		private IFileInfo ChildOf(IFileSystemInfo parent, string childName)
 		{
 			var fullPath = Path.Combine(parent.FullName, childName);
 			return fileSystem.FileInfo.FromFileName(fullPath);
@@ -84,12 +87,15 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 		public IFileInfo GpgExecutable { get; set; }
 		public IFileInfo GpgAgentExecutable { get; set; }
 		public IFileInfo GpgConnectAgentExecutable { get; set; }
+		public IFileInfo GpgConfExecutable { get; set; }
 
-		public GpgInstallation(IDirectoryInfo installDirectory, IFileInfo gpgExecutable, IFileInfo gpgAgentExecutable, IFileInfo gpgConnectAgentExecutable)
+		public GpgInstallation(IDirectoryInfo installDirectory, IFileInfo gpgExecutable, IFileInfo gpgAgentExecutable, IFileInfo gpgConnectAgentExecutable, IFileInfo gpgConfExecutable)
 		{
 			InstallDirectory = installDirectory;
 			GpgExecutable = gpgExecutable;
 			GpgAgentExecutable = gpgAgentExecutable;
+			GpgConnectAgentExecutable = gpgConnectAgentExecutable;
+			GpgConfExecutable = gpgConfExecutable;
 			GpgConnectAgentExecutable = gpgConnectAgentExecutable;
 		}
 	}

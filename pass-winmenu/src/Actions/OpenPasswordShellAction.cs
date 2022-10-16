@@ -12,17 +12,17 @@ namespace PassWinmenu.Actions
 	{
 		private readonly GpgInstallation installation;
 		private readonly PasswordStoreConfig passwordStore;
-		private readonly IGpgHomedirResolver homedirResolver;
+		private readonly GpgHomeDirectory homeDirectory;
 		private readonly IFileSystem fileSystem;
 		private readonly IProcesses processes;
 
 		public HotkeyAction ActionType => HotkeyAction.OpenShell;
 
-		public OpenPasswordShellAction(GpgInstallation installation, PasswordStoreConfig passwordStore, IGpgHomedirResolver homedirResolver, IFileSystem fileSystem, IProcesses processes)
+		public OpenPasswordShellAction(GpgInstallation installation, PasswordStoreConfig passwordStore, GpgHomeDirectory homeDirectory, IFileSystem fileSystem, IProcesses processes)
 		{
 			this.installation = installation;
 			this.passwordStore = passwordStore;
-			this.homedirResolver = homedirResolver;
+			this.homeDirectory = homeDirectory;
 			this.fileSystem = fileSystem;
 			this.processes = processes;
 		}
@@ -39,13 +39,13 @@ namespace PassWinmenu.Actions
 			var gpgExe = installation.GpgExecutable.FullName;
 
 			string gpgInvocation;
-			var homeDir = homedirResolver.GetConfiguredHomeDir();
-			if (homeDir == null)
+			if (homeDirectory.IsOverride)
+			{
+				gpgInvocation  = FormatPowerShellArguments(gpgExe, "--homedir", fileSystem.Path.GetFullPath(homeDirectory.Path));
+			}
+			else
 			{
 				gpgInvocation = FormatPowerShellArguments(gpgExe);
-			}else
-			{
-				gpgInvocation  = FormatPowerShellArguments(gpgExe, "--homedir", fileSystem.Path.GetFullPath(homeDir));
 			}
 
 			powerShell.FormatArguments(

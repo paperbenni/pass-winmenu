@@ -17,9 +17,7 @@ namespace PassWinmenu.ExternalPrograms
 		public StreamReader StandardOutput => process.StandardOutput;
 		public StreamReader StandardError => process.StandardError;
 		public int ExitCode => process.ExitCode;
-		public string MainModuleName => process.MainModule.FileName;
 		public int Id => process.Id;
-		public DateTime StartTime => process.StartTime;
 
 		public void Kill() => process.Kill();
 

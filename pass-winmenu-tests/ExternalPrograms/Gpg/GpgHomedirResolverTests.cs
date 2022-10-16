@@ -10,48 +10,41 @@ namespace PassWinmenuTests.ExternalPrograms.Gpg
 {
 	public class GpgHomedirResolverTests
 	{
-		[Fact]
-		public void Resolve_NullHomeOverrideAndNoEnvVarSet_ReturnsDefaultLocation()
-		{
-			var config = new GpgConfig {GnupghomeOverride = null};
-			var environment = StubEnvironment.Create()
-				.WithSpecialFolder(Environment.SpecialFolder.ApplicationData, @"C:\Users\Test\AppData")
-				.Build();
-			var resolver = new GpgHomeDirResolver(config, environment, new MockFileSystem());
-
-			var homeDir = resolver.GetHomeDir();
-
-			homeDir.ShouldBe(@"C:\Users\Test\AppData\gnupg");
-		}
+		private static readonly GpgInstallation Installation = new GpgInstallationBuilder().Build();
 
 		[Fact]
-		public void Resolve_NullHomeOverrideWithEnvVarSet_ReturnsEnvVarPath()
+		public void Resolve_NullHomeOverride_ReturnsLocationSpecifiedByGpg()
 		{
 			var config = new GpgConfig { GnupghomeOverride = null };
-			var environment = StubEnvironment.Create()
-				.WithSpecialFolder(Environment.SpecialFolder.ApplicationData, @"C:\Users\Test\AppData")
-				.WithEnvironmentVariable("GNUPGHOME", @"C:\gpg")
-				.Build();
-			var resolver = new GpgHomeDirResolver(config, environment, new MockFileSystem());
+			var resolver = new GpgHomeDirResolver(
+				config,
+				Installation,
+				ReturnsHomeDir(@"homedir:C%3a\Users\Test\AppData\gnupg"));
 
 			var homeDir = resolver.GetHomeDir();
 
-			homeDir.ShouldBe(@"C:\gpg");
+			homeDir.Path.ShouldBe(@"C:\Users\Test\AppData\gnupg");
+			homeDir.IsOverride.ShouldBeFalse();
 		}
 
 		[Fact]
 		public void Resolve_HomeOverrideSet_ReturnsHomeOverride()
 		{
 			var config = new GpgConfig { GnupghomeOverride = @"C:\Users\Test\.gpg" };
-			var environment = StubEnvironment.Create()
-				.WithSpecialFolder(Environment.SpecialFolder.ApplicationData, @"C:\Users\Test\AppData")
-				.WithEnvironmentVariable("GNUPGHOME", @"C:\gpg")
-				.Build();
-			var resolver = new GpgHomeDirResolver(config, environment, new MockFileSystem());
+			var resolver = new GpgHomeDirResolver(
+				config,
+				Installation,
+				ReturnsHomeDir(@"homedir:C%3a\Users\Test\AppData\gnupg"));
 
 			var homeDir = resolver.GetHomeDir();
 
-			homeDir.ShouldBe(@"C:\Users\Test\.gpg");
+			homeDir.Path.ShouldBe(@"C:\Users\Test\.gpg");
+			homeDir.IsOverride.ShouldBeTrue();
+		}
+
+		private static FakeProcesses ReturnsHomeDir(string homeDir)
+		{
+			return new FakeProcesses(new FakeProcessBuilder().WithStandardOutput(homeDir).Build());
 		}
 	}
 }

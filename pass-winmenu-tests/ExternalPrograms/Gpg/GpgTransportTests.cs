@@ -22,7 +22,7 @@ namespace PassWinmenuTests.ExternalPrograms.Gpg
 					.WithStandardError("stderr message 1\r\nstderr message 2")
 					.WithExitCode(10)
 					.Build());
-			var transport = new GpgTransport(new StubHomedirResolver(@"C:\gpghome"), installation, processes.Object);
+			var transport = new GpgTransport(new GpgHomeDirectory(@"C:\gpghome"), installation, processes.Object);
 
 			var result = transport.CallGpg("--decrypt");
 
@@ -43,7 +43,7 @@ namespace PassWinmenuTests.ExternalPrograms.Gpg
 					.WithStandardOutput("")
 					.WithStandardError("[GNUPG:] ENC_TO keyId\r\n[GNUPG:] DECRYPTION_OKAY")
 					.Build());
-			var transport = new GpgTransport(new StubHomedirResolver(@"C:\gpghome"), installation, processes.Object);
+			var transport = new GpgTransport(new GpgHomeDirectory(@"C:\gpghome"), installation, processes.Object);
 
 			var result = transport.CallGpg("--decrypt");
 
@@ -69,7 +69,7 @@ namespace PassWinmenuTests.ExternalPrograms.Gpg
 					.WithStandardError("")
 					.WithStandardInput(inputStream.Object)
 					.Build());
-			var transport = new GpgTransport(new StubHomedirResolver(@"C:\gpghome"), installation, processes.Object);
+			var transport = new GpgTransport(new GpgHomeDirectory(@"C:\gpghome"), installation, processes.Object);
 
 			transport.CallGpg("--encrypt", "input");
 

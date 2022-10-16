@@ -13,7 +13,8 @@ namespace PassWinmenuTests.Utilities
 				fileSystem.DirectoryInfo.FromDirectoryName(@"C:\gpg\bin"),
 				fileSystem.FileInfo.FromFileName(@"C:\gpg\bin\gpg.exe"),
 				fileSystem.FileInfo.FromFileName(@"C:\gpg\bin\gpg-agent.exe"),
-				fileSystem.FileInfo.FromFileName(@"C:\gpg\bin\gpg-connect-agent.exe")
+				fileSystem.FileInfo.FromFileName(@"C:\gpg\bin\gpg-connect-agent.exe"),
+				fileSystem.FileInfo.FromFileName(@"C:\gpg\bin\gpgconf.exe")
 			);
 		}
 	}

@@ -24,33 +24,33 @@ namespace PassWinmenuTests.Utilities
 			};
 		}
 
-		public FakeProcessBuilder WithStandardError(string standardError)
+		public FakeProcessBuilder WithStandardError(string stderr)
 		{
-			this.standardError = new StreamReader(new MemoryStream(Encoding.UTF8.GetBytes(standardError)));
+			standardError = new StreamReader(new MemoryStream(Encoding.UTF8.GetBytes(stderr)));
 			return this;
 		}
 
-		public FakeProcessBuilder WithExitTime(TimeSpan exitTime)
+		public FakeProcessBuilder WithExitTime(TimeSpan timeSpan)
 		{
-			this.exitTime = exitTime;
+			exitTime = timeSpan;
 			return this;
 		}
 
-		public FakeProcessBuilder WithStandardOutput(string standardOutput)
+		public FakeProcessBuilder WithStandardOutput(string stdout)
 		{
-			this.standardOutput = new StreamReader(new MemoryStream(Encoding.UTF8.GetBytes(standardOutput)));
+			standardOutput = new StreamReader(new MemoryStream(Encoding.UTF8.GetBytes(stdout)));
 			return this;
 		}
 
-		public FakeProcessBuilder WithExitCode(int exitCode)
+		public FakeProcessBuilder WithExitCode(int code)
 		{
-			this.exitCode = exitCode;
+			exitCode = code;
 			return this;
 		}
 
-		public FakeProcessBuilder WithStandardInput(Stream inputStream)
+		public FakeProcessBuilder WithStandardInput(Stream stream)
 		{
-			this.inputStream = inputStream;
+			inputStream = stream;
 			return this;
 		}
 	}

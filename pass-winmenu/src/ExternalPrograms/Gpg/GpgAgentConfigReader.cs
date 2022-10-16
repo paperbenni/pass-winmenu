@@ -9,12 +9,12 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 		private const string GpgAgentConfigFileName = "gpg-agent.conf";
 
 		private readonly IFileSystem fileSystem;
-		private readonly IGpgHomedirResolver homedirResolver;
+		private readonly GpgHomeDirectory homeDirectory;
 
-		public GpgAgentConfigReader(IFileSystem fileSystem, IGpgHomedirResolver homedirResolver)
+		public GpgAgentConfigReader(IFileSystem fileSystem, GpgHomeDirectory homeDirectory)
 		{
 			this.fileSystem = fileSystem;
-			this.homedirResolver = homedirResolver;
+			this.homeDirectory = homeDirectory;
 		}
 
 		public string[] ReadConfigLines()
@@ -44,11 +44,9 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 
 		private string GetHomeDir()
 		{
-			var homeDir = homedirResolver.GetHomeDir();
-
-			if (fileSystem.Directory.Exists(homeDir))
+			if (fileSystem.Directory.Exists(homeDirectory.Path))
 			{
-				return homeDir;
+				return homeDirectory.Path;
 			}
 
 			throw new DirectoryNotFoundException("GPG Homedir does not exist");

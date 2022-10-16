@@ -1,38 +1,43 @@
 using System;
-using System.IO.Abstractions;
+using System.Diagnostics;
+using System.Linq;
 using PassWinmenu.Configuration;
-using PassWinmenu.WinApi;
+using PassWinmenu.Utilities.ExtensionMethods;
 
 #nullable enable
 namespace PassWinmenu.ExternalPrograms.Gpg
 {
-	internal class GpgHomeDirResolver : IGpgHomedirResolver
+	internal class GpgHomeDirResolver
 	{
-		private const string DefaultHomeDirName = "gnupg";
-		private const string HomeDirEnvironmentVariableName = "GNUPGHOME";
+		private static readonly TimeSpan GpgConfTimeout = TimeSpan.FromSeconds(5);
 
 		private readonly GpgConfig config;
-		private readonly IEnvironment environment;
-		private readonly IFileSystem fileSystem;
+		private readonly GpgInstallation installation;
+		private readonly IProcesses processes;
 
-		public GpgHomeDirResolver(GpgConfig config, IEnvironment environment, IFileSystem fileSystem)
+		public GpgHomeDirResolver(GpgConfig config, GpgInstallation installation, IProcesses processes)
 		{
 			this.config = config;
-			this.environment = environment;
-			this.fileSystem = fileSystem;
+			this.installation = installation;
+			this.processes = processes;
 		}
 
 		/// <summary>
 		/// Returns the path GPG will use as its home directory.
 		/// </summary>
-		public string GetHomeDir() => GetConfiguredHomeDir() ?? GetDefaultHomeDir();
-
-		/// <summary>
-		/// Returns the home directory as configured by the user, or null if no home directory has been defined.
-		/// </summary>
-		public string? GetConfiguredHomeDir()
+		public GpgHomeDirectory GetHomeDir()
 		{
-			return config.GnupghomeOverride ?? environment.GetEnvironmentVariable(HomeDirEnvironmentVariableName);
+			if (config.GnupghomeOverride == null)
+			{
+				var defaultHomeDir = GetDefaultHomeDir();
+				Log.Send($"Detected GPG home directory: \"{defaultHomeDir}\"");
+				return new GpgHomeDirectory(defaultHomeDir);
+			}
+			else
+			{
+				Log.Send($"Using override for GPG home directory: \"{config.GnupghomeOverride}\"");
+				return new GpgHomeDirectory(config.GnupghomeOverride, true);
+			}
 		}
 
 		/// <summary>
@@ -40,8 +45,21 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 		/// </summary>
 		private string GetDefaultHomeDir()
 		{
-			var appData = environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-			return fileSystem.Path.Combine(appData, DefaultHomeDirName);
+			var psi = new ProcessStartInfo(installation.GpgConfExecutable.FullName, "--list-dirs");
+			var gpgConf = processes.Start(psi);
+
+			var lines = gpgConf.StandardOutput.ReadAllLines();
+			gpgConf.WaitForExit(GpgConfTimeout);
+
+			const string homeDirKey = "homedir:";
+
+			var homeDirLine = lines.FirstOrDefault(l => l.StartsWith(homeDirKey, StringComparison.OrdinalIgnoreCase));
+			if (homeDirLine == null)
+			{
+				throw new Exception("Could not determine home directory by querying gpgconf.");
+			}
+
+			return PercentEscape.UnEscape(homeDirLine.Substring(homeDirKey.Length));
 		}
 	}
 }

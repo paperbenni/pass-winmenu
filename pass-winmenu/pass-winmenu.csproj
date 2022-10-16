@@ -114,6 +114,8 @@
     <Compile Include="src\Configuration\LoadResult.cs" />
     <Compile Include="src\ExternalPrograms\Git\GitSyncStrategies.cs" />
     <Compile Include="src\ExternalPrograms\Git\GitException.cs" />
+    <Compile Include="src\ExternalPrograms\Gpg\GpgHomeDirectory.cs" />
+    <Compile Include="src\ExternalPrograms\Gpg\PercentEscape.cs" />
     <Compile Include="src\ExternalPrograms\ISyncStateTracker.cs" />
     <Compile Include="src\ExternalPrograms\Git\RemoteUpdateChecker.cs" />
     <Compile Include="src\ExternalPrograms\Git\RemoteUpdateCheckerFactory.cs" />
@@ -132,7 +134,6 @@
     <Compile Include="src\ExternalPrograms\Gpg\GpgStatusCode.cs" />
     <Compile Include="src\ExternalPrograms\Gpg\GpgTransport.cs" />
     <Compile Include="src\ExternalPrograms\Gpg\IGpgAgentConfigReader.cs" />
-    <Compile Include="src\ExternalPrograms\Gpg\IGpgHomedirResolver.cs" />
     <Compile Include="src\ExternalPrograms\Gpg\IGpgResultVerifier.cs" />
     <Compile Include="src\ExternalPrograms\Gpg\IGpgTransport.cs" />
     <Compile Include="src\ExternalPrograms\Gpg\StatusMessage.cs" />
@@ -162,6 +163,7 @@
     <Compile Include="src\Utilities\ExtensionMethods\EnumerableExtensions.cs" />
     <Compile Include="src\Utilities\ExtensionMethods\FileSystemInfoExtensions.cs" />
     <Compile Include="src\Utilities\ExtensionMethods\ProcessExtensions.cs" />
+    <Compile Include="src\Utilities\ExtensionMethods\StreamExtensions.cs" />
     <Compile Include="src\Utilities\Option.cs" />
     <Compile Include="src\WinApi\TemporaryClipboard.cs" />
     <Compile Include="src\Configuration\Classes\GitConfig.cs" />

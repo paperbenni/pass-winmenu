@@ -13,10 +13,10 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 		public readonly List<StatusMessage> StatusMessages;
 		public readonly List<string> StdErrMessages;
 
-		public StdErrResult(List<StatusMessage> StatusMessages, List<string> StdErrMessages)
+		public StdErrResult(List<StatusMessage> statusMessages, List<string> stdErrMessages)
 		{
-			this.StatusMessages = StatusMessages;
-			this.StdErrMessages = StdErrMessages;
+			StatusMessages = statusMessages;
+			StdErrMessages = stdErrMessages;
 		}
 	}
 
@@ -25,13 +25,13 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 		private const string StatusMarker = "[GNUPG:] ";
 
 		private readonly TimeSpan gpgCallTimeout = TimeSpan.FromSeconds(5);
-		private readonly IGpgHomedirResolver homedirResolver;
+		private readonly GpgHomeDirectory homeDirectory;
 		private readonly GpgInstallation installation;
 		private readonly IProcesses processes;
 
-		public GpgTransport(IGpgHomedirResolver homedirResolver, GpgInstallation installation, IProcesses processes)
+		public GpgTransport(GpgHomeDirectory homeDirectory, GpgInstallation installation, IProcesses processes)
 		{
-			this.homedirResolver = homedirResolver;
+			this.homeDirectory = homeDirectory;
 			this.installation = installation;
 			this.processes = processes;
 		}
@@ -61,7 +61,7 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 
 		private StdErrResult ReadStdErr(IProcess gpgProc)
 		{
-			string stderrLine;
+			string? stderrLine;
 			var stderrMessages = new List<string>();
 			var statusMessages = new List<StatusMessage>();
 
@@ -127,10 +127,9 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 				"--with-colons", // Use colon notation for displaying keys
 				"--exit-on-status-write-error", //  Exit if status messages cannot be written
 			};
-			var homedirOverride = homedirResolver.GetConfiguredHomeDir();
-			if (homedirOverride != null)
+			if (homeDirectory.IsOverride)
 			{
-				argList.Add($"--homedir \"{homedirOverride}\"");
+				argList.Add($"--homedir \"{homeDirectory.Path}\"");
 			}
 
 			var psi = new ProcessStartInfo

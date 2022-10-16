@@ -17,8 +17,8 @@ namespace PassWinmenuTests.ExternalPrograms.Gpg
 			{
 				{@"C:\gpg\gpg-agent.conf", new MockFileData("key1=value1\nkey2=value2")}
 			});
-			var resolver = new StubHomedirResolver(@"C:\gpg");
-			var reader = new GpgAgentConfigReader(fileSystem, resolver);
+			var homeDir = new GpgHomeDirectory(@"C:\gpg");
+			var reader = new GpgAgentConfigReader(fileSystem, homeDir);
 
 			var lines = reader.ReadConfigLines();
 
@@ -30,8 +30,8 @@ namespace PassWinmenuTests.ExternalPrograms.Gpg
 		{
 			var fileSystem = new MockFileSystem();
 			fileSystem.AddDirectory(@"C:\gpg");
-			var resolver = new StubHomedirResolver(@"C:\gpg");
-			var reader = new GpgAgentConfigReader(fileSystem, resolver);
+			var homeDir = new GpgHomeDirectory(@"C:\gpg");
+			var reader = new GpgAgentConfigReader(fileSystem, homeDir);
 
 			var lines = reader.ReadConfigLines();
 
@@ -43,8 +43,8 @@ namespace PassWinmenuTests.ExternalPrograms.Gpg
 		public void ReadConfigLines_NonexistentHomedir_ThrowsDirectoryNotFoundException()
 		{
 			var fileSystem = new MockFileSystem();
-			var resolver = new StubHomedirResolver(@"C:\gpg");
-			var reader = new GpgAgentConfigReader(fileSystem, resolver);
+			var homeDir = new GpgHomeDirectory(@"C:\gpg");
+			var reader = new GpgAgentConfigReader(fileSystem, homeDir);
 
 			Should.Throw<DirectoryNotFoundException>(() => reader.ReadConfigLines());
 		}
@@ -54,8 +54,8 @@ namespace PassWinmenuTests.ExternalPrograms.Gpg
 		{
 			var fileSystem = new MockFileSystem();
 			fileSystem.AddDirectory(@"C:\gpg");
-			var resolver = new StubHomedirResolver(@"C:\gpg");
-			var reader = new GpgAgentConfigReader(fileSystem, resolver);
+			var homeDir = new GpgHomeDirectory(@"C:\gpg");
+			var reader = new GpgAgentConfigReader(fileSystem, homeDir);
 			var linesToWrite = new[] {"key1=value1", "key2=value2", "#comment"};
 
 			reader.WriteConfigLines(linesToWrite);
@@ -73,8 +73,8 @@ namespace PassWinmenuTests.ExternalPrograms.Gpg
 			{
 				@"C:\gpg\gpg-agent.conf", new MockFileData("key1=value1\nkey2=value2")
 			} });
-			var resolver = new StubHomedirResolver(@"C:\gpg");
-			var reader = new GpgAgentConfigReader(fileSystem, resolver);
+			var homeDir = new GpgHomeDirectory(@"C:\gpg");
+			var reader = new GpgAgentConfigReader(fileSystem, homeDir);
 			var linesToWrite = new[] { "key3=value3", "key4=value4", "#comment" };
 
 			reader.WriteConfigLines(linesToWrite);

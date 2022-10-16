@@ -58,6 +58,7 @@
     <Compile Include="ExternalPrograms\Gpg\GpgResultTests.cs" />
     <Compile Include="ExternalPrograms\Gpg\GpgResultVerifierTests.cs" />
     <Compile Include="ExternalPrograms\Gpg\GpgTransportTests.cs" />
+    <Compile Include="ExternalPrograms\Gpg\PercentEscapeTests.cs" />
     <Compile Include="PasswordManagement\GpgRecipientFinderTests.cs" />
     <Compile Include="PasswordManagement\PasswordFileParserTests.cs" />
     <Compile Include="PasswordManagement\TotpGeneratorTests.cs" />
@@ -75,12 +76,12 @@
     <Compile Include="ExternalPrograms\Gpg\GpgTests.cs" />
     <Compile Include="Utilities\BlockingStream.cs" />
     <Compile Include="ExternalPrograms\Gpg\GpgAgentConfigUpdaterTests.cs" />
+    <Compile Include="Utilities\FakeProcesses.cs" />
     <Compile Include="Utilities\GpgInstallationBuilder.cs" />
     <Compile Include="Utilities\GpgResultBuilder.cs" />
     <Compile Include="Utilities\MockFileSystemBuilder.cs" />
     <Compile Include="Utilities\StatusMessageTests.cs" />
     <Compile Include="Utilities\FakeGpgAgentConfigReader.cs" />
-    <Compile Include="Utilities\StubHomedirResolver.cs" />
     <Compile Include="Utilities\StubEnvironment.cs" />
     <Compile Include="Configuration\ConfigFileTests.cs" />
     <Compile Include="Hotkeys\DummyHotkeyRegistrar.cs" />
