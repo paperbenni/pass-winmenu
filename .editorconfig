@@ -7,6 +7,17 @@
 indent_style = tab
 charset = utf-8
 
+# ReSharper properties
+resharper_align_multiline_binary_expressions_chain = false
+resharper_space_within_single_line_array_initializer_braces = false
+resharper_csharp_wrap_after_invocation_lpar = true
+resharper_csharp_wrap_arguments_style = chop_if_long
+resharper_csharp_wrap_before_binary_opsign = true
+resharper_csharp_wrap_chained_method_calls = chop_if_long
+resharper_keep_existing_invocation_parens_arrangement = false
+resharper_keep_existing_linebreaks = true
+resharper_wrap_chained_binary_expressions = chop_if_long
+
 # Code files
 [*.{cs,csx,vb,vbx}]
 indent_size = 4
@@ -172,9 +183,6 @@ dotnet_naming_symbols.public_fields_symbols.applicable_kinds = field
 dotnet_naming_symbols.static_readonly_symbols.applicable_accessibilities = public,internal,protected,protected_internal,private_protected
 dotnet_naming_symbols.static_readonly_symbols.applicable_kinds = field
 dotnet_naming_symbols.static_readonly_symbols.required_modifiers = static,readonly
-
-# ReSharper properties
-resharper_space_within_single_line_array_initializer_braces = false
 
 # ReSharper inspection severities
 resharper_arrange_redundant_parentheses_highlighting = warning
