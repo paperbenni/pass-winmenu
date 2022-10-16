@@ -18,7 +18,7 @@ namespace PassWinmenu.Windows
 
 		public void Start()
 		{
-			program = new Program().Start();
+			program = Program.Start();
 		}
 
 		public void Dispose()

@@ -124,9 +124,13 @@ namespace PassWinmenu
 				.AsSelf()
 				.SingleInstance();
 
-			builder.Register(context => UpdateCheckerFactory.CreateUpdateChecker(context.Resolve<UpdateCheckingConfig>(), context.Resolve<INotificationService>())).SingleInstance();
+			builder.Register(
+					context => UpdateCheckerFactory.CreateUpdateChecker(
+						context.Resolve<UpdateCheckingConfig>(),
+						context.Resolve<INotificationService>()))
+				.SingleInstance();
 			builder.RegisterType<RemoteUpdateCheckerFactory>().AsSelf();
-			builder.Register(context => context.Resolve<RemoteUpdateCheckerFactory>().Build()).AsSelf();
+			builder.Register(context => context.Resolve<RemoteUpdateCheckerFactory>().Build()).AsSelf().SingleInstance();
 
 			return this;
 		}

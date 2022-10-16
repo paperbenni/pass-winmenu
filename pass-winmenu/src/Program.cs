@@ -25,9 +25,7 @@ namespace PassWinmenu
 		public const string EncryptedFileExtension = ".gpg";
 		public const string PlaintextFileExtension = ".txt";
 
-		private Option<RemoteUpdateChecker> remoteUpdateChecker;
-
-		public IDisposable? Start()
+		public static IDisposable? Start()
 		{
 			Notifications? notifications = null;
 			IContainer? container = null;
@@ -58,7 +56,7 @@ namespace PassWinmenu
 				{
 					notifications.ShowErrorWindow(errorMessage);
 				}
-				
+
 				notifications?.Dispose();
 				container?.Dispose();
 				App.Exit();
@@ -70,7 +68,7 @@ namespace PassWinmenu
 		/// <summary>
 		/// Loads all required resources.
 		/// </summary>
-		private (IContainer Container, Notifications notifications) Initialise()
+		private static (IContainer, Notifications) Initialise()
 		{
 			// Load compiled-in resources.
 			EmbeddedResources.Load();
@@ -104,7 +102,7 @@ namespace PassWinmenu
 			return (container, notifications);
 		}
 
-		private void Start(IContainer container, Notifications notifications)
+		private static void Start(IContainer container, Notifications notifications)
 		{
 			var gpgConfig = container.Resolve<GpgConfig>();
 			if (gpgConfig.GpgAgent.Config.AllowConfigManagement)
@@ -118,20 +116,18 @@ namespace PassWinmenu
 			var hotkeyService = container.Resolve<HotkeyService>();
 			AssignHotkeys(actionDispatcher, hotkeyService, notifications);
 
-			var updateChecker = container.Resolve<UpdateChecker>();
-			remoteUpdateChecker = container.Resolve<Option<RemoteUpdateChecker>>();
-
 			if (container.Resolve<UpdateCheckingConfig>().CheckForUpdates)
 			{
-				updateChecker.Start();
+				container.Resolve<UpdateChecker>().Start();
 			}
-			remoteUpdateChecker.Apply(c => c.Start());
+
+			container.Resolve<Option<RemoteUpdateChecker>>().Apply(c => c.Start());
 		}
 
 		/// <summary>
 		/// Checks if all components are configured correctly.
 		/// </summary>
-		private void RunInitialCheck(IContainer container, INotificationService notificationService)
+		private static void RunInitialCheck(IContainer container, INotificationService notificationService)
 		{
 			var gpg = container.Resolve<GPG>();
 
@@ -181,7 +177,7 @@ namespace PassWinmenu
 		/// <summary>
 		/// Loads keybindings from the configuration file and registers them with Windows.
 		/// </summary>
-		private void AssignHotkeys(
+		private static void AssignHotkeys(
 			ActionDispatcher actionDispatcher,
 			HotkeyService hotkeyService,
 			INotificationService notificationService)
