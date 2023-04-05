@@ -13,6 +13,7 @@ namespace PassWinmenu.Windows
 	internal sealed partial class EditWindow
 	{
 		private readonly PasswordGenerator passwordGenerator;
+		private readonly string originalContent;
 
 		public EditWindow(string path, string content, PasswordGenerationConfig options)
 		{
@@ -23,6 +24,8 @@ namespace PassWinmenu.Windows
 			CreateCheckboxes();
 
 			Title = $"Editing '{path}'";
+
+			originalContent = content.Replace(Environment.NewLine, "\n");
 
 			PasswordContent.Text = content;
 			PasswordContent.Focus();
@@ -104,6 +107,11 @@ namespace PassWinmenu.Windows
 			{
 				PasswordDivider.Stroke = new SolidColorBrush(Color.FromRgb(171, 173, 179));
 			}
+		}
+
+		private void PasswordContent_TextChanged(object sender, TextChangedEventArgs e)
+		{
+			Btn_OK.IsEnabled = PasswordContent.Text.Replace(Environment.NewLine, "\n") != originalContent;
 		}
 	}
 }
