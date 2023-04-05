@@ -50,7 +50,7 @@ namespace PassWinmenu.Actions
 			// Display the password generation window.
 			string password;
 			string metadata;
-			using (var passwordWindow = new PasswordWindow(Path.GetFileName(passwordFilePath), ConfigManager.Config.PasswordStore.PasswordGeneration))
+			using (var passwordWindow = new PasswordWindow(Path.GetFileNameWithoutExtension(passwordFilePath), ConfigManager.Config.PasswordStore.PasswordGeneration))
 			{
 				passwordWindow.ShowDialog();
 				if (!passwordWindow.DialogResult.GetValueOrDefault())
