@@ -68,6 +68,13 @@ namespace PassWinmenu.Windows
 			Password.Text = passwordGenerator.GeneratePassword();
 		}
 
+		private void Btn_Replace_Click(object sender, RoutedEventArgs e)
+		{
+			var content = PasswordContent.Text.Replace(Environment.NewLine, "\n");
+			var index = content.IndexOf('\n');
+			PasswordContent.Text = index == -1 ? Password.Text : Password.Text + content.Remove(0, index);
+		}
+
 		private void Btn_OK_Click(object sender, RoutedEventArgs e)
 		{
 			DialogResult = true;
