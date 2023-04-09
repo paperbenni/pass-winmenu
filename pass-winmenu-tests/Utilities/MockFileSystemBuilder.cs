@@ -11,21 +11,21 @@ namespace PassWinmenuTests.Utilities
 		{
 			files = new Dictionary<string, MockFileData>
 			{
-				{@"C:\gpg\bin\gpg.exe", MockFileData.NullObject },
-				{@"C:\gpg\bin\gpg-agent.exe", MockFileData.NullObject },
-				{@"C:\gpg\bin\gpg-connect-agent.exe", MockFileData.NullObject },
+				{@"C:\gpg\bin\gpg.exe", new MockFileData(string.Empty) },
+				{@"C:\gpg\bin\gpg-agent.exe", new MockFileData(string.Empty) },
+				{@"C:\gpg\bin\gpg-connect-agent.exe", new MockFileData(string.Empty) },
 			};
 		}
 
 		public MockFileSystemBuilder WithEmptyFile(string path)
 		{
-			files[path] = MockFileData.NullObject;
+			files[path] = new MockFileData(string.Empty);
 			return this;
 		}
 
 		public MockFileSystemBuilder WithDirectory(string path)
 		{
-			files[path] = MockDirectoryData.NullObject;
+			files[path] = new MockDirectoryData();
 			return this;
 		}
 

@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.IO;
+using System.Text;
 using Moq;
 using PassWinmenu.ExternalPrograms;
 using PassWinmenu.ExternalPrograms.Gpg;
@@ -61,19 +62,18 @@ namespace PassWinmenuTests.ExternalPrograms.Gpg
 		{
 			var installation = new GpgInstallationBuilder().Build();
 			var processes = new Mock<IProcesses>();
-			var inputStream = new Mock<Stream>();
-			inputStream.Setup(s => s.CanWrite).Returns(true);
+			var inputStream = new MemoryStream();
 			processes.Setup(p => p.Start(It.IsAny<ProcessStartInfo>()))
 				.Returns(new FakeProcessBuilder()
 					.WithStandardOutput("")
 					.WithStandardError("")
-					.WithStandardInput(inputStream.Object)
+					.WithStandardInput(inputStream)
 					.Build());
 			var transport = new GpgTransport(new GpgHomeDirectory(@"C:\gpghome"), installation, processes.Object);
 
 			transport.CallGpg("--encrypt", "input");
 
-			inputStream.Verify(s => s.Write(It.IsAny<byte[]>(), 0, 5));
+			inputStream.ToArray().ShouldBe(Encoding.UTF8.GetBytes("input"));
 		}
 	}
 }

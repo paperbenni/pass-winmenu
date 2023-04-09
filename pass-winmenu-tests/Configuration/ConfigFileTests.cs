@@ -13,7 +13,7 @@ namespace PassWinmenuTests.Configuration
 				.Build();
 
 			// Will throw an exception if the file does not contain valid YAML
-			des.Deserialize(File.OpenText(@"..\..\..\pass-winmenu\embedded\default-config.yaml"));
+			des.Deserialize(File.OpenText(@"..\..\..\..\pass-winmenu\embedded\default-config.yaml"));
 		}
 	}
 }
