@@ -82,7 +82,7 @@ namespace PassWinmenu.Actions
 				return;
 			}
 
-			var newFile = new DecryptedPasswordFile(file, window.PasswordContent.Text);
+			var newFile = new DecryptedPasswordFile(file, window.PasswordContent.Text.Replace(Environment.NewLine, "\n"));
 			try
 			{
 				passwordManager.EncryptPassword(newFile);
