@@ -33,7 +33,7 @@ While many Linux integrations for pass are available, there are fewer options fo
 
 Bring up the password menu with the keyboard shortcut `Ctrl Alt P`.
 The password menu allows you to quickly search through your passwords to find the one you are looking for.
-Navigate through the results by pressing Tab, and press Enter to decrypt the selected password.
+Navigate through the results by pressing Tab, and press Enter to decrypt the selected password. Use spaces between words to search for multiple substrings of the password path to filter more efficiently.
 
 The password will be decrypted using GPG, and your GPG key passphrase may be requested through pinentry.
 The decrypted password will then be copied to your clipboard and/or entered into the active window,
