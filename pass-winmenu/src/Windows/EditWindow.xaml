@@ -23,7 +23,7 @@
 			<Grid DockPanel.Dock="Top">
 				<TextBox x:Name="PasswordContent" Margin="10,10,10,45" Padding="3,3,3,3" TextWrapping="Wrap" AcceptsReturn="True"
 				         AcceptsTab="True" CaretIndex="10" FontFamily="Consolas" GotFocus="HandlePasswordContentFocus"
-				         LostFocus="HandlePasswordContentFocus">
+				         LostFocus="HandlePasswordContentFocus" TextChanged="PasswordContent_TextChanged">
 				</TextBox>
 				<Rectangle x:Name="PasswordDivider" Stroke="#569de5" Margin="10,28,10,0" StrokeThickness="1" StrokeDashArray="2 3" Height="1" VerticalAlignment="Top" />
 			</Grid>
