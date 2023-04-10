@@ -10,7 +10,7 @@ using PassWinmenu.PasswordGeneration;
 #nullable enable
 namespace PassWinmenu.Windows
 {
-	internal sealed partial class PasswordWindow : IDisposable
+	internal sealed partial class PasswordWindow
 	{
 		private readonly PasswordGenerator passwordGenerator;
 
@@ -31,12 +31,12 @@ namespace PassWinmenu.Windows
 
 		private void CreateCheckboxes()
 		{
-			int colCount = 3;
-			int index = 0;
+			var colCount = 3;
+			var index = 0;
 			foreach (var charGroup in passwordGenerator.Options.CharacterGroups)
 			{
-				int x = index % colCount;
-				int y = index / colCount;
+				var x = index % colCount;
+				var y = index / colCount;
 
 				var cbx = new CheckBox
 				{
@@ -103,11 +103,6 @@ namespace PassWinmenu.Windows
 			passwordGenerator.Options.CharacterGroups.First(c => c.Name == checkbox.Name).Enabled = checkbox.IsChecked ?? false;
 
 			RegeneratePassword();
-		}
-
-		public void Dispose()
-		{
-			passwordGenerator.Dispose();
 		}
 	}
 }

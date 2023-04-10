@@ -19,7 +19,7 @@ namespace PassWinmenu.Actions
 
 		public void Execute()
 		{
-			processes.Start(new ProcessStartInfo(passwordStore.Location));
+			processes.Start(new ProcessStartInfo("explorer", passwordStore.Location));
 		}
 	}
 }

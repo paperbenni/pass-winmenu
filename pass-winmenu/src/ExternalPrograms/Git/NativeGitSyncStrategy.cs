@@ -58,7 +58,7 @@ namespace PassWinmenu.ExternalPrograms
 			Process gitProc;
 			try
 			{
-				gitProc = Process.Start(psi);
+				gitProc = Process.Start(psi) ?? throw new GitException("Failed to start Git process");
 			}
 			catch (Win32Exception e)
 			{

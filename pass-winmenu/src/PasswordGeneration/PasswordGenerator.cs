@@ -7,11 +7,9 @@ using PassWinmenu.Configuration;
 #nullable enable
 namespace PassWinmenu.PasswordGeneration
 {
-	internal class PasswordGenerator : IDisposable
+	internal class PasswordGenerator
 	{
 		public PasswordGenerationConfig Options { get; }
-
-		private readonly RNGCryptoServiceProvider csprng = new RNGCryptoServiceProvider();
 
 		public PasswordGenerator(PasswordGenerationConfig options)
 		{
@@ -104,14 +102,8 @@ namespace PassWinmenu.PasswordGeneration
 
 		private ulong GetRandomUint64()
 		{
-			var bytes = new byte[8];
-			csprng.GetBytes(bytes);
+			var bytes = RandomNumberGenerator.GetBytes(8);
 			return BitConverter.ToUInt64(bytes, 0);
-		}
-
-		public void Dispose()
-		{
-			csprng.Dispose();
 		}
 	}
 }

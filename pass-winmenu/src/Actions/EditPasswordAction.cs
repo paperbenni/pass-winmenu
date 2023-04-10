@@ -76,7 +76,7 @@ namespace PassWinmenu.Actions
 		{
 			Helpers.AssertOnUiThread();
 
-			using var window = new EditWindow(pathDisplayHelper.GetDisplayPath(file), file.Content, ConfigManager.Config.PasswordStore.PasswordGeneration);
+			var window = new EditWindow(pathDisplayHelper.GetDisplayPath(file), file.Content, ConfigManager.Config.PasswordStore.PasswordGeneration);
 			if (!window.ShowDialog() ?? true)
 			{
 				return;

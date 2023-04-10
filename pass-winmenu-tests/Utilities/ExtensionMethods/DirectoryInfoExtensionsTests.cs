@@ -13,8 +13,8 @@ namespace PassWinmenuTests.Utilities.ExtensionMethods
 				.WithDirectory("C:/parent")
 				.WithDirectory("C:/parent/sub/child")
 				.Build();
-			var parent = fs.DirectoryInfo.FromDirectoryName("C:/parent");
-			var child = fs.DirectoryInfo.FromDirectoryName("C:/parent/sub/child");
+			var parent = fs.DirectoryInfo.New("C:/parent");
+			var child = fs.DirectoryInfo.New("C:/parent/sub/child");
 
 			parent.IsChildOrSelf(child).ShouldBeTrue();
 
@@ -26,8 +26,8 @@ namespace PassWinmenuTests.Utilities.ExtensionMethods
 			var fs = new MockFileSystemBuilder()
 				.WithDirectory("C:/parent")
 				.Build();
-			var parent = fs.DirectoryInfo.FromDirectoryName("C:/parent");
-			var child = fs.DirectoryInfo.FromDirectoryName("C:/parent");
+			var parent = fs.DirectoryInfo.New("C:/parent");
+			var child = fs.DirectoryInfo.New("C:/parent");
 
 			parent.IsChildOrSelf(child).ShouldBeTrue();
 		}
@@ -39,8 +39,8 @@ namespace PassWinmenuTests.Utilities.ExtensionMethods
 				.WithDirectory("C:/parent")
 				.WithDirectory("C:/sibling")
 				.Build();
-			var parent = fs.DirectoryInfo.FromDirectoryName("C:/parent");
-			var child = fs.DirectoryInfo.FromDirectoryName("C:/sibling");
+			var parent = fs.DirectoryInfo.New("C:/parent");
+			var child = fs.DirectoryInfo.New("C:/sibling");
 			parent.IsChildOrSelf(child).ShouldBeFalse();
 		}
 
@@ -51,8 +51,8 @@ namespace PassWinmenuTests.Utilities.ExtensionMethods
 				.WithDirectory("C:/parent")
 				.WithEmptyFile("C:/parent/child")
 				.Build();
-			var parent = fs.DirectoryInfo.FromDirectoryName("C:/parent");
-			var child = fs.FileInfo.FromFileName("C:/parent/child");
+			var parent = fs.DirectoryInfo.New("C:/parent");
+			var child = fs.FileInfo.New("C:/parent/child");
 
 			parent.IsChild(child).ShouldBeTrue();
 		}

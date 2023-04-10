@@ -22,7 +22,7 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 			this.fileSystem = fileSystem;
 			this.executablePathResolver = executablePathResolver;
 
-			gpgDefaultInstallDir = fileSystem.DirectoryInfo.FromDirectoryName(@"C:\Program Files (x86)\gnupg\bin");
+			gpgDefaultInstallDir = fileSystem.DirectoryInfo.New(@"C:\Program Files (x86)\gnupg\bin");
 		}
 
 		/// <summary>
@@ -60,7 +60,7 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 			{
 				throw new GpgError($"Gpg executable not found. Please verify that '{gpgPathSpec}' points to a valid GPG executable.");
 			}
-			var executable = fileSystem.FileInfo.FromFileName(resolved);
+			var executable = fileSystem.FileInfo.New(resolved);
 
 			Log.Send("GPG executable found at the configured path. Assuming installation dir to be " + executable.Directory);
 
@@ -77,7 +77,7 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 		private IFileInfo ChildOf(IFileSystemInfo parent, string childName)
 		{
 			var fullPath = Path.Combine(parent.FullName, childName);
-			return fileSystem.FileInfo.FromFileName(fullPath);
+			return fileSystem.FileInfo.New(fullPath);
 		}
 	}
 

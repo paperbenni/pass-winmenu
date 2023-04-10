@@ -78,8 +78,9 @@ namespace PassWinmenu.WinApi
 				}
 			}
 
-			var t = Type.GetTypeFromCLSID(new Guid("72C24DD5-D70A-438B-8A42-98424B88AFB8")); //Windows Script Host Shell Object
-			dynamic shell = Activator.CreateInstance(t);
+			var windowsScriptHostShellObject = new Guid("72C24DD5-D70A-438B-8A42-98424B88AFB8");
+			var t = Type.GetTypeFromCLSID(windowsScriptHostShellObject) ?? throw new Exception("Unable to create shortcut");
+			dynamic shell = Activator.CreateInstance(t) ?? throw new Exception("Unable to create shortcut");
 			try
 			{
 				var lnk = shell.CreateShortcut(ShortcutPath);

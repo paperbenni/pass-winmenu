@@ -12,7 +12,7 @@ namespace PassWinmenuTests.WinApi
 		{
 			var filesystem = new MockFileSystemBuilder().Build();
 
-			var parent = filesystem.DirectoryInfo.FromDirectoryName(@"C:\parent");
+			var parent = filesystem.DirectoryInfo.New(@"C:\parent");
 			var child = @"C:\parent\child";
 
 			PathUtilities.MakeRelativePathForDisplay(parent, child).ShouldBe("child");
@@ -23,7 +23,7 @@ namespace PassWinmenuTests.WinApi
 		{
 			var filesystem = new MockFileSystemBuilder().Build();
 
-			var parent = filesystem.DirectoryInfo.FromDirectoryName(@"C:\parent");
+			var parent = filesystem.DirectoryInfo.New(@"C:\parent");
 			var child = @"C:\parent\child\";
 
 			PathUtilities.MakeRelativePathForDisplay(parent, child).ShouldBe("child/");
@@ -34,8 +34,8 @@ namespace PassWinmenuTests.WinApi
 		{
 			var filesystem = new MockFileSystemBuilder().Build();
 
-			var parent = filesystem.DirectoryInfo.FromDirectoryName(@"C:\parent");
-			var child = filesystem.DirectoryInfo.FromDirectoryName(@"C:\parent");
+			var parent = filesystem.DirectoryInfo.New(@"C:\parent");
+			var child = filesystem.DirectoryInfo.New(@"C:\parent");
 
 			PathUtilities.MakeRelativePathForDisplay(parent, child).ShouldBe(".");
 		}
@@ -45,8 +45,8 @@ namespace PassWinmenuTests.WinApi
 		{
 			var filesystem = new MockFileSystemBuilder().Build();
 
-			var parent = filesystem.DirectoryInfo.FromDirectoryName(@"C:\parent");
-			var child = filesystem.DirectoryInfo.FromDirectoryName(@"C:\parent\sub\child");
+			var parent = filesystem.DirectoryInfo.New(@"C:\parent");
+			var child = filesystem.DirectoryInfo.New(@"C:\parent\sub\child");
 
 			PathUtilities.MakeRelativePathForDisplay(parent, child).ShouldBe("sub/child/");
 		}
@@ -56,8 +56,8 @@ namespace PassWinmenuTests.WinApi
 		{
 			var filesystem = new MockFileSystemBuilder().Build();
 
-			var parent = filesystem.DirectoryInfo.FromDirectoryName(@"C:\parent");
-			var child = filesystem.FileInfo.FromFileName(@"C:\parent\sub\child");
+			var parent = filesystem.DirectoryInfo.New(@"C:\parent");
+			var child = filesystem.FileInfo.New(@"C:\parent\sub\child");
 
 			PathUtilities.MakeRelativePathForDisplay(parent, child).ShouldBe("sub/child");
 		}

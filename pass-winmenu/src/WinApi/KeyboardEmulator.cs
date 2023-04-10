@@ -41,7 +41,8 @@ namespace PassWinmenu.WinApi
 			var success = User32.SendInput(inputs.Count, inputs.ToArray(), size);
 			if (success != inputs.Count)
 			{
-				var exc = Marshal.GetExceptionForHR(Marshal.GetHRForLastWin32Error());
+				var exc = Marshal.GetExceptionForHR(Marshal.GetHRForLastWin32Error())
+					?? new Exception("Unknown error sending keyboard input");
 				throw exc;
 			}
 		}

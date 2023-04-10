@@ -53,7 +53,7 @@ namespace PassWinmenu.WinApi
 			return new Notifications(icon);
 		}
 
-		private void HandleIconClick(object sender, EventArgs e)
+		private void HandleIconClick(object? sender, EventArgs e)
 		{
 			var args = (MouseEventArgs)e;
 			if (args.Button == MouseButtons.Left)
@@ -162,7 +162,7 @@ namespace PassWinmenu.WinApi
 			return MessageBox.Show(message, title, MessageBoxButton.YesNo, MessageBoxImage.None) == MessageBoxResult.Yes;
 		}
 
-		private void HandleDownloadUpdateClick(object sender, EventArgs e)
+		private void HandleDownloadUpdateClick(object? sender, EventArgs e)
 		{
 			Process.Start(DownloadUpdateString);
 		}

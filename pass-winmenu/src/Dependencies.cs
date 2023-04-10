@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
 using System.Reflection;
@@ -144,7 +143,7 @@ namespace PassWinmenu
 				.AsSelf();
 
 			// Register the internal password manager
-			builder.Register(context => context.Resolve<IFileSystem>().DirectoryInfo.FromDirectoryName(context.Resolve<PasswordStoreConfig>().Location))
+			builder.Register(context => context.Resolve<IFileSystem>().DirectoryInfo.New(context.Resolve<PasswordStoreConfig>().Location))
 				.Named("PasswordStore", typeof(IDirectoryInfo));
 
 			builder.RegisterType<GpgRecipientFinder>().WithParameter(
@@ -246,8 +245,10 @@ namespace PassWinmenu
 					notificationService.Raise("A default configuration file was generated, but could not be saved.\nPass-winmenu will fall back to its default settings.", Severity.Error);
 					break;
 				case LoadResult.NewFileCreated:
-					var open = MessageBox.Show("A new configuration file has been generated. Please modify it according to your preferences and restart the application.\n\n" +
-															  "Would you like to open it now?", "New configuration file created", MessageBoxButton.YesNo);
+					var open = MessageBox.Show(
+						"A new configuration file has been generated. Please modify it according to your preferences and restart the application.\n\n" +
+						"Would you like to open it now?", "New configuration file created",
+						MessageBoxButton.YesNo);
 					if (open == MessageBoxResult.Yes)
 					{
 						Process.Start("explorer", runtimeConfig.ConfigFileLocation);
@@ -257,9 +258,11 @@ namespace PassWinmenu
 					return;
 				case LoadResult.NeedsUpgrade:
 					var backedUpFile = ConfigManager.Backup(runtimeConfig.ConfigFileLocation);
-					var openBoth = MessageBox.Show("The current configuration file is out of date. A new configuration file has been created, and the old file has been backed up.\n" +
-																  "Please edit the new configuration file according to your preferences and restart the application.\n\n" +
-																  "Would you like to open both files now?", "Configuration file out of date", MessageBoxButton.YesNo);
+					var openBoth = MessageBox.Show(
+						"The current configuration file is out of date. A new configuration file has been created, and the old file has been backed up.\n" +
+						"Please edit the new configuration file according to your preferences and restart the application.\n\n" +
+						"Would you like to open both files now?", "Configuration file out of date",
+						MessageBoxButton.YesNo);
 					if (openBoth == MessageBoxResult.Yes)
 					{
 						Process.Start("explorer", runtimeConfig.ConfigFileLocation);

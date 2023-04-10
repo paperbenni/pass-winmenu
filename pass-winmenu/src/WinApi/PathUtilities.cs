@@ -21,7 +21,7 @@ namespace PassWinmenu.WinApi
 		/// </summary>
 		public static string MakeRelativePathForDisplay(IDirectoryInfo baseDir, string child)
 		{
-			var fileInfo = baseDir.FileSystem.FileInfo.FromFileName(child);
+			var fileInfo = baseDir.FileSystem.FileInfo.New(child);
 			return MakeRelativePathForDisplay(baseDir, fileInfo);
 		}
 

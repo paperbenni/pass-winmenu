@@ -25,7 +25,7 @@ namespace PassWinmenuTests.Utilities
 
 		public string FindShortKeyId(string target)
 		{
-			return null;
+			return string.Empty;
 		}
 
 		public List<string> GetRecipients(string file)

@@ -18,23 +18,9 @@ namespace PassWinmenuTests.Utilities
 		}
 
 		[Fact]
-		public void Throws_OnNullAction()
-		{
-			Assert.Throws<ArgumentNullException>(
-				() => new Disposable(null, true));
-
-			Assert.Throws<ArgumentNullException>(
-				() => new Disposable(null, false));
-
-
-			Assert.Throws<ArgumentNullException>(
-				() => new Disposable(null));
-		}
-
-		[Fact]
 		public void Dispose_DisallowMultipleDispose()
 		{
-			int i = 0;
+			var i = 0;
 
 			var d = new Disposable(() => i++, allowMultipleDispose: false);
 
@@ -46,7 +32,7 @@ namespace PassWinmenuTests.Utilities
 		[Fact]
 		public void Dispose_AllowMultipleDispose()
 		{
-			int i = 0;
+			var i = 0;
 
 			var d = new Disposable(() => i++, allowMultipleDispose: true);
 

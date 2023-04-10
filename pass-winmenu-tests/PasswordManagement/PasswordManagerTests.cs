@@ -111,16 +111,6 @@ namespace PassWinmenuTests.PasswordManagement
 		}
 
 		[Fact]
-		public void AddPassword_NullPath_ThrowsArgumentNullException()
-		{
-			var fileSystem = new MockFileSystemBuilder().Build();
-			var passwordDirectory = new MockDirectoryInfo(fileSystem, passwordStorePath);
-			var passwordManager = new PasswordManager(passwordDirectory, new FakeCryptoService(fileSystem), Mock.Of<IRecipientFinder>(), new PasswordFileParser(new UsernameDetectionConfig()), new PasswordStoreConfig());
-
-			Should.Throw<ArgumentNullException>(() => passwordManager.AddPassword(null, "new_content", null));
-		}
-
-		[Fact]
 		public void AddPassword_AbsolutePath_ThrowsArgumentException()
 		{
 			var fileSystem = new MockFileSystemBuilder().Build();
@@ -162,7 +152,7 @@ namespace PassWinmenuTests.PasswordManagement
 			var fileSystem = new MockFileSystemBuilder().Build();
 			var passwordDirectory = new MockDirectoryInfo(fileSystem, passwordStorePath);
 			var passwordManager = new PasswordManager(passwordDirectory, new FakeCryptoService(fileSystem), Mock.Of<IRecipientFinder>(), new PasswordFileParser(new UsernameDetectionConfig()), new PasswordStoreConfig());
-			var file = new PasswordFile(fileSystem.FileInfo.FromFileName(@"C:\password-store\password_1"), passwordDirectory);
+			var file = new PasswordFile(fileSystem.FileInfo.New(@"C:\password-store\password_1"), passwordDirectory);
 
 			Should.Throw<ArgumentException>(() => passwordManager.DecryptPassword(file, true));
 		}
@@ -176,7 +166,7 @@ namespace PassWinmenuTests.PasswordManagement
 				.Build();
 			var passwordDirectory = new MockDirectoryInfo(fileSystem, passwordStorePath);
 			var passwordManager = new PasswordManager(passwordDirectory, new FakeCryptoService(fileSystem), Mock.Of<IRecipientFinder>(), new PasswordFileParser(new UsernameDetectionConfig()), new PasswordStoreConfig());
-			var file = new PasswordFile(fileSystem.FileInfo.FromFileName(@"C:\password-store\password_1"), passwordDirectory);
+			var file = new PasswordFile(fileSystem.FileInfo.New(@"C:\password-store\password_1"), passwordDirectory);
 
 			var decrypted = passwordManager.DecryptPassword(file, true);
 
@@ -186,8 +176,8 @@ namespace PassWinmenuTests.PasswordManagement
 		private DecryptedPasswordFile CreateDecryptedPassword(MockFileSystem fileSystem, string path, string content)
 		{
 			return new DecryptedPasswordFile(new PasswordFile(
-				fileSystem.FileInfo.FromFileName(path),
-				fileSystem.DirectoryInfo.FromDirectoryName(@"C:\password-store")
+				fileSystem.FileInfo.New(path),
+				fileSystem.DirectoryInfo.New(@"C:\password-store")
 			), content);
 		}
 	}

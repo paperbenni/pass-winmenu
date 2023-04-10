@@ -80,7 +80,7 @@ namespace PassWinmenu
 			}
 		}
 
-		private static void ReportTaskSchedulerException(object sender, UnobservedTaskExceptionEventArgs eventArgs)
+		private static void ReportTaskSchedulerException(object? sender, UnobservedTaskExceptionEventArgs eventArgs)
 		{
 			SendRaw("An unhandled exception occurred in a background task. Stack trace:");
 			LogExceptionAsText(eventArgs.Exception, 0);
@@ -145,7 +145,8 @@ namespace PassWinmenu
 
 					foreach (var frame in stackFrames)
 					{
-						SendRaw($"{indents}  -> in {frame.GetMethod().ReflectedType?.FullName ?? "unknown"}.{frame.GetMethod().Name} -- {frame.GetFileName()}:{frame.GetFileLineNumber()}:{frame.GetFileColumnNumber()}");
+						var method = frame.GetMethod();
+						SendRaw($"{indents}  -> in {method?.ReflectedType?.FullName ?? "<unknown>"}.{method?.Name ?? "<unknown>"} -- {frame.GetFileName()}:{frame.GetFileLineNumber()}:{frame.GetFileColumnNumber()}");
 					}
 				}
 			}

@@ -116,7 +116,7 @@ namespace PassWinmenu.Windows
 			BorderThickness = styleConfig.BorderWidth;
 		}
 
-		private void OnSelectionIndexChanged(object sender, int index)
+		private void OnSelectionIndexChanged(object? sender, int index)
 		{
 			var relativeIndex = index - scrollableView.ViewPortStart;
 			
@@ -125,7 +125,7 @@ namespace PassWinmenu.Windows
 			ApplySelectionStyle(SelectedLabel);
 		}
 
-		private void OnViewPortChanged(object sender, int viewPortStart)
+		private void OnViewPortChanged(object? sender, int viewPortStart)
 		{
 			var itemsInView = scrollableView.ItemsInView;
 			SetLabelContents(itemsInView);

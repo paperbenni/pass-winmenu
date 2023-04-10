@@ -10,11 +10,11 @@ namespace PassWinmenuTests.Utilities
 			var fileSystem = new MockFileSystemBuilder().Build();
 			return new GpgInstallation
 			(
-				fileSystem.DirectoryInfo.FromDirectoryName(@"C:\gpg\bin"),
-				fileSystem.FileInfo.FromFileName(@"C:\gpg\bin\gpg.exe"),
-				fileSystem.FileInfo.FromFileName(@"C:\gpg\bin\gpg-agent.exe"),
-				fileSystem.FileInfo.FromFileName(@"C:\gpg\bin\gpg-connect-agent.exe"),
-				fileSystem.FileInfo.FromFileName(@"C:\gpg\bin\gpgconf.exe")
+				fileSystem.DirectoryInfo.New(@"C:\gpg\bin"),
+				fileSystem.FileInfo.New(@"C:\gpg\bin\gpg.exe"),
+				fileSystem.FileInfo.New(@"C:\gpg\bin\gpg-agent.exe"),
+				fileSystem.FileInfo.New(@"C:\gpg\bin\gpg-connect-agent.exe"),
+				fileSystem.FileInfo.New(@"C:\gpg\bin\gpgconf.exe")
 			);
 		}
 	}

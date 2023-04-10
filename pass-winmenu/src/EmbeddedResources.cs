@@ -8,11 +8,11 @@ namespace PassWinmenu
 {
 	public static class EmbeddedResources
 	{
-		public static Icon Icon => new Icon(Assembly.GetExecutingAssembly().GetManifestResourceStream("PassWinmenu.embedded.pass-winmenu-plain.ico"));
-		public static Icon IconAhead => new Icon(Assembly.GetExecutingAssembly().GetManifestResourceStream("PassWinmenu.embedded.pass-winmenu-ahead.ico"));
-		public static Icon IconBehind => new Icon(Assembly.GetExecutingAssembly().GetManifestResourceStream("PassWinmenu.embedded.pass-winmenu-behind.ico"));
-		public static Icon IconDiverged => new Icon(Assembly.GetExecutingAssembly().GetManifestResourceStream("PassWinmenu.embedded.pass-winmenu-diverged.ico"));
-		public static Stream DefaultConfig => Assembly.GetExecutingAssembly().GetManifestResourceStream("PassWinmenu.embedded.default-config.yaml");
+		public static Icon Icon => new Icon(LoadResource("PassWinmenu.embedded.pass-winmenu-plain.ico"));
+		public static Icon IconAhead => new Icon(LoadResource("PassWinmenu.embedded.pass-winmenu-ahead.ico"));
+		public static Icon IconBehind => new Icon(LoadResource("PassWinmenu.embedded.pass-winmenu-behind.ico"));
+		public static Icon IconDiverged => new Icon(LoadResource("PassWinmenu.embedded.pass-winmenu-diverged.ico"));
+		public static Stream DefaultConfig => LoadResource("PassWinmenu.embedded.default-config.yaml");
 		public static string Version { get; private set; } = UnknownVersion;
 
 		public const string UnknownVersion = "<unknown version>";
@@ -26,6 +26,12 @@ namespace PassWinmenu
 			}
 			using var reader = new StreamReader(stream);
 			Version = reader.ReadLine();
+		}
+
+		private static Stream LoadResource(string name)
+		{
+			return Assembly.GetExecutingAssembly().GetManifestResourceStream(name)
+				?? throw new Exception($"Unable to find required resource '{name}'");
 		}
 	}
 }

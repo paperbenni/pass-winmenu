@@ -54,7 +54,7 @@ namespace PassWinmenu.PasswordManagement
 		/// <param name="password">The password to be encrypted.</param>
 		/// <param name="metadata">Any metadata that should be added.</param>
 		/// <exception cref="InvalidOperationException">If a file already exists at the given location.</exception>
-		public PasswordFile AddPassword(string path, string password, string metadata)
+		public PasswordFile AddPassword(string path, string password, string? metadata)
 		{
 			if (path == null)
 			{
@@ -121,7 +121,7 @@ namespace PassWinmenu.PasswordManagement
 		private PasswordFile CreatePasswordFileFromPath(string relativePath)
 		{
 			var fullPath = FileSystem.Path.Combine(PasswordStore.FullName, relativePath);
-			return new PasswordFile(FileSystem.FileInfo.FromFileName(fullPath), PasswordStore);
+			return new PasswordFile(FileSystem.FileInfo.New(fullPath), PasswordStore);
 		}
 	}
 }

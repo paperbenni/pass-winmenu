@@ -28,7 +28,7 @@ namespace PassWinmenuTests.Utilities
 			return this;
 		}
 
-		public GpgResultBuilder WithStatusMessage(GpgStatusCode code, string message = null)
+		public GpgResultBuilder WithStatusMessage(GpgStatusCode code, string? message = null)
 		{
 			statusMessages.Add(new StatusMessage(code, message));
 			return this;

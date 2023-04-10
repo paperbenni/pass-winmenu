@@ -141,6 +141,6 @@ namespace PassWinmenu.Windows
 			}
 		}
 
-		private static void Dummy(object sender, int args) { }
+		private static void Dummy(object? sender, int args) { }
 	}
 }

@@ -17,7 +17,7 @@ namespace PassWinmenuTests.PasswordManagement
 				.Build();
 			var passwordStore = new MockDirectoryInfo(fileSystem, @"C:\password-store");
 			var recipientFinder = new GpgRecipientFinder(passwordStore, new EnvironmentVariables());
-			var passwordFile = new PasswordFile(fileSystem.FileInfo.FromFileName(@"C:\password-store\sub\password"), passwordStore);
+			var passwordFile = new PasswordFile(fileSystem.FileInfo.New(@"C:\password-store\sub\password"), passwordStore);
 
 			var recipients = recipientFinder.FindRecipients(passwordFile);
 
@@ -36,7 +36,7 @@ namespace PassWinmenuTests.PasswordManagement
 				.Build();
 			var passwordStore = new MockDirectoryInfo(fileSystem, @"C:\password-store");
 			var recipientFinder = new GpgRecipientFinder(passwordStore, new EnvironmentVariables());
-			var passwordFile = new PasswordFile(fileSystem.FileInfo.FromFileName(@"C:\password-store\sub\password"), passwordStore);
+			var passwordFile = new PasswordFile(fileSystem.FileInfo.New(@"C:\password-store\sub\password"), passwordStore);
 
 			var recipients = recipientFinder.FindRecipients(passwordFile);
 
@@ -54,7 +54,7 @@ namespace PassWinmenuTests.PasswordManagement
 				.Build();
 			var passwordStore = new MockDirectoryInfo(fileSystem, @"C:\password-store");
 			var recipientFinder = new GpgRecipientFinder(passwordStore, new EnvironmentVariables());
-			var passwordFile = new PasswordFile(fileSystem.FileInfo.FromFileName(@"C:\password-store\sub\password"), passwordStore);
+			var passwordFile = new PasswordFile(fileSystem.FileInfo.New(@"C:\password-store\sub\password"), passwordStore);
 
 			var recipients = recipientFinder.FindRecipients(passwordFile);
 
@@ -71,7 +71,7 @@ namespace PassWinmenuTests.PasswordManagement
 			var recipientFinder = new GpgRecipientFinder(passwordStore, new EnvironmentVariables {
 				PasswordStoreKey = "test_recipient_3 test_recipient_4",
 			});
-			var passwordFile = new PasswordFile(fileSystem.FileInfo.FromFileName(@"C:\password-store\sub\password"), passwordStore);
+			var passwordFile = new PasswordFile(fileSystem.FileInfo.New(@"C:\password-store\sub\password"), passwordStore);
 
 			var recipients = recipientFinder.FindRecipients(passwordFile);
 
