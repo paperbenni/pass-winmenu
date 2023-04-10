@@ -1,25 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net6.0-windows</TargetFramework>
     <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
     <RootNamespace>PassWinmenu</RootNamespace>
     <LangVersion>8.0</LangVersion>
     <Nullable>enable</Nullable>
-    <PublishUrl>publish\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <UseApplicationTrust>false</UseApplicationTrust>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <UseWindowsForms>true</UseWindowsForms>
     <UseWPF>true</UseWPF>
-  </PropertyGroup>
-  <PropertyGroup>
-    <ApplicationIcon>embedded\pass-winmenu-plain.ico</ApplicationIcon>
-  </PropertyGroup>
-  <PropertyGroup>
     <NoWin32Manifest>true</NoWin32Manifest>
+    <ApplicationIcon>embedded\pass-winmenu-plain.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <AppDesigner Include="Properties\" />
@@ -33,16 +25,9 @@
       <ProductName>Microsoft .NET Framework 4.5.2 %28x86 and x64%29</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="embedded\version.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="embedded\pass-winmenu-ahead.ico" />
     <EmbeddedResource Include="embedded\pass-winmenu-behind.ico" />
     <EmbeddedResource Include="embedded\pass-winmenu-diverged.ico" />
@@ -52,41 +37,17 @@
     <PackageReference Include="Autofac">
       <Version>4.9.4</Version>
     </PackageReference>
-    <PackageReference Include="Fody" Version="6.6.4">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Costura.Fody" Version="5.7.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
     <PackageReference Include="LibGit2Sharp">
       <Version>0.26.2</Version>
     </PackageReference>
     <PackageReference Include="McSherry.SemanticVersioning">
       <Version>1.3.0</Version>
     </PackageReference>
-    <PackageReference Include="Microsoft.CodeAnalysis.VersionCheckAnalyzer">
-      <Version>2.9.8</Version>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="7.0.1">
       <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.CodeQuality.Analyzers">
-      <Version>2.9.8</Version>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageReference Include="Microsoft.NetCore.Analyzers">
-      <Version>2.9.8</Version>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.NetFramework.Analyzers">
-      <Version>2.9.8</Version>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>13.0.1</Version>
     </PackageReference>
@@ -111,6 +72,6 @@
     <PackageReference Include="Microsoft.Windows.Compatibility" Version="7.0.0" />
   </ItemGroup>
   <Target Name="PreBuild" AfterTargets="PreBuildEvent">
-    <Exec Command="git describe --tags &gt; &quot;$(ProjectDir)embedded\version.txt&quot;"/>
+    <Exec Command="git describe --tags &gt; &quot;$(ProjectDir)embedded\version.txt&quot;" />
   </Target>
 </Project>
