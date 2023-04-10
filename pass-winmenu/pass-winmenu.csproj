@@ -5,19 +5,15 @@
     <RootNamespace>PassWinmenu</RootNamespace>
     <LangVersion>8.0</LangVersion>
     <Nullable>enable</Nullable>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
-    <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <UseWindowsForms>true</UseWindowsForms>
     <UseWPF>true</UseWPF>
-    <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>embedded\pass-winmenu-plain.ico</ApplicationIcon>
@@ -114,7 +110,7 @@
     </PackageReference>
     <PackageReference Include="Microsoft.Windows.Compatibility" Version="7.0.0" />
   </ItemGroup>
-  <PropertyGroup>
-    <PreBuildEvent>git describe --tags &gt; "$(ProjectDir)\embedded\version.txt"</PreBuildEvent>
-  </PropertyGroup>
+  <Target Name="PreBuild" AfterTargets="PreBuildEvent">
+    <Exec Command="git describe --tags &gt; &quot;$(ProjectDir)embedded\version.txt&quot;"/>
+  </Target>
 </Project>
