@@ -6,6 +6,7 @@
 [*]
 indent_style = tab
 charset = utf-8
+end_of_line = lf
 
 # ReSharper properties
 resharper_align_multiline_binary_expressions_chain = false
@@ -22,6 +23,10 @@ resharper_wrap_chained_binary_expressions = chop_if_long
 [*.{cs,csx,vb,vbx}]
 indent_size = 4
 insert_final_newline = true
+
+[*.csproj]
+# Visual Studio seems to prefer this
+end_of_line = crlf
 
 [*.yaml]
 indent_style = space
