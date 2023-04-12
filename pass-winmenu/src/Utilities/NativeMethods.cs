@@ -188,9 +188,8 @@ namespace PassWinmenu.Utilities
 		/// </summary>
 		internal static Exception LastWin32Exception()
 		{
-			return Marshal.GetExceptionForHR(
-				Marshal.GetHRForLastWin32Error()
-			);
+			var HResult = Marshal.GetHRForLastWin32Error();
+			return Marshal.GetExceptionForHR(HResult) ?? new Exception($"Unknown exception with code {HResult}");
 		}
 	}
 }

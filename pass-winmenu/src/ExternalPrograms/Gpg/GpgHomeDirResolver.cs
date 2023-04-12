@@ -64,7 +64,7 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 				throw new Exception("Could not determine home directory by querying gpgconf.");
 			}
 
-			return PercentEscape.UnEscape(homeDirLine.Substring(homeDirKey.Length));
+			return PercentEscape.UnEscape(homeDirLine[homeDirKey.Length..]);
 		}
 	}
 }

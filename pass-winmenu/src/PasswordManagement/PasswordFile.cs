@@ -17,7 +17,13 @@ namespace PassWinmenu.PasswordManagement
 		/// <summary>
 		/// Represents the directory containing the password file.
 		/// </summary>
-		public IDirectoryInfo Directory => FileInfo.Directory;
+		public IDirectoryInfo Directory => 
+			// As far as I can tell, this can only be null if the file path represents
+			// a root directory, in which case we wouldn't be dealing with a file in the
+			// first place. So we'll just assume it cannot be null, and accept the exception
+			// otherwise.
+			FileInfo.Directory!;
+
 		/// <summary>
 		/// The full path to this file.
 		/// </summary>

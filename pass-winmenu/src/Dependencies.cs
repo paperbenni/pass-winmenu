@@ -139,7 +139,7 @@ namespace PassWinmenu
 			// Register user interaction types
 			builder.RegisterType<DialogCreator>()
 				.AsSelf();
-			builder.RegisterType<PathDisplayHelper>()
+			builder.RegisterType<PathDisplayService>()
 				.AsSelf();
 
 			// Register the internal password manager

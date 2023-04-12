@@ -15,16 +15,16 @@ namespace PassWinmenu.Windows
 	{
 		private readonly INotificationService notificationService;
 		private readonly IPasswordManager passwordManager;
-		private readonly PathDisplayHelper pathDisplayHelper;
+		private readonly PathDisplayService pathDisplayService;
 
 		public DialogCreator(
 			INotificationService notificationService,
 			IPasswordManager passwordManager,
-			PathDisplayHelper pathDisplayHelper)
+			PathDisplayService pathDisplayService)
 		{
 			this.notificationService = notificationService ?? throw new ArgumentNullException(nameof(notificationService));
 			this.passwordManager = passwordManager ?? throw new ArgumentNullException(nameof(passwordManager));
-			this.pathDisplayHelper = pathDisplayHelper;
+			this.pathDisplayService = pathDisplayService;
 		}
 
 		public void DecryptMetadata(bool copyToClipboard, bool type)
@@ -198,7 +198,7 @@ namespace PassWinmenu.Windows
 				MessageBox.Show("Your password store doesn't appear to contain any passwords yet.", "Empty password store", MessageBoxButton.OK, MessageBoxImage.Information);
 				return null;
 			}
-			return ShowPasswordMenu(passFiles, pathDisplayHelper.GetDisplayPath, "Select a password...").ValueOrDefault();
+			return ShowPasswordMenu(passFiles, pathDisplayService.GetDisplayPath, "Select a password...").ValueOrDefault();
 		}
 
 

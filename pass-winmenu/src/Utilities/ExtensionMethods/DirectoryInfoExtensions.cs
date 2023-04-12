@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO.Abstractions;
 using System.Linq;
@@ -15,29 +16,30 @@ namespace PassWinmenu.Utilities.ExtensionMethods
 			return directory.EnumerateFiles(name).Any();
 		}
 
-		internal static bool IsChildOrSelf(this IDirectoryInfo directory, IDirectoryInfo child)
+		internal static bool IsChildOrSelf(this IDirectoryInfo parent, IDirectoryInfo candidate)
 		{
+			var current = candidate;
 			do
 			{
-				if (child.PathEquals(directory))
+				if (current.PathEquals(parent))
 				{
 					return true;
 				}
-				child = child.Parent;
-			} while (child != null);
+				current = current.Parent;
+			} while (current != null);
 
 			return false;
 		}
-		
+
 		internal static bool IsChild(this IDirectoryInfo directory, IFileInfo child)
 		{
-			return IsChildOrSelf(directory, child.Directory);
+			return IsChildOrSelf(directory, child.Directory ?? throw new Exception($"Unable to find parent directory of '{child.FullName}'"));
 		}
 
 		public static IEnumerable<IDirectoryInfo> EnumerateParentsUpTo(this IDirectoryInfo directory, IDirectoryInfo parent)
 		{
 			var current = directory;
-			while (!current.PathEquals(parent))
+			while (current != null && !current.PathEquals(parent))
 			{
 				yield return current;
 				current = current.Parent;

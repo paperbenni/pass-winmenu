@@ -66,7 +66,7 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 
 			return new GpgInstallation
 			(
-				executable.Directory,
+				executable.Directory ?? throw new GpgError($"Unable to determine GPG installation directory from executable path '{resolved}' (resolved from '{gpgPathSpec}')"),
 				executable,
 				ChildOf(executable.Directory, GpgAgentExeName),
 				ChildOf(executable.Directory, GpgConnectAgentExeName),

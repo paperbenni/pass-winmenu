@@ -1,14 +1,12 @@
-using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.IO.Abstractions;
-using System.Linq;
 using System.Text;
 using PassWinmenu.Utilities.ExtensionMethods;
 
 namespace PassWinmenu.WinApi
 {
+	// TODO: Bring functionality into PathDisplayService and deal with nullability properly.
 	internal static class PathUtilities
 	{
 		/// <summary>
@@ -39,13 +37,13 @@ namespace PassWinmenu.WinApi
 			{
 				return child.FullName;
 			}
-			var parent = child.Directory;
+			var parent = child.Directory!;
 			var entries = new List<string>();
 			entries.Insert(0, child.Name);
 			while (!parent.PathEquals(baseDir))
 			{
 				entries.Insert(0, parent.Name);
-				parent = parent.Parent;
+				parent = parent.Parent!;
 			}
 			return string.Join("/", entries);
 		}
@@ -70,7 +68,7 @@ namespace PassWinmenu.WinApi
 			while (!current.PathEquals(baseDir))
 			{
 				path.Insert(0, current.Name + "/");
-				current = current.Parent;
+				current = current.Parent!;
 			}
 			if (path.Length == 0)
 			{

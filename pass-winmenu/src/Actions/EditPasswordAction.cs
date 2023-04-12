@@ -22,7 +22,7 @@ namespace PassWinmenu.Actions
 		private readonly INotificationService notificationService;
 		private readonly ISyncService? syncService;
 		private readonly DialogCreator dialogCreator;
-		private readonly PathDisplayHelper pathDisplayHelper;
+		private readonly PathDisplayService pathDisplayService;
 		private readonly PasswordEditorConfig config;
 
 		public HotkeyAction ActionType => HotkeyAction.EditPassword;
@@ -32,7 +32,7 @@ namespace PassWinmenu.Actions
 			INotificationService notificationService,
 			Option<ISyncService> syncService,
 			DialogCreator dialogCreator,
-			PathDisplayHelper pathDisplayHelper,
+			PathDisplayService pathDisplayService,
 			PasswordEditorConfig config
 			)
 		{
@@ -40,7 +40,7 @@ namespace PassWinmenu.Actions
 			this.passwordManager = passwordManager;
 			this.notificationService = notificationService;
 			this.syncService = syncService.ValueOrDefault();
-			this.pathDisplayHelper = pathDisplayHelper;
+			this.pathDisplayService = pathDisplayService;
 			this.config = config;
 		}
 
@@ -76,7 +76,7 @@ namespace PassWinmenu.Actions
 		{
 			Helpers.AssertOnUiThread();
 
-			var window = new EditWindow(pathDisplayHelper.GetDisplayPath(file), file.Content, ConfigManager.Config.PasswordStore.PasswordGeneration);
+			var window = new EditWindow(pathDisplayService.GetDisplayPath(file), file.Content, ConfigManager.Config.PasswordStore.PasswordGeneration);
 			if (!window.ShowDialog() ?? true)
 			{
 				return;

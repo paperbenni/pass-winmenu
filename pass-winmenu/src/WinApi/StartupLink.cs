@@ -51,7 +51,7 @@ namespace PassWinmenu.WinApi
 		{
 			if (workingDirectory == null)
 			{
-				workingDirectory = Path.GetDirectoryName(targetPath);
+				workingDirectory = Path.GetDirectoryName(targetPath) ?? throw new Exception($"Invalid shortcut path: '{targetPath}'");
 			}
 			CreateShortcutInternal(false, targetPath, workingDirectory);
 		}

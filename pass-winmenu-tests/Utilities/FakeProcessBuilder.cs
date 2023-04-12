@@ -7,10 +7,10 @@ namespace PassWinmenuTests.Utilities
 	public class FakeProcessBuilder
 	{
 		private TimeSpan exitTime;
-		private StreamReader standardError;
-		private StreamReader standardOutput;
+		private StreamReader? standardError;
+		private StreamReader? standardOutput;
 		private int exitCode;
-		private Stream inputStream;
+		private Stream? inputStream;
 
 		public FakeProcess Build()
 		{
@@ -18,9 +18,9 @@ namespace PassWinmenuTests.Utilities
 			{
 				ExitCode = exitCode,
 				ExitTime = exitTime,
-				StandardError = standardError,
-				StandardOutput = standardOutput,
-				StandardInput = inputStream == null ? null : new StreamWriter(inputStream)
+				StandardError = standardError ?? new StreamReader(Stream.Null),
+				StandardOutput = standardOutput ?? new StreamReader(Stream.Null),
+				StandardInput = new StreamWriter(inputStream ?? Stream.Null)
 			};
 		}
 

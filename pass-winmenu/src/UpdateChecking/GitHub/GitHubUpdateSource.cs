@@ -20,7 +20,7 @@ namespace PassWinmenu.UpdateChecking.GitHub
 		private ProgramVersion ToProgramVersion(Release release)
 		{
 			var importantRegex = new Regex(@"\*\*\s*important\s+release:?\s*\*\*", RegexOptions.IgnoreCase);
-			var important = importantRegex.IsMatch(release.Body);
+			var important = importantRegex.IsMatch(release.Body ?? string.Empty);
 
 			return new ProgramVersion
 			{
@@ -55,7 +55,7 @@ namespace PassWinmenu.UpdateChecking.GitHub
 			return GithubReleaseDeserialiser.DeserialiseReleases(responseText);
 		}
 
-		private bool ValidateCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+		private bool ValidateCertificate(object sender, X509Certificate? certificate, X509Chain? chain, SslPolicyErrors sslPolicyErrors)
 		{
 			if (sslPolicyErrors == SslPolicyErrors.None)
 			{

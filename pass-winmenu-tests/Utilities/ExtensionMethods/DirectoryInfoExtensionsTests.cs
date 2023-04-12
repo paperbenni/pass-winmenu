@@ -40,8 +40,8 @@ namespace PassWinmenuTests.Utilities.ExtensionMethods
 				.WithDirectory("C:/sibling")
 				.Build();
 			var parent = fs.DirectoryInfo.New("C:/parent");
-			var child = fs.DirectoryInfo.New("C:/sibling");
-			parent.IsChildOrSelf(child).ShouldBeFalse();
+			var sibling = fs.DirectoryInfo.New("C:/sibling");
+			parent.IsChildOrSelf(sibling).ShouldBeFalse();
 		}
 
 		[Fact]

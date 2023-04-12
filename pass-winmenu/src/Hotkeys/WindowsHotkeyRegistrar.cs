@@ -56,7 +56,7 @@ namespace PassWinmenu.Hotkeys
 				// The logic in the rest of the class should prevent this
 				// from being null. If it doesn't, we want the error, as
 				// it means we aren't doing something properly.
-				handler.Invoke(this, null);
+				handler.Invoke(this, null!);
 
 				// Indicate success
 				return IntPtr.Zero;

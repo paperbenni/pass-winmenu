@@ -25,7 +25,9 @@ namespace PassWinmenu
 				throw new InvalidOperationException("Version number could not be read from the assembly.");
 			}
 			using var reader = new StreamReader(stream);
-			Version = reader.ReadLine();
+			Version = reader.ReadLine()
+				?? throw new InvalidOperationException("Version number could not be read from the assembly.");
+
 		}
 
 		private static Stream LoadResource(string name)

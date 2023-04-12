@@ -5,11 +5,11 @@ using PassWinmenu.Utilities.ExtensionMethods;
 
 namespace PassWinmenu.Windows
 {
-	internal class PathDisplayHelper
+	internal class PathDisplayService
 	{
 		private readonly string directorySeparator;
 
-		public PathDisplayHelper(InterfaceConfig config)
+		public PathDisplayService(InterfaceConfig config)
 		{
 			directorySeparator = config.DirectorySeparator;
 		}
@@ -25,7 +25,8 @@ namespace PassWinmenu.Windows
 			while (!current.PathEquals(file.PasswordStore))
 			{
 				names.Insert(0, current.Name);
-				current = current.Parent;
+				// TODO: Check if this is reasonable
+				current = current.Parent!;
 			}
 
 			return string.Join(directorySeparator, names);

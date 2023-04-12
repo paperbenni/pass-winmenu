@@ -178,7 +178,7 @@ namespace PassWinmenuTests.Windows
 
 		private class EventRecorder
 		{
-			public void RecordIndex(object _, int eventData)
+			public void RecordIndex(object? _, int eventData)
 			{
 				IndexCallData.Add(eventData);
 			}

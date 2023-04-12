@@ -41,6 +41,17 @@ namespace PassWinmenuTests.WinApi
 		}
 
 		[Fact]
+		public void MakeRelativePathForDisplay_NotAParent_ReturnsFullPath()
+		{
+			var filesystem = new MockFileSystemBuilder().Build();
+
+			var parent = filesystem.DirectoryInfo.New(@"C:\parent");
+			var child = filesystem.DirectoryInfo.New(@"C:\child");
+
+			PathUtilities.MakeRelativePathForDisplay(parent, child).ShouldBe(@"C:\child");
+		}
+
+		[Fact]
 		public void MakeRelativePathForDisplay_Directory_AddsTrailingSlash()
 		{
 			var filesystem = new MockFileSystemBuilder().Build();
