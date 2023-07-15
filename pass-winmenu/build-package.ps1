@@ -32,12 +32,11 @@ if($Clean){
 	}
 }
 
-Copy-Item -recurse "bin/Release/lib/win32" "$PKGDIR/lib/win32"
-# The PDB files aren't used, so they can be removed.
-Remove-Item -recurse "$PKGDIR/lib/win32/x64/*.pdb"
-Remove-Item -recurse "$PKGDIR/lib/win32/x86/*.pdb"
+dotnet publish --configuration Release
 
-Copy-Item "bin/Release/pass-winmenu.exe" "$PKGDIR/pass-winmenu.exe"
+$PUBLISHDIR="bin/Release/net6.0-windows/win-x64/publish"
+
+Copy-Item "$PUBLISHDIR/pass-winmenu.exe" "$PKGDIR/pass-winmenu.exe"
 
 if($WithGpg){
 	tools/7za.exe x -aos "include/GnuPG.zip" "-o$INCLUDEDIR"
