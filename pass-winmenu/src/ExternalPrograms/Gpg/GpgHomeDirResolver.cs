@@ -49,6 +49,7 @@ namespace PassWinmenu.ExternalPrograms.Gpg
 			{
 				RedirectStandardOutput = true,
 				UseShellExecute = false,
+				CreateNoWindow = true,
 			};
 
 			var gpgConf = processes.Start(psi);
