@@ -66,9 +66,9 @@ namespace PassWinmenu.Utilities
 			source.Match(v => action(v), default);
 		}
 
-		public static T ValueOrDefault<T>(this Option<T> source)
+		public static T? ValueOrDefault<T>(this Option<T> source)
 		{
-			return source.Match(v => v, () => default!);
+			return source.Match<T?>(v => v, () => default);
 		}
 	}
 }
