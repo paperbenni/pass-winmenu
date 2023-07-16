@@ -72,7 +72,7 @@ namespace PassWinmenu
 					typeof(Processes),
 					typeof(ExecutablePathResolver))
 				.AsImplementedInterfaces();
-			builder.Register(context => EnvironmentVariables.LoadFromEnvironment()).AsSelf();
+			builder.Register(_ => EnvironmentVariables.LoadFromEnvironment()).AsSelf();
 
 			return this;
 		}

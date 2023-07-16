@@ -30,7 +30,7 @@ namespace PassWinmenu
 			IContainer? container = null;
 			try
 			{
-				container = Initialise(notificationService, dialogService, configManager);
+				container = Setup.Initialise(notificationService, dialogService, configManager);
 				Start(container, notificationService, dialogService);
 				RunInitialCheck(container, dialogService);
 			}
@@ -50,42 +50,6 @@ namespace PassWinmenu
 				container?.Dispose();
 				App.Exit();
 			}
-
-			return container;
-		}
-
-		/// <summary>
-		/// Loads all required resources.
-		/// </summary>
-		private static IContainer Initialise(INotificationService notificationService, IDialogService dialogService, ConfigManager configManager)
-		{
-			// Load compiled-in resources.
-			EmbeddedResources.Load();
-
-			Log.Send("------------------------------");
-			Log.Send($"Starting pass-winmenu {Version}");
-			Log.Send("------------------------------");
-
-			Log.Send($"Enabled security protocols: {ServicePointManager.SecurityProtocol}");
-
-#if DEBUG
-			Log.EnableFileLogging();
-#else
-			if (ConfigManager.Config.CreateLogFile)
-			{
-				Log.EnableFileLogging();
-			}
-#endif
-
-			var container = new DependenciesBuilder()
-				.RegisterNotifications(notificationService, dialogService)
-				.RegisterConfiguration(configManager)
-				.RegisterEnvironment()
-				.RegisterActions()
-				.RegisterGpg()
-				.RegisterGit()
-				.RegisterApplication()
-				.Build();
 
 			return container;
 		}

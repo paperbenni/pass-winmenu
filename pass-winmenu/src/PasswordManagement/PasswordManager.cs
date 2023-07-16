@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using PassWinmenu.Configuration;
 using PassWinmenu.ExternalPrograms;
+using PassWinmenu.Utilities;
 
 #nullable enable
 namespace PassWinmenu.PasswordManagement
@@ -100,6 +101,25 @@ namespace PassWinmenu.PasswordManagement
 			var passwordFiles = matchingFiles.Select(CreatePasswordFile);
 
 			return passwordFiles;
+		}
+
+		public Option<PasswordFile> QueryPasswordFile(string path)
+		{
+			if (FileSystem.Path.IsPathRooted(path))
+			{
+				throw new ArgumentException("Path to the password file must be relative.");
+			}
+
+			var joined = FileSystem.Path.Join(PasswordStore.FullName, path);
+
+			var fileInfo = FileSystem.FileInfo.New(joined);
+
+			if (fileInfo.Exists)
+			{
+				return Option.Some(CreatePasswordFile(fileInfo));
+			}
+
+			return default;
 		}
 
 		private PasswordFile EncryptPasswordInternal(DecryptedPasswordFile file, bool overwrite)

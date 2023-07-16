@@ -162,7 +162,7 @@ namespace PassWinmenu
 				History.Add(line);
 			}
 #if DEBUG
-			Console.WriteLine(line);
+			Console.Error.WriteLine(line);
 #endif
 			writer?.WriteLine(line);
 		}

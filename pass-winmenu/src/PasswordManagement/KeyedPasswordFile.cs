@@ -12,7 +12,7 @@ namespace PassWinmenu.PasswordManagement
 		public List<KeyValuePair<string, string>> Keys { get; }
 
 		public KeyedPasswordFile(PasswordFile original, string password, string? metadata, List<KeyValuePair<string, string>>? keys)
-			: base(original,  password, metadata)
+			: base(original, password, metadata)
 		{
 			Keys = keys ?? new List<KeyValuePair<string, string>>();
 		}
