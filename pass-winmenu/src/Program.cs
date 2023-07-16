@@ -2,7 +2,6 @@ using System;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
-using System.Windows;
 using Autofac;
 using Autofac.Core;
 using PassWinmenu.Actions;
@@ -25,13 +24,12 @@ namespace PassWinmenu
 		public const string EncryptedFileExtension = ".gpg";
 		public const string PlaintextFileExtension = ".txt";
 
-		public static IDisposable? Start()
+		public static IDisposable? Start(INotificationService notifications)
 		{
-			Notifications? notifications = null;
 			IContainer? container = null;
 			try
 			{
-				(container, notifications) = Initialise();
+				container = Initialise(notifications);
 				Start(container, notifications);
 				RunInitialCheck(container, notifications);
 			}
@@ -45,19 +43,10 @@ namespace PassWinmenu
 				{
 					e = de.InnerException;
 				}
-				var errorMessage = $"pass-winmenu failed to start ({e.GetType().Name}: {e.Message})";
-				if (notifications == null)
-				{
-					// We have no notification service yet. Instantiating one is risky,
-					// so we'll make do with a call to MessageBox.Show() instead.
-					MessageBox.Show(errorMessage, "An error occurred.", MessageBoxButton.OK, MessageBoxImage.Error);
-				}
-				else
-				{
-					notifications.ShowErrorWindow(errorMessage);
-				}
 
-				notifications?.Dispose();
+				var errorMessage = $"pass-winmenu failed to start ({e.GetType().Name}: {e.Message})";
+				notifications.ShowErrorWindow(errorMessage);
+				notifications.Dispose();
 				container?.Dispose();
 				App.Exit();
 			}
@@ -68,7 +57,7 @@ namespace PassWinmenu
 		/// <summary>
 		/// Loads all required resources.
 		/// </summary>
-		private static (IContainer, Notifications) Initialise()
+		private static IContainer Initialise(INotificationService notifications)
 		{
 			// Load compiled-in resources.
 			EmbeddedResources.Load();
@@ -88,7 +77,6 @@ namespace PassWinmenu
 			}
 #endif
 
-			var notifications = Notifications.Create();
 			var container = new DependenciesBuilder(notifications)
 				.RegisterNotifications()
 				.RegisterConfiguration()
@@ -99,10 +87,10 @@ namespace PassWinmenu
 				.RegisterApplication()
 				.Build();
 
-			return (container, notifications);
+			return container;
 		}
 
-		private static void Start(IContainer container, Notifications notifications)
+		private static void Start(IContainer container, INotificationService notifications)
 		{
 			var gpgConfig = container.Resolve<GpgConfig>();
 			if (gpgConfig.GpgAgent.Config.AllowConfigManagement)
@@ -111,9 +99,13 @@ namespace PassWinmenu
 			}
 
 			var actionDispatcher = container.Resolve<ActionDispatcher>();
-			notifications.AddMenuActions(actionDispatcher);
-
 			var hotkeyService = container.Resolve<HotkeyService>();
+			
+			// TODO: Not great, not terrible
+			if (notifications is INotifyIcon n)
+			{
+				n.AddMenuActions(actionDispatcher);
+			}
 			AssignHotkeys(actionDispatcher, hotkeyService, notifications);
 
 			if (container.Resolve<UpdateCheckingConfig>().CheckForUpdates)

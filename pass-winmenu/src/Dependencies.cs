@@ -22,27 +22,37 @@ namespace PassWinmenu
 {
 	internal class DependenciesBuilder
 	{
-		private readonly Notifications notificationService;
-		private readonly ContainerBuilder builder = new ContainerBuilder();
+		private readonly INotificationService notificationService;
+		private readonly ContainerBuilder builder = new();
 
-		public DependenciesBuilder(Notifications notificationService)
+		public DependenciesBuilder(INotificationService notificationService)
 		{
 			this.notificationService = notificationService;
 		}
 
 		public DependenciesBuilder RegisterNotifications()
 		{
-			builder.Register(_ => notificationService).AsImplementedInterfaces();
+			builder.Register(_ => notificationService)
+				.AsImplementedInterfaces()
+				.ExternallyOwned()
+				.SingleInstance();
+
+			if (notificationService is ISyncStateTracker syncStateTracker)
+			{
+				builder.Register(_ => syncStateTracker)
+					.AsSelf()
+					.ExternallyOwned()
+					.SingleInstance();
+			}
+			
 			return this;
 		}
 
 		public DependenciesBuilder RegisterConfiguration()
 		{
-			var runtimeConfig = RuntimeConfiguration.Parse(Environment.GetCommandLineArgs());
-			builder.Register(_ => runtimeConfig).AsSelf();
+			ConfigurationLoader.Load(notificationService);
 
-			LoadConfigFile(runtimeConfig);
-
+			builder.Register(_ => ConfigManager.ConfigurationFile).AsSelf();
 			builder.Register(_ => ConfigManager.Config).AsSelf();
 			builder.Register(_ => ConfigManager.Config.Application.UpdateChecking).AsSelf();
 			builder.Register(_ => ConfigManager.Config.Git).AsSelf();
@@ -191,91 +201,6 @@ namespace PassWinmenu
 				notificationService.ShowErrorWindow($"Failed to open the password store Git repository ({e.GetType().Name}: {e.Message}). Git support will be disabled.");
 			}
 			return Option<ISyncService>.None;
-		}
-
-		private void LoadConfigFile(RuntimeConfiguration runtimeConfig)
-		{
-			LoadResult result;
-			try
-			{
-				result = ConfigManager.Load(runtimeConfig.ConfigFileLocation);
-			}
-			catch (Exception e) when (e.InnerException != null)
-			{
-				if (e is YamlException)
-				{
-					notificationService.ShowErrorWindow(
-						$"The configuration file could not be loaded: {e.Message}\n\n" +
-						$"{e.InnerException.GetType().Name}: {e.InnerException.Message}",
-						"Unable to load configuration file.");
-				}
-				else
-				{
-					notificationService.ShowErrorWindow(
-						$"The configuration file could not be loaded. An unhandled exception occurred.\n" +
-						$"{e.InnerException.GetType().Name}: {e.InnerException.Message}",
-						"Unable to load configuration file.");
-				}
-
-				App.Exit();
-				return;
-			}
-			catch (SemanticErrorException e)
-			{
-				notificationService.ShowErrorWindow(
-					$"The configuration file could not be loaded, a YAML error was encountered.\n" +
-					$"{e.GetType().Name}: {e.Message}\n\n" +
-					$"File location: {runtimeConfig.ConfigFileLocation}",
-					"Unable to load configuration file.");
-				App.Exit();
-				return;
-			}
-			catch (YamlException e)
-			{
-				notificationService.ShowErrorWindow(
-					$"The configuration file could not be loaded. An unhandled exception occurred.\n{e.GetType().Name}: {e.Message}",
-					"Unable to load configuration file.");
-				App.Exit();
-				return;
-			}
-
-			switch (result)
-			{
-				case LoadResult.FileCreationFailure:
-					notificationService.Raise("A default configuration file was generated, but could not be saved.\nPass-winmenu will fall back to its default settings.", Severity.Error);
-					break;
-				case LoadResult.NewFileCreated:
-					var open = MessageBox.Show(
-						"A new configuration file has been generated. Please modify it according to your preferences and restart the application.\n\n" +
-						"Would you like to open it now?", "New configuration file created",
-						MessageBoxButton.YesNo);
-					if (open == MessageBoxResult.Yes)
-					{
-						Process.Start("explorer", runtimeConfig.ConfigFileLocation);
-					}
-
-					App.Exit();
-					return;
-				case LoadResult.NeedsUpgrade:
-					var backedUpFile = ConfigManager.Backup(runtimeConfig.ConfigFileLocation);
-					var openBoth = MessageBox.Show(
-						"The current configuration file is out of date. A new configuration file has been created, and the old file has been backed up.\n" +
-						"Please edit the new configuration file according to your preferences and restart the application.\n\n" +
-						"Would you like to open both files now?", "Configuration file out of date",
-						MessageBoxButton.YesNo);
-					if (openBoth == MessageBoxResult.Yes)
-					{
-						Process.Start("explorer", runtimeConfig.ConfigFileLocation);
-						Process.Start(backedUpFile);
-					}
-					App.Exit();
-					return;
-			}
-			if (ConfigManager.Config.Application.ReloadConfig)
-			{
-				ConfigManager.EnableAutoReloading(runtimeConfig.ConfigFileLocation);
-				Log.Send("Config reloading enabled");
-			}
 		}
 	}
 }

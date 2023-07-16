@@ -33,7 +33,7 @@ namespace PassWinmenu.Actions
 			{
 				FileName = "powershell",
 				WorkingDirectory = passwordStore.Location,
-				UseShellExecute = false,
+				UseShellExecute = true,
 			};
 
 			var gpgExe = installation.GpgExecutable.FullName;

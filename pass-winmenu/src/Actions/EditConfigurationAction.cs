@@ -5,11 +5,11 @@ namespace PassWinmenu.Actions
 {
 	internal class EditConfigurationAction : IAction
 	{
-		private readonly RuntimeConfiguration runtimeConfiguration;
+		private readonly ConfigurationFile configFile;
 
-		public EditConfigurationAction(RuntimeConfiguration runtimeConfiguration)
+		public EditConfigurationAction(ConfigurationFile configFile)
 		{
-			this.runtimeConfiguration = runtimeConfiguration;
+			this.configFile = configFile;
 		}
 
 		public void Execute()
@@ -17,7 +17,7 @@ namespace PassWinmenu.Actions
 			var startInfo = new ProcessStartInfo
 			{
 				FileName = "explorer", 
-				Arguments = runtimeConfiguration.ConfigFileLocation,
+				Arguments = configFile.Path,
 			};
 			Process.Start(startInfo);
 		}

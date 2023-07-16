@@ -3,7 +3,6 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net6.0-windows</TargetFramework>
     <RootNamespace>PassWinmenu</RootNamespace>
-    <LangVersion>8.0</LangVersion>
     <Nullable>enable</Nullable>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <UseWindowsForms>true</UseWindowsForms>
@@ -65,9 +64,11 @@
     <PackageReference Include="Otp.NET">
       <Version>1.2.2</Version>
     </PackageReference>
+    <PackageReference Include="Pinvoke.Kernel32" Version="0.7.124" />
     <PackageReference Include="PInvoke.User32">
       <Version>0.7.104</Version>
     </PackageReference>
+    <PackageReference Include="System.Commandline" Version="2.0.0-beta4.22272.1" />
     <PackageReference Include="System.IO.Abstractions">
       <Version>19.2.4</Version>
     </PackageReference>

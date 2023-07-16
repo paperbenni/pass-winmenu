@@ -18,7 +18,7 @@ namespace PassWinmenu.WinApi
 {
 	internal class Notifications : INotificationService, INotifyIcon, ISyncStateTracker
 	{
-		public NotifyIcon Icon { get; set; }
+		private readonly NotifyIcon icon;
 
 		private const string DownloadUpdateString = "https://github.com/geluk/pass-winmenu/releases";
 		private readonly ToolStripMenuItem downloadUpdate;
@@ -27,8 +27,8 @@ namespace PassWinmenu.WinApi
 
 		private Notifications(NotifyIcon icon)
 		{
-			Icon = icon ?? throw new ArgumentNullException(nameof(icon));
-			Icon.Click += HandleIconClick;
+			this.icon = icon;
+			this.icon.Click += HandleIconClick;
 
 			downloadUpdate = new ToolStripMenuItem("Download Update");
 			downloadUpdate.Click += HandleDownloadUpdateClick;
@@ -64,7 +64,7 @@ namespace PassWinmenu.WinApi
 				// so we have to resort to a bit of a hack to get it to work.
 				var mi = typeof(NotifyIcon)
 					.GetMethod("ShowContextMenu", BindingFlags.Instance | BindingFlags.NonPublic);
-				mi!.Invoke(Icon, null);
+				mi!.Invoke(icon, null);
 			}
 		}
 
@@ -114,14 +114,14 @@ namespace PassWinmenu.WinApi
 			menu.Items.Add(startWithWindows);
 			menu.Items.Add("About", null, (sender, args) => Process.Start("https://github.com/geluk/pass-winmenu#readme"));
 			menu.Items.Add("Quit", null, (sender, args) => App.Exit());
-			Icon.ContextMenuStrip = menu;
+			icon.ContextMenuStrip = menu;
 		}
 
 		public void Raise(string message, Severity level)
 		{
 			if (ConfigManager.Config.Notifications.Enabled)
 			{
-				Icon.ShowBalloonTip(ToolTipTimeoutMs, "pass-winmenu", message, GetIconForSeverity(level));
+				icon.ShowBalloonTip(ToolTipTimeoutMs, "pass-winmenu", message, GetIconForSeverity(level));
 			}
 		}
 
@@ -201,20 +201,20 @@ namespace PassWinmenu.WinApi
 
 		public void Dispose()
 		{
-			Icon.Dispose();
+			icon.Dispose();
 			downloadUpdate.Dispose();
 			downloadSeparator.Dispose();
 		}
 
 		public void SetSyncState(SyncState state)
 		{
-			Icon.Icon = state switch
+			icon.Icon = state switch
 			{
 				SyncState.UpToDate => EmbeddedResources.Icon,
 				SyncState.Ahead => EmbeddedResources.IconAhead,
 				SyncState.Behind => EmbeddedResources.IconBehind,
 				SyncState.Diverged => EmbeddedResources.IconDiverged,
-				_ => Icon.Icon
+				_ => icon.Icon
 			};
 		}
 	}

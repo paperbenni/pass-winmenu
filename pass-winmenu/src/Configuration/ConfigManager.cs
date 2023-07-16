@@ -9,7 +9,10 @@ namespace PassWinmenu.Configuration
 {
 	internal class ConfigManager
 	{
+		// TODO: Remove usages and rely on DI instead.
 		public static Config Config { get; private set; } = new Config();
+		public static ConfigurationFile ConfigurationFile { get; private set; }
+		
 		private static FileSystemWatcher? watcher;
 
 		~ConfigManager()
@@ -78,6 +81,7 @@ namespace PassWinmenu.Configuration
 
 			using (var reader = File.OpenText(fileName))
 			{
+				ConfigurationFile = new ConfigurationFile(fileName);
 				Config = ConfigurationDeserialiser.Deserialise<Config>(reader);
 			}
 
