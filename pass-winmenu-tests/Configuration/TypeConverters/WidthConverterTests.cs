@@ -1,11 +1,11 @@
 using System.Windows;
-using PassWinmenu.Configuration;
+using PassWinmenu.Configuration.TypeConverters;
 using Shouldly;
 using Xunit;
 using YamlDotNet.Core;
 using YamlDotNet.Serialization;
 
-namespace PassWinmenuTests.Configuration
+namespace PassWinmenuTests.Configuration.TypeConverters
 {
 	public class WidthConverterTests
 	{

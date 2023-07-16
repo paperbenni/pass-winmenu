@@ -12,13 +12,15 @@ namespace PassWinmenu.Actions
 	{
 		private readonly ISyncService? syncService;
 		private readonly INotificationService notificationService;
+		private readonly NotificationConfig notificationConfig;
 
 		public HotkeyAction ActionType => HotkeyAction.GitPush;
 
-		public CommitChangesAction(Option<ISyncService> syncService, INotificationService notificationService)
+		public CommitChangesAction(Option<ISyncService> syncService, INotificationService notificationService, NotificationConfig notificationConfig)
 		{
 			this.syncService = syncService.ValueOrDefault();
 			this.notificationService = notificationService;
+			this.notificationConfig = notificationConfig;
 		}
 
 		/// <summary>
@@ -107,7 +109,7 @@ namespace PassWinmenu.Actions
 				syncService.Push();
 			}
 
-			if (!ConfigManager.Config.Notifications.Types.GitPush)
+			if (!notificationConfig.Types.GitPush)
 			{
 				return;
 			}

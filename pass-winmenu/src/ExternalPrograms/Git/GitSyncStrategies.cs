@@ -32,7 +32,7 @@ namespace PassWinmenu.ExternalPrograms
 
 			if (syncMode == SyncMode.NativeGit)
 			{
-				return new NativeGitSyncStrategy(config.GitPath, repositoryPath);
+				return new NativeGitSyncStrategy(repositoryPath, config);
 			}
 			else
 			{

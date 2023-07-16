@@ -16,15 +16,18 @@ namespace PassWinmenu.Windows
 		private readonly INotificationService notificationService;
 		private readonly IPasswordManager passwordManager;
 		private readonly PathDisplayService pathDisplayService;
+		private readonly Config config;
 
 		public DialogCreator(
 			INotificationService notificationService,
 			IPasswordManager passwordManager,
-			PathDisplayService pathDisplayService)
+			PathDisplayService pathDisplayService,
+			Config config)
 		{
 			this.notificationService = notificationService ?? throw new ArgumentNullException(nameof(notificationService));
 			this.passwordManager = passwordManager ?? throw new ArgumentNullException(nameof(passwordManager));
 			this.pathDisplayService = pathDisplayService;
+			this.config = config;
 		}
 
 		public void DecryptMetadata(bool copyToClipboard, bool type)
@@ -37,7 +40,7 @@ namespace PassWinmenu.Windows
 			KeyedPasswordFile passFile;
 			try
 			{
-				passFile = passwordManager.DecryptPassword(selectedFile, ConfigManager.Config.PasswordStore.FirstLineOnly);
+				passFile = passwordManager.DecryptPassword(selectedFile, config.PasswordStore.FirstLineOnly);
 			}
 			catch (GpgError e)
 			{
@@ -62,10 +65,10 @@ namespace PassWinmenu.Windows
 
 			if (copyToClipboard)
 			{
-				TemporaryClipboard.Place(passFile.Metadata, TimeSpan.FromSeconds(ConfigManager.Config.Interface.ClipboardTimeout));
-				if (ConfigManager.Config.Notifications.Types.PasswordCopied)
+				TemporaryClipboard.Place(passFile.Metadata, TimeSpan.FromSeconds(config.Interface.ClipboardTimeout));
+				if (config.Notifications.Types.PasswordCopied)
 				{
-					notificationService.Raise($"The key has been copied to your clipboard.\nIt will be cleared in {ConfigManager.Config.Interface.ClipboardTimeout:0.##} seconds.", Severity.Info);
+					notificationService.Raise($"The key has been copied to your clipboard.\nIt will be cleared in {config.Interface.ClipboardTimeout:0.##} seconds.", Severity.Info);
 				}
 			}
 			if (type)
@@ -85,7 +88,7 @@ namespace PassWinmenu.Windows
 			KeyedPasswordFile passFile;
 			try
 			{
-				passFile = passwordManager.DecryptPassword(selectedFile, ConfigManager.Config.PasswordStore.FirstLineOnly);
+				passFile = passwordManager.DecryptPassword(selectedFile, config.PasswordStore.FirstLineOnly);
 			}
 			catch (GpgError e)
 			{
@@ -141,10 +144,10 @@ namespace PassWinmenu.Windows
 
 			if (copyToClipboard)
 			{
-				TemporaryClipboard.Place(chosenValue, TimeSpan.FromSeconds(ConfigManager.Config.Interface.ClipboardTimeout));
-				if (ConfigManager.Config.Notifications.Types.PasswordCopied)
+				TemporaryClipboard.Place(chosenValue, TimeSpan.FromSeconds(config.Interface.ClipboardTimeout));
+				if (config.Notifications.Types.PasswordCopied)
 				{
-					notificationService.Raise($"The key has been copied to your clipboard.\nIt will be cleared in {ConfigManager.Config.Interface.ClipboardTimeout:0.##} seconds.", Severity.Info);
+					notificationService.Raise($"The key has been copied to your clipboard.\nIt will be cleared in {config.Interface.ClipboardTimeout:0.##} seconds.", Severity.Info);
 				}
 			}
 			if (type)
@@ -162,7 +165,7 @@ namespace PassWinmenu.Windows
 			SelectionWindowConfiguration windowConfig;
 			try
 			{
-				windowConfig = SelectionWindowConfiguration.ParseMainWindowConfiguration(ConfigManager.Config);
+				windowConfig = SelectionWindowConfiguration.ParseMainWindowConfiguration(config);
 			}
 			catch (ConfigurationParseException e)
 			{
@@ -171,7 +174,7 @@ namespace PassWinmenu.Windows
 			}
 
 			// Ask the user where the password file should be placed.
-			var pathWindow = new FileSelectionWindow(passwordManager.PasswordStore, windowConfig, "Choose a location...");
+			var pathWindow = new FileSelectionWindow(passwordManager.PasswordStore, windowConfig, config.Interface, "Choose a location...");
 			pathWindow.ShowDialog();
 			if (!pathWindow.Success)
 			{
@@ -215,7 +218,7 @@ namespace PassWinmenu.Windows
 			SelectionWindowConfiguration windowConfig;
 			try
 			{
-				windowConfig = SelectionWindowConfiguration.ParseMainWindowConfiguration(ConfigManager.Config);
+				windowConfig = SelectionWindowConfiguration.ParseMainWindowConfiguration(config);
 			}
 			catch (ConfigurationParseException e)
 			{
@@ -223,7 +226,7 @@ namespace PassWinmenu.Windows
 				return default;
 			}
 
-			var menu = new PasswordSelectionWindow<TEntry>(options, keySelector, windowConfig, hint);
+			var menu = new PasswordSelectionWindow<TEntry>(options, keySelector, windowConfig, config.Interface, hint);
 			menu.ShowDialog();
 			if (menu.Success)
 			{

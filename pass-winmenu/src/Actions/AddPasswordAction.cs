@@ -21,6 +21,7 @@ namespace PassWinmenu.Actions
 		private readonly IPasswordManager passwordManager;
 		private readonly ISyncService? syncService;
 		private readonly INotificationService notificationService;
+		private readonly Config config;
 
 		public HotkeyAction ActionType => HotkeyAction.AddPassword;
 
@@ -28,12 +29,14 @@ namespace PassWinmenu.Actions
 			DialogCreator dialogCreator,
 			IPasswordManager passwordManager,
 			Option<ISyncService> syncService,
-			INotificationService notificationService)
+			INotificationService notificationService,
+			Config config)
 		{
 			this.dialogCreator = dialogCreator;
 			this.passwordManager = passwordManager;
 			this.syncService = syncService.ValueOrDefault();
 			this.notificationService = notificationService;
+			this.config = config;
 		}
 
 		public void Execute()
@@ -50,7 +53,7 @@ namespace PassWinmenu.Actions
 			// Display the password generation window.
 			string password;
 			string metadata;
-			var passwordWindow = new PasswordWindow(Path.GetFileNameWithoutExtension(passwordFilePath), ConfigManager.Config.PasswordStore.PasswordGeneration);
+			var passwordWindow = new PasswordWindow(Path.GetFileNameWithoutExtension(passwordFilePath), config.PasswordStore.PasswordGeneration);
 			passwordWindow.ShowDialog();
 			if (!passwordWindow.DialogResult.GetValueOrDefault())
 			{
@@ -75,11 +78,11 @@ namespace PassWinmenu.Actions
 				return;
 			}
 			// Copy the newly generated password.
-			TemporaryClipboard.Place(password, TimeSpan.FromSeconds(ConfigManager.Config.Interface.ClipboardTimeout));
+			TemporaryClipboard.Place(password, TimeSpan.FromSeconds(config.Interface.ClipboardTimeout));
 
-			if (ConfigManager.Config.Notifications.Types.PasswordGenerated)
+			if (config.Notifications.Types.PasswordGenerated)
 			{
-				notificationService.Raise($"The new password has been copied to your clipboard.\nIt will be cleared in {ConfigManager.Config.Interface.ClipboardTimeout:0.##} seconds.", Severity.Info);
+				notificationService.Raise($"The new password has been copied to your clipboard.\nIt will be cleared in {config.Interface.ClipboardTimeout:0.##} seconds.", Severity.Info);
 			}
 
 			try

@@ -18,6 +18,7 @@ namespace PassWinmenu.Actions
 		private readonly PasswordFileParser passwordFileParser;
 		private readonly PasswordStoreConfig passwordStoreConfig;
 		private readonly InterfaceConfig interfaceConfig;
+		private readonly NotificationConfig notificationConfig;
 
 		public DecryptPasswordAction(
 			IPasswordManager passwordManager,
@@ -25,7 +26,8 @@ namespace PassWinmenu.Actions
 			DialogCreator dialogCreator,
 			PasswordFileParser passwordFileParser,
 			PasswordStoreConfig passwordStoreConfig,
-			InterfaceConfig interfaceConfig)
+			InterfaceConfig interfaceConfig,
+			NotificationConfig notificationConfig)
 		{
 			this.passwordManager = passwordManager;
 			this.notificationService = notificationService;
@@ -33,6 +35,7 @@ namespace PassWinmenu.Actions
 			this.passwordFileParser = passwordFileParser;
 			this.passwordStoreConfig = passwordStoreConfig;
 			this.interfaceConfig = interfaceConfig;
+			this.notificationConfig = notificationConfig;
 		}
 
 		public void Execute(bool copyToClipboard, bool typeUsername, bool typePassword)
@@ -63,7 +66,7 @@ namespace PassWinmenu.Actions
 			if (copyToClipboard)
 			{
 				TemporaryClipboard.Place(passFile.Password, TimeSpan.FromSeconds(interfaceConfig.ClipboardTimeout));
-				if (ConfigManager.Config.Notifications.Types.PasswordCopied)
+				if (notificationConfig.Types.PasswordCopied)
 				{
 					notificationService.Raise($"The password has been copied to your clipboard.\nIt will be cleared in {interfaceConfig.ClipboardTimeout:0.##} seconds.", Severity.Info);
 				}

@@ -4,19 +4,20 @@ using System.ComponentModel;
 using System.Diagnostics;
 
 using LibGit2Sharp;
+using PassWinmenu.Configuration;
 
 namespace PassWinmenu.ExternalPrograms
 {
 	internal class NativeGitSyncStrategy : IGitSyncStrategy
 	{
-		private readonly string gitPath;
 		private readonly string repositoryPath;
+		private readonly GitConfig gitConfig;
 		private readonly TimeSpan gitCallTimeout = TimeSpan.FromSeconds(5);
 
-		public NativeGitSyncStrategy(string gitPath, string repositoryPath)
+		public NativeGitSyncStrategy(string repositoryPath, GitConfig gitConfig)
 		{
-			this.gitPath = gitPath;
 			this.repositoryPath = repositoryPath;
+			this.gitConfig = gitConfig;
 		}
 
 		public void Fetch(Branch branch)
@@ -41,7 +42,7 @@ namespace PassWinmenu.ExternalPrograms
 
 			var psi = new ProcessStartInfo
 			{
-				FileName = gitPath,
+				FileName = gitConfig.GitPath,
 				WorkingDirectory = repositoryPath,
 				Arguments = $"{arguments} {string.Join(" ", argList)}",
 				UseShellExecute = false,
@@ -49,11 +50,11 @@ namespace PassWinmenu.ExternalPrograms
 				RedirectStandardOutput = true,
 				CreateNoWindow = true
 			};
-			if (!string.IsNullOrEmpty(Configuration.ConfigManager.Config.Git.SshPath))
+			if (!string.IsNullOrEmpty(gitConfig.SshPath))
 			{
 				// Remove is a no-op if the variable is not set.
 				psi.EnvironmentVariables.Remove("GIT_SSH");
-				psi.EnvironmentVariables.Add("GIT_SSH", Configuration.ConfigManager.Config.Git.SshPath);
+				psi.EnvironmentVariables.Add("GIT_SSH", gitConfig.SshPath);
 			}
 			Process gitProc;
 			try

@@ -7,22 +7,24 @@ using System.Windows;
 #nullable enable
 namespace PassWinmenu.Configuration
 {
-	internal class ConfigManager
+	internal class ConfigManager : IDisposable
 	{
-		// TODO: Remove usages and rely on DI instead.
-		public static Config Config { get; private set; } = new Config();
-		public static ConfigurationFile ConfigurationFile { get; private set; }
+		[Obsolete("Remove usages and rely on DI instead")]
+		public static Config Config => instance?.ConfigurationFile.Config ?? throw new NullReferenceException();
+		private static ConfigManager? instance;
+		public ConfigurationFile ConfigurationFile { get; private set; }
 		
-		private static FileSystemWatcher? watcher;
+		private FileSystemWatcher? watcher;
 
-		~ConfigManager()
+		private ConfigManager(ConfigurationFile configurationFile)
 		{
-			watcher?.Dispose();
+			ConfigurationFile = configurationFile;
+			instance = this;
 		}
 
-		public static void EnableAutoReloading(string fileName)
+		public void EnableAutoReloading()
 		{
-			var directory = Path.GetDirectoryName(fileName);
+			var directory = Path.GetDirectoryName(ConfigurationFile.Path);
 			if (string.IsNullOrWhiteSpace(directory))
 			{
 				directory = Directory.GetCurrentDirectory();
@@ -41,61 +43,60 @@ namespace PassWinmenu.Configuration
 
 				// Reloading the configuration file involves creating UI resources
 				// (Brush/Thickness), which needs to be done on the main thread.
-				Application.Current.Dispatcher.Invoke(() =>
-				{
-					Reload(fileName);
-				});
+				Application.Current.Dispatcher.Invoke(Reload);
 			};
+			
+			Log.Send("Config reloading enabled");
 		}
 
-		public static LoadResult Load(string fileName)
+		public static LoadResult Load(string path)
 		{
-			if (!File.Exists(fileName))
+			if (!File.Exists(path))
 			{
 				try
 				{
 					using var defaultConfig = EmbeddedResources.DefaultConfig;
-					using var configFile = File.Create(fileName);
+					using var configFile = File.Create(path);
 					defaultConfig.CopyTo(configFile);
 				}
-				catch (Exception e) when (e is FileNotFoundException || e is FileLoadException || e is IOException)
+				catch (Exception e) when (e is FileNotFoundException or FileLoadException or IOException)
 				{
-					return LoadResult.FileCreationFailure;
+					throw new Exception("A new configuration file could not be created", e);
 				}
 
-				return LoadResult.NewFileCreated;
+				return new LoadResult.NewFileCreated();
 			}
 
-			using (var reader = File.OpenText(fileName))
+			using (var reader = File.OpenText(path))
 			{
-				var versionCheck = ConfigurationDeserialiser.Deserialise<Dictionary<string, object>>(reader);
+				var versionCheck = ConfigurationDeserialiser.Deserialise<Dictionary<string, object>?>(reader);
 				if (versionCheck == null || !versionCheck.ContainsKey("config-version"))
 				{
-					return LoadResult.NeedsUpgrade;
+					return new LoadResult.NeedsUpgrade();
 				}
 				if (versionCheck["config-version"] as string != Program.LastConfigVersion)
 				{
-					return LoadResult.NeedsUpgrade;
+					return new LoadResult.NeedsUpgrade();
 				}
 			}
 
-			using (var reader = File.OpenText(fileName))
+			using (var reader = File.OpenText(path))
 			{
-				ConfigurationFile = new ConfigurationFile(fileName);
-				Config = ConfigurationDeserialiser.Deserialise<Config>(reader);
+				var config = ConfigurationDeserialiser.Deserialise<Config>(reader);
+				var configurationFile = new ConfigurationFile(path, config);
+				return new LoadResult.Success(new ConfigManager(configurationFile));
 			}
-
-			return LoadResult.Success;
 		}
 
-		public static void Reload(string fileName)
+		private void Reload()
 		{
 			try
 			{
-				using (var reader = File.OpenText(fileName))
+				using var reader = File.OpenText(ConfigurationFile.Path);
+				ConfigurationFile = ConfigurationFile with
 				{
-					Config = ConfigurationDeserialiser.Deserialise<Config>(reader);
-				}
+					Config = ConfigurationDeserialiser.Deserialise<Config>(reader),
+				};
 				Log.Send("Configuration file reloaded successfully.");
 
 			}
@@ -107,11 +108,11 @@ namespace PassWinmenu.Configuration
 			}
 		}
 
-		public static string Backup(string fileName)
+		public static string Backup(string originalFile)
 		{
-			var extension = Path.GetExtension(fileName);
-			var name = Path.GetFileNameWithoutExtension(fileName);
-			var directory = Path.GetDirectoryName(fileName);
+			var extension = Path.GetExtension(originalFile);
+			var name = Path.GetFileNameWithoutExtension(originalFile);
+			var directory = Path.GetDirectoryName(originalFile);
 
 			// Find an unused name to which we can rename the old configuration file.
 			var root = string.IsNullOrEmpty(directory) ? name : Path.Combine(directory, name);
@@ -122,14 +123,19 @@ namespace PassWinmenu.Configuration
 				newFileName =$"{root}-backup-{counter++}{extension}";
 			}
 
-			File.Move(fileName, newFileName);
-		
-			using (var defaultConfig = EmbeddedResources.DefaultConfig)
-			using (var configFile = File.Create(fileName))
-			{
-				defaultConfig.CopyTo(configFile);
-			}
+			File.Move(originalFile, newFileName);
+
+			using var defaultConfig = EmbeddedResources.DefaultConfig;
+			using var configFile = File.Create(originalFile);
+			
+			defaultConfig.CopyTo(configFile);
+			
 			return newFileName;
+		}
+
+		public void Dispose()
+		{
+			watcher?.Dispose();
 		}
 	}
 }

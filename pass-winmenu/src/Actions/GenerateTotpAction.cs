@@ -13,13 +13,13 @@ namespace PassWinmenu.Actions
 		private readonly IPasswordManager passwordManager;
 		private readonly INotificationService notificationService;
 		private readonly DialogCreator dialogCreator;
-		private readonly InterfaceConfig config;
+		private readonly Config config;
 
 		public GenerateTotpAction(
 			IPasswordManager passwordManager,
 			INotificationService notificationService,
 			DialogCreator dialogCreator,
-			InterfaceConfig config)
+			Config config)
 		{
 			this.passwordManager = passwordManager;
 			this.notificationService = notificationService;
@@ -62,10 +62,10 @@ namespace PassWinmenu.Actions
 				{
 					if (copyToClipboard)
 					{
-						TemporaryClipboard.Place(code, TimeSpan.FromSeconds(config.ClipboardTimeout));
-						if (ConfigManager.Config.Notifications.Types.TotpCopied)
+						TemporaryClipboard.Place(code, TimeSpan.FromSeconds(config.Interface.ClipboardTimeout));
+						if (config.Notifications.Types.TotpCopied)
 						{
-							notificationService.Raise($"The totp code has been copied to your clipboard.\nIt will be cleared in {config.ClipboardTimeout:0.##} seconds.", Severity.Info);
+							notificationService.Raise($"The totp code has been copied to your clipboard.\nIt will be cleared in {config.Interface.ClipboardTimeout:0.##} seconds.", Severity.Info);
 						}
 					}
 

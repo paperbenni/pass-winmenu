@@ -7,19 +7,20 @@ using System.Windows.Input;
 using PassWinmenu.Configuration;
 using PassWinmenu.PasswordGeneration;
 
-#nullable enable
 namespace PassWinmenu.Windows
 {
 	internal sealed partial class PasswordWindow
 	{
+		private readonly PasswordGenerationConfig passwordGenerationConfig;
 		private readonly PasswordGenerator passwordGenerator;
 
-		public PasswordWindow(string filename, PasswordGenerationConfig options)
+		public PasswordWindow(string filename, PasswordGenerationConfig passwordGenerationConfig)
 		{
+			this.passwordGenerationConfig = passwordGenerationConfig;
 			WindowStartupLocation = WindowStartupLocation.CenterScreen;
 			InitializeComponent();
 
-			passwordGenerator = new PasswordGenerator(options);
+			passwordGenerator = new PasswordGenerator(passwordGenerationConfig);
 			CreateCheckboxes();
 
 			Title = "Add new password";
@@ -58,7 +59,7 @@ namespace PassWinmenu.Windows
 		private void AddDefaultMetadata(string filename)
 		{
 			var now = DateTime.Now;
-			var extraContent = ConfigManager.Config.PasswordStore.PasswordGeneration.DefaultContent
+			var extraContent = passwordGenerationConfig.DefaultContent
 				.Replace("$filename", filename)
 				.Replace("$date", now.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture))
 				.Replace("$time", now.ToString("HH:mm:ss", CultureInfo.InvariantCulture));

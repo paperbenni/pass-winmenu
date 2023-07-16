@@ -1,5 +1,5 @@
 using System.IO;
-using PassWinmenu.Configuration;
+using PassWinmenu.Configuration.TypeConverters;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
@@ -17,6 +17,5 @@ namespace PassWinmenu.Configuration
 		{
 			return Deserialiser.Deserialize<T>(reader);
 		}
-
 	}
 }

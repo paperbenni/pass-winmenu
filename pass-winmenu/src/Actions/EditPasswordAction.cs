@@ -23,7 +23,7 @@ namespace PassWinmenu.Actions
 		private readonly ISyncService? syncService;
 		private readonly DialogCreator dialogCreator;
 		private readonly PathDisplayService pathDisplayService;
-		private readonly PasswordEditorConfig config;
+		private readonly Config config;
 
 		public HotkeyAction ActionType => HotkeyAction.EditPassword;
 
@@ -33,7 +33,7 @@ namespace PassWinmenu.Actions
 			Option<ISyncService> syncService,
 			DialogCreator dialogCreator,
 			PathDisplayService pathDisplayService,
-			PasswordEditorConfig config
+			Config config
 			)
 		{
 			this.dialogCreator = dialogCreator;
@@ -52,7 +52,7 @@ namespace PassWinmenu.Actions
 				return;
 			}
 
-			if (config.UseBuiltin)
+			if (config.Interface.PasswordEditor.UseBuiltin)
 			{
 				DecryptedPasswordFile decryptedFile;
 				try
@@ -76,7 +76,7 @@ namespace PassWinmenu.Actions
 		{
 			Helpers.AssertOnUiThread();
 
-			var window = new EditWindow(pathDisplayService.GetDisplayPath(file), file.Content, ConfigManager.Config.PasswordStore.PasswordGeneration);
+			var window = new EditWindow(pathDisplayService.GetDisplayPath(file), file.Content, config.PasswordStore.PasswordGeneration);
 			if (!window.ShowDialog() ?? true)
 			{
 				return;
@@ -88,7 +88,7 @@ namespace PassWinmenu.Actions
 				passwordManager.EncryptPassword(newFile);
 
 				syncService?.EditPassword(newFile.FullPath);
-				if (ConfigManager.Config.Notifications.Types.PasswordUpdated)
+				if (config.Notifications.Types.PasswordUpdated)
 				{
 					notificationService.Raise($"Password file \"{newFile.FileNameWithoutExtension}\" has been updated.", Severity.Info);
 				}
@@ -151,7 +151,7 @@ namespace PassWinmenu.Actions
 					passwordManager.EncryptPassword(newPasswordFile);
 					syncService?.EditPassword(selectedFile.FullPath);
 
-					if (ConfigManager.Config.Notifications.Types.PasswordUpdated)
+					if (config.Notifications.Types.PasswordUpdated)
 					{
 						notificationService.Raise($"Password file \"{selectedFile}\" has been updated.", Severity.Info);
 					}
@@ -191,9 +191,9 @@ namespace PassWinmenu.Actions
 			}
 		}
 
-		private static string CreateTemporaryPlaintextFile()
+		private string CreateTemporaryPlaintextFile()
 		{
-			var tempDir = ConfigManager.Config.Interface.PasswordEditor.TemporaryFileDirectory;
+			var tempDir = config.Interface.PasswordEditor.TemporaryFileDirectory;
 
 			if (string.IsNullOrWhiteSpace(tempDir))
 			{

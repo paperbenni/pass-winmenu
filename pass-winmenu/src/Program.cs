@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
@@ -24,12 +25,12 @@ namespace PassWinmenu
 		public const string EncryptedFileExtension = ".gpg";
 		public const string PlaintextFileExtension = ".txt";
 
-		public static IDisposable? Start(INotificationService notifications)
+		public static IDisposable? Start(INotificationService notifications, string configPath)
 		{
 			IContainer? container = null;
 			try
 			{
-				container = Initialise(notifications);
+				container = Initialise(notifications, configPath);
 				Start(container, notifications);
 				RunInitialCheck(container, notifications);
 			}
@@ -57,7 +58,7 @@ namespace PassWinmenu
 		/// <summary>
 		/// Loads all required resources.
 		/// </summary>
-		private static IContainer Initialise(INotificationService notifications)
+		private static IContainer Initialise(INotificationService notifications, string configPath)
 		{
 			// Load compiled-in resources.
 			EmbeddedResources.Load();
@@ -79,7 +80,7 @@ namespace PassWinmenu
 
 			var container = new DependenciesBuilder(notifications)
 				.RegisterNotifications()
-				.RegisterConfiguration()
+				.RegisterConfiguration(configPath)
 				.RegisterEnvironment()
 				.RegisterActions()
 				.RegisterGpg()
@@ -100,13 +101,14 @@ namespace PassWinmenu
 
 			var actionDispatcher = container.Resolve<ActionDispatcher>();
 			var hotkeyService = container.Resolve<HotkeyService>();
+			var hotkeys = container.Resolve<Config>().Hotkeys;
 			
 			// TODO: Not great, not terrible
 			if (notifications is INotifyIcon n)
 			{
 				n.AddMenuActions(actionDispatcher);
 			}
-			AssignHotkeys(actionDispatcher, hotkeyService, notifications);
+			AssignHotkeys(hotkeys, actionDispatcher, hotkeyService, notifications);
 
 			if (container.Resolve<UpdateCheckingConfig>().CheckForUpdates)
 			{
@@ -114,6 +116,13 @@ namespace PassWinmenu
 			}
 
 			container.Resolve<Option<RemoteUpdateChecker>>().Apply(c => c.Start());
+
+			var applicationConfig = container.Resolve<ApplicationConfig>();
+			if (applicationConfig.ReloadConfig)
+			{
+				var configManager = container.Resolve<ConfigManager>();
+				configManager.EnableAutoReloading();
+			}
 		}
 
 		/// <summary>
@@ -122,10 +131,12 @@ namespace PassWinmenu
 		private static void RunInitialCheck(IContainer container, INotificationService notificationService)
 		{
 			var gpg = container.Resolve<GPG>();
+			var passwordStoreConfig = container.Resolve<PasswordStoreConfig>();
+			var gpgAgentConfig = container.Resolve<GpgAgentConfig>();
 
-			if (!Directory.Exists(ConfigManager.Config.PasswordStore.Location))
+			if (!Directory.Exists(passwordStoreConfig.Location))
 			{
-				notificationService.ShowErrorWindow($"Could not find the password store at {Path.GetFullPath(ConfigManager.Config.PasswordStore.Location)}. Please make sure it exists.");
+				notificationService.ShowErrorWindow($"Could not find the password store at {Path.GetFullPath(passwordStoreConfig.Location)}. Please make sure it exists.");
 				App.Exit();
 				return;
 			}
@@ -145,7 +156,7 @@ namespace PassWinmenu
 				App.Exit();
 				return;
 			}
-			if (ConfigManager.Config.Gpg.GpgAgent.Preload)
+			if (gpgAgentConfig.Preload)
 			{
 				Task.Run(() =>
 				{
@@ -170,6 +181,7 @@ namespace PassWinmenu
 		/// Loads keybindings from the configuration file and registers them with Windows.
 		/// </summary>
 		private static void AssignHotkeys(
+			IEnumerable<HotkeyConfig> hotkeys,
 			ActionDispatcher actionDispatcher,
 			HotkeyService hotkeyService,
 			INotificationService notificationService)
@@ -177,7 +189,7 @@ namespace PassWinmenu
 			try
 			{
 				hotkeyService.AssignHotkeys(
-					ConfigManager.Config.Hotkeys ?? Array.Empty<HotkeyConfig>(),
+					hotkeys,
 					actionDispatcher,
 					notificationService!);
 			}

@@ -5,8 +5,7 @@ using YamlDotNet.Core.Events;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NodeDeserializers;
 
-#nullable enable
-namespace PassWinmenu.Configuration
+namespace PassWinmenu.Configuration.TypeConverters
 {
 	internal class WidthConverter : IYamlTypeConverter
 	{

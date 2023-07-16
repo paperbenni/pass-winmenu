@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Windows.Controls;
+using PassWinmenu.Configuration;
 
-#nullable enable
 namespace PassWinmenu.Windows
 {
 	internal class PasswordSelectionWindow<TEntry> : SelectionWindow
@@ -15,8 +15,9 @@ namespace PassWinmenu.Windows
 			IEnumerable<TEntry> options,
 			Func<TEntry, string> keySelector,
 			SelectionWindowConfiguration configuration,
+			InterfaceConfig interfaceConfig,
 			string hint)
-			: base(configuration, hint)
+			: base(configuration, interfaceConfig, hint)
 		{
 			entries = options.ToDictionary(keySelector);
 			ResetItems(entries.Keys);

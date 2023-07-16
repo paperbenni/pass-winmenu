@@ -31,14 +31,14 @@ namespace PassWinmenu
 			command.AddGlobalOption(configFile);
 
 			var run = new Command("run", "Run pass-winmenu in GUI mode");
-			run.SetHandler(HandleRun);
+			run.SetHandler(HandleRun, configFile);
 			var show = new Command("show", "Show a password");
 			show.SetHandler(HandleShow);
 			show.AddArgument(new Argument<string>("path", "Path to the password to be shown"));
 
 			command.Add(run);
 			command.Add(show);
-			command.SetHandler(HandleRun);
+			command.SetHandler(HandleRun, configFile);
 			
 			var exitCode = command.Invoke(Environment.GetCommandLineArgs()[1..]);
 			if (!remain)
@@ -47,11 +47,11 @@ namespace PassWinmenu
 			}
 		}
 
-		private void HandleRun(InvocationContext obj)
+		private void HandleRun(string configFile)
 		{
 			remain = true;
 			var notifications = Notifications.Create();
-			using var program = Program.Start(notifications);
+			using var program = Program.Start(notifications, configFile);
 			mainWindow = new MainWindow();
 		}
 

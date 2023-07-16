@@ -5,8 +5,7 @@ using YamlDotNet.Core;
 using YamlDotNet.Core.Events;
 using YamlDotNet.Serialization;
 
-#nullable enable
-namespace PassWinmenu.Configuration
+namespace PassWinmenu.Configuration.TypeConverters
 {
 	internal class BrushConverter : IYamlTypeConverter
 	{

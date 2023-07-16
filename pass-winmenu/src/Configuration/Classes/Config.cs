@@ -16,7 +16,7 @@ namespace PassWinmenu.Configuration
 		public object Output { get; set; } = new object();
 
 		[YamlMember(Alias = "hotkeys")]
-		public HotkeyConfig[] UnfilteredHotkeys { get; set; } =
+		public HotkeyConfig[]? UnfilteredHotkeys { get; set; } =
 		{
 			new HotkeyConfig
 			{

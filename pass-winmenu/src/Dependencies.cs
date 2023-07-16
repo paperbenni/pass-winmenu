@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO.Abstractions;
 using System.Linq;
 using System.Reflection;
-using System.Windows;
 using Autofac;
 using PassWinmenu.Actions;
 using PassWinmenu.Configuration;
@@ -16,7 +14,6 @@ using PassWinmenu.UpdateChecking;
 using PassWinmenu.Utilities;
 using PassWinmenu.WinApi;
 using PassWinmenu.Windows;
-using YamlDotNet.Core;
 
 namespace PassWinmenu
 {
@@ -48,20 +45,26 @@ namespace PassWinmenu
 			return this;
 		}
 
-		public DependenciesBuilder RegisterConfiguration()
+		public DependenciesBuilder RegisterConfiguration(string configPath)
 		{
-			ConfigurationLoader.Load(notificationService);
-
-			builder.Register(_ => ConfigManager.ConfigurationFile).AsSelf();
-			builder.Register(_ => ConfigManager.Config).AsSelf();
-			builder.Register(_ => ConfigManager.Config.Application.UpdateChecking).AsSelf();
-			builder.Register(_ => ConfigManager.Config.Git).AsSelf();
-			builder.Register(_ => ConfigManager.Config.Gpg).AsSelf();
-			builder.Register(_ => ConfigManager.Config.Interface).AsSelf();
-			builder.Register(_ => ConfigManager.Config.Interface.PasswordEditor).AsSelf();
-			builder.Register(_ => ConfigManager.Config.PasswordStore).AsSelf();
-			builder.Register(_ => ConfigManager.Config.PasswordStore.UsernameDetection).AsSelf();
-
+			var configManager = ConfigurationLoader.Load(notificationService, configPath);
+			
+			configManager.Apply(cm =>
+			{
+				builder.Register(_ => cm).AsImplementedInterfaces().AsSelf();
+				builder.Register(_ => cm.ConfigurationFile).AsSelf();
+				builder.Register(_ => cm.ConfigurationFile.Config).AsSelf();
+				builder.Register(_ => cm.ConfigurationFile.Config.Application).AsSelf();
+				builder.Register(_ => cm.ConfigurationFile.Config.Application.UpdateChecking).AsSelf();
+				builder.Register(_ => cm.ConfigurationFile.Config.Git).AsSelf();
+				builder.Register(_ => cm.ConfigurationFile.Config.Gpg).AsSelf();
+				builder.Register(_ => cm.ConfigurationFile.Config.Gpg.GpgAgent).AsSelf();
+				builder.Register(_ => cm.ConfigurationFile.Config.Interface).AsSelf();
+				builder.Register(_ => cm.ConfigurationFile.Config.Interface.PasswordEditor).AsSelf();
+				builder.Register(_ => cm.ConfigurationFile.Config.PasswordStore).AsSelf();
+				builder.Register(_ => cm.ConfigurationFile.Config.PasswordStore.UsernameDetection).AsSelf();
+			});
+			
 			return this;
 		}
 
@@ -115,7 +118,7 @@ namespace PassWinmenu
 
 			// Register GPG installation
 			// Single instance, as there is no need to look for the same GPG installation multiple times.
-			builder.Register(context => context.Resolve<GpgInstallationFinder>().FindGpgInstallation(ConfigManager.Config.Gpg.GpgPath))
+			builder.Register(context => context.Resolve<GpgInstallationFinder>().FindGpgInstallation(context.Resolve<GpgConfig>().GpgPath))
 				.SingleInstance();
 
 			builder.Register(ctx => ctx.Resolve<GpgHomeDirResolver>().GetHomeDir())

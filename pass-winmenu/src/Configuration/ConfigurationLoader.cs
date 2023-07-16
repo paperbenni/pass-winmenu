@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using PassWinmenu.Utilities;
 using PassWinmenu.WinApi;
 using YamlDotNet.Core;
 
@@ -7,14 +8,12 @@ namespace PassWinmenu.Configuration;
 
 internal class ConfigurationLoader
 {
-	public static void Load(INotificationService notificationService)
+	public static Option<ConfigManager> Load(INotificationService notificationService, string configPath)
 	{
-		var configFileLocation = "pass-winmenu.yaml";
-
 		LoadResult result;
 		try
 		{
-			result = ConfigManager.Load(configFileLocation);
+			result = ConfigManager.Load(configPath);
 		}
 		catch (Exception e) when (e.InnerException != null)
 		{
@@ -34,17 +33,17 @@ internal class ConfigurationLoader
 			}
 
 			App.Exit();
-			return;
+			return default;
 		}
 		catch (SemanticErrorException e)
 		{
 			notificationService.ShowErrorWindow(
 				$"The configuration file could not be loaded, a YAML error was encountered.\n"
 				+ $"{e.GetType().Name}: {e.Message}\n\n"
-				+ $"File location: {configFileLocation}",
+				+ $"File location: {configPath}",
 				"Unable to load configuration file.");
 			App.Exit();
-			return;
+			return default;
 		}
 		catch (YamlException e)
 		{
@@ -52,16 +51,11 @@ internal class ConfigurationLoader
 				$"The configuration file could not be loaded. An unhandled exception occurred.\n{e.GetType().Name}: {e.Message}",
 				"Unable to load configuration file.");
 			App.Exit();
-			return;
+			return default;
 		}
 
 		switch (result)
 		{
-			case LoadResult.FileCreationFailure:
-				notificationService.Raise(
-					"A default configuration file was generated, but could not be saved.\nPass-winmenu will fall back to its default settings.",
-					Severity.Error);
-				break;
 			case LoadResult.NewFileCreated:
 				var open = notificationService.ShowYesNoWindow(
 					"A new configuration file has been generated. Please modify it according to your preferences and restart the application.\n\n"
@@ -69,13 +63,13 @@ internal class ConfigurationLoader
 					"New configuration file created");
 				if (open)
 				{
-					Process.Start("explorer", configFileLocation);
+					Process.Start("explorer", configPath);
 				}
 
 				App.Exit();
-				return;
+				return default;
 			case LoadResult.NeedsUpgrade:
-				var backedUpFile = ConfigManager.Backup(configFileLocation);
+				var backedUpFile = ConfigManager.Backup(configPath);
 				var openBoth = notificationService.ShowYesNoWindow(
 					"The current configuration file is out of date. A new configuration file has been created, and the old file has been backed up.\n"
 					+ "Please edit the new configuration file according to your preferences and restart the application.\n\n"
@@ -83,18 +77,16 @@ internal class ConfigurationLoader
 					"Configuration file out of date");
 				if (openBoth)
 				{
-					Process.Start("explorer", configFileLocation);
+					Process.Start("explorer", configPath);
 					Process.Start(backedUpFile);
 				}
 
 				App.Exit();
-				return;
-		}
-
-		if (ConfigManager.Config.Application.ReloadConfig)
-		{
-			ConfigManager.EnableAutoReloading(configFileLocation);
-			Log.Send("Config reloading enabled");
+				return default;
+			case LoadResult.Success success:
+				return Option.Some(success.ConfigManager);
+			default:
+				throw new ArgumentOutOfRangeException();
 		}
 	}
 }

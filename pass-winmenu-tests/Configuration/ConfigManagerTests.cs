@@ -14,7 +14,7 @@ namespace PassWinmenuTests.Configuration
 			var result = ConfigManager.Load(tempFile);
 			File.Delete(tempFile);
 
-			result.ShouldBe(LoadResult.NeedsUpgrade);
+			result.ShouldBeOfType<LoadResult.NeedsUpgrade>();
 		}
 
 		[Fact]
@@ -26,7 +26,7 @@ namespace PassWinmenuTests.Configuration
 			var result = ConfigManager.Load(tempFile);
 			File.Delete(tempFile);
 
-			result.ShouldBe(LoadResult.NewFileCreated);
+			result.ShouldBeOfType<LoadResult.NewFileCreated>();
 		}
 	}
 }

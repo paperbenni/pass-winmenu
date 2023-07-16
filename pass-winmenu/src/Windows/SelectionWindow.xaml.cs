@@ -21,12 +21,12 @@ namespace PassWinmenu.Windows
 	internal abstract partial class SelectionWindow
 	{
 		private readonly ScrollableView<string> scrollableView;
-		private readonly StyleConfig styleConfig;
+		private readonly InterfaceConfig interfaceConfig;
 		private readonly bool tryRemainOnTop = true;
 		private bool isClosing;
 		private bool firstActivation = true;
 
-		protected readonly List<SelectionLabel> Labels = new List<SelectionLabel>();
+		protected readonly List<SelectionLabel> Labels = new();
 		/// <summary>
 		/// The label that is currently selected.
 		/// </summary>
@@ -51,10 +51,10 @@ namespace PassWinmenu.Windows
 		/// <summary>
 		/// Initialises the window with the provided options.
 		/// </summary>
-		protected SelectionWindow(SelectionWindowConfiguration configuration, string hint)
+		protected SelectionWindow(SelectionWindowConfiguration configuration, InterfaceConfig interfaceConfig, string hint)
 		{
 			HintText = hint;
-			styleConfig = ConfigManager.Config.Interface.Style;
+			this.interfaceConfig = interfaceConfig;
 
 			// Position and size the window according to user configuration.
 			Matrix fromDevice;
@@ -88,11 +88,12 @@ namespace PassWinmenu.Windows
 			SelectedLabel = Labels[0];
 			ApplySelectionStyle(SelectedLabel);
 
+			var styleConfig = interfaceConfig.Style;
 			scrollableView = new ScrollableView<string>(
 				Array.Empty<string>(),
 				new ScrollableViewOptions
 				{
-					ScrollBoundarySize = ConfigManager.Config.Interface.Style.ScrollBoundary,
+					ScrollBoundarySize = styleConfig.ScrollBoundary,
 					ViewPortSize = Labels.Count,
 				});
 			scrollableView.ViewPortChanged += OnViewPortChanged;
@@ -157,7 +158,7 @@ namespace PassWinmenu.Windows
 				var labelFit = availableSpace / labelHeight;
 				labelCount = (int) labelFit;
 
-				if (!styleConfig.ScaleToFit)
+				if (!interfaceConfig.Style.ScaleToFit)
 				{
 					var remainder = (labelFit - labelCount) * labelHeight;
 					Log.Send($"Max height: {MaxHeight:F}, Available for labels: {availableSpace:F}, Total used by labels: {labelCount * labelHeight:F}, Remainder: {remainder:F}");
@@ -225,7 +226,7 @@ namespace PassWinmenu.Windows
 
 		private void ApplySelectionStyle(SelectionLabel label)
 		{
-			var selectStyle = styleConfig.Selection;
+			var selectStyle = interfaceConfig.Style.Selection;
 			label.Background = selectStyle.BackgroundColour;
 			label.Foreground = selectStyle.TextColour;
 			label.LabelBorder.BorderBrush = selectStyle.BorderColour;
@@ -234,7 +235,7 @@ namespace PassWinmenu.Windows
 
 		private void ApplyDeselectionStyle(SelectionLabel label)
 		{
-			var deselectStyle = styleConfig.Options;
+			var deselectStyle = interfaceConfig.Style.Options;
 			label.Background = deselectStyle.BackgroundColour;
 			label.Foreground = deselectStyle.TextColour;
 			label.LabelBorder.BorderBrush = deselectStyle.BorderColour;
@@ -245,9 +246,9 @@ namespace PassWinmenu.Windows
 		{
 			var label = new SelectionLabel(
 				content,
-				styleConfig.Options,
-				styleConfig.FontSize,
-				new FontFamily(styleConfig.FontFamily));
+				interfaceConfig.Style.Options,
+				interfaceConfig.Style.FontSize,
+				new FontFamily(interfaceConfig.Style.FontFamily));
 
 			label.MouseLeftButtonUp += (sender, args) =>
 			{
@@ -326,7 +327,7 @@ namespace PassWinmenu.Windows
 
 		private void SearchBox_OnPreviewKeyDown(object sender, KeyEventArgs e)
 		{
-			var matches = ConfigManager.Config.Interface.Hotkeys.Where(IsPressed).ToList();
+			var matches = interfaceConfig.Hotkeys.Where(IsPressed).ToList();
 
 			// Prefer manually defined shortcuts over default shortcuts.
 			if (matches.Any())

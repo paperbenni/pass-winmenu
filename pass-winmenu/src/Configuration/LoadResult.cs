@@ -1,10 +1,9 @@
 ﻿namespace PassWinmenu.Configuration
 {
-	public enum LoadResult
+	internal abstract record LoadResult
 	{
-		Success,
-		NeedsUpgrade,
-		FileCreationFailure,
-		NewFileCreated
+		internal record Success(ConfigManager ConfigManager) : LoadResult;
+		internal record NeedsUpgrade : LoadResult;
+		internal record NewFileCreated : LoadResult;
 	}
 }

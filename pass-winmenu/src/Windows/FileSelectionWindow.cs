@@ -1,12 +1,11 @@
 using System;
 using System.IO;
 using System.IO.Abstractions;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using PassWinmenu.Configuration;
 using PassWinmenu.Utilities;
 
-#nullable enable
 namespace PassWinmenu.Windows
 {
 	internal class FileSelectionWindow : SelectionWindow
@@ -16,8 +15,8 @@ namespace PassWinmenu.Windows
 
 		private bool hasSuggestionForEnteredFileName;
 
-		public FileSelectionWindow(IDirectoryInfo baseDirectory, SelectionWindowConfiguration configuration,
-			string hint) : base(configuration, hint)
+		public FileSelectionWindow(IDirectoryInfo baseDirectory, SelectionWindowConfiguration configuration, InterfaceConfig interfaceConfig,
+			string hint) : base(configuration, interfaceConfig, hint)
 		{
 			this.baseDirectory = baseDirectory;
 			autocomplete = new DirectoryAutocomplete(baseDirectory);
