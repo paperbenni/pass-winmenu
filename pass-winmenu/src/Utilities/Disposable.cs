@@ -56,6 +56,11 @@ namespace PassWinmenu.Utilities
 		}
 
 		/// <summary>
+		/// Creates an <see cref="IDisposable"/> that does nothing when disposed.
+		/// </summary>
+		public static IDisposable Empty => new Disposable(() => { });
+
+		/// <summary>
 		/// Calls the <see cref="Action"/> provided during construction.
 		/// </summary>
 		public void Dispose()

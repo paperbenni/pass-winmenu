@@ -14,17 +14,20 @@ namespace PassWinmenu.Windows
 	internal class DialogCreator
 	{
 		private readonly INotificationService notificationService;
+		private readonly IDialogService dialogService;
 		private readonly IPasswordManager passwordManager;
 		private readonly PathDisplayService pathDisplayService;
 		private readonly Config config;
 
 		public DialogCreator(
 			INotificationService notificationService,
+			IDialogService dialogService,
 			IPasswordManager passwordManager,
 			PathDisplayService pathDisplayService,
 			Config config)
 		{
 			this.notificationService = notificationService ?? throw new ArgumentNullException(nameof(notificationService));
+			this.dialogService = dialogService;
 			this.passwordManager = passwordManager ?? throw new ArgumentNullException(nameof(passwordManager));
 			this.pathDisplayService = pathDisplayService;
 			this.config = config;
@@ -44,22 +47,22 @@ namespace PassWinmenu.Windows
 			}
 			catch (GpgError e)
 			{
-				notificationService.ShowErrorWindow("Password decryption failed: " + e.Message);
+				dialogService.ShowErrorWindow("Password decryption failed: " + e.Message);
 				return;
 			}
 			catch (GpgException e)
 			{
-				notificationService.ShowErrorWindow("Password decryption failed. " + e.Message);
+				dialogService.ShowErrorWindow("Password decryption failed. " + e.Message);
 				return;
 			}
 			catch (ConfigurationException e)
 			{
-				notificationService.ShowErrorWindow("Password decryption failed: " + e.Message);
+				dialogService.ShowErrorWindow("Password decryption failed: " + e.Message);
 				return;
 			}
 			catch (Exception e)
 			{
-				notificationService.ShowErrorWindow($"Password decryption failed: An error occurred: {e.GetType().Name}: {e.Message}");
+				dialogService.ShowErrorWindow($"Password decryption failed: An error occurred: {e.GetType().Name}: {e.Message}");
 				return;
 			}
 
@@ -92,22 +95,22 @@ namespace PassWinmenu.Windows
 			}
 			catch (GpgError e)
 			{
-				notificationService.ShowErrorWindow("Password decryption failed: " + e.Message);
+				dialogService.ShowErrorWindow("Password decryption failed: " + e.Message);
 				return;
 			}
 			catch (GpgException e)
 			{
-				notificationService.ShowErrorWindow("Password decryption failed. " + e.Message);
+				dialogService.ShowErrorWindow("Password decryption failed. " + e.Message);
 				return;
 			}
 			catch (ConfigurationException e)
 			{
-				notificationService.ShowErrorWindow("Password decryption failed: " + e.Message);
+				dialogService.ShowErrorWindow("Password decryption failed: " + e.Message);
 				return;
 			}
 			catch (Exception e)
 			{
-				notificationService.ShowErrorWindow($"Password decryption failed: An error occurred: {e.GetType().Name}: {e.Message}");
+				dialogService.ShowErrorWindow($"Password decryption failed: An error occurred: {e.GetType().Name}: {e.Message}");
 				return;
 			}
 

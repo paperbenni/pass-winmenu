@@ -21,6 +21,7 @@ namespace PassWinmenu.Actions
 		private readonly IPasswordManager passwordManager;
 		private readonly ISyncService? syncService;
 		private readonly INotificationService notificationService;
+		private readonly IDialogService dialogService;
 		private readonly Config config;
 
 		public HotkeyAction ActionType => HotkeyAction.AddPassword;
@@ -30,12 +31,14 @@ namespace PassWinmenu.Actions
 			IPasswordManager passwordManager,
 			Option<ISyncService> syncService,
 			INotificationService notificationService,
+			IDialogService dialogService,
 			Config config)
 		{
 			this.dialogCreator = dialogCreator;
 			this.passwordManager = passwordManager;
 			this.syncService = syncService.ValueOrDefault();
 			this.notificationService = notificationService;
+			this.dialogService = dialogService;
 			this.config = config;
 		}
 
@@ -69,12 +72,12 @@ namespace PassWinmenu.Actions
 			}
 			catch (GpgException e)
 			{
-				notificationService.ShowErrorWindow("Unable to encrypt your password: " + e.Message);
+				dialogService.ShowErrorWindow("Unable to encrypt your password: " + e.Message);
 				return;
 			}
 			catch (ConfigurationException e)
 			{
-				notificationService.ShowErrorWindow("Unable to encrypt your password: " + e.Message);
+				dialogService.ShowErrorWindow("Unable to encrypt your password: " + e.Message);
 				return;
 			}
 			// Copy the newly generated password.
@@ -94,7 +97,7 @@ namespace PassWinmenu.Actions
 			{
 				Log.Send($"Failed to commit {passwordFile.FullPath}");
 				Log.ReportException(e);
-				notificationService.ShowErrorWindow("Unable to commit your changes: " + e.Message);
+				dialogService.ShowErrorWindow("Unable to commit your changes: " + e.Message);
 			}
 		}
 	}

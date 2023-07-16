@@ -20,6 +20,7 @@ namespace PassWinmenu.Actions
 	{
 		private readonly IPasswordManager passwordManager;
 		private readonly INotificationService notificationService;
+		private readonly IDialogService dialogService;
 		private readonly ISyncService? syncService;
 		private readonly DialogCreator dialogCreator;
 		private readonly PathDisplayService pathDisplayService;
@@ -30,6 +31,7 @@ namespace PassWinmenu.Actions
 		public EditPasswordAction(
 			IPasswordManager passwordManager,
 			INotificationService notificationService,
+			IDialogService dialogService,
 			Option<ISyncService> syncService,
 			DialogCreator dialogCreator,
 			PathDisplayService pathDisplayService,
@@ -39,6 +41,7 @@ namespace PassWinmenu.Actions
 			this.dialogCreator = dialogCreator;
 			this.passwordManager = passwordManager;
 			this.notificationService = notificationService;
+			this.dialogService = dialogService;
 			this.syncService = syncService.ValueOrDefault();
 			this.pathDisplayService = pathDisplayService;
 			this.config = config;
@@ -61,7 +64,7 @@ namespace PassWinmenu.Actions
 				}
 				catch (Exception e)
 				{
-					notificationService.ShowErrorWindow($"Unable to edit your password (decryption failed): {e.Message}");
+					dialogService.ShowErrorWindow($"Unable to edit your password (decryption failed): {e.Message}");
 					return;
 				}
 				EditWithEditWindow(decryptedFile);
@@ -95,12 +98,12 @@ namespace PassWinmenu.Actions
 			}
 			catch (GitException e)
 			{
-				notificationService.ShowErrorWindow($"Unable to commit your changes: {e.Message}");
+				dialogService.ShowErrorWindow($"Unable to commit your changes: {e.Message}");
 				EditWithEditWindow(newFile);
 			}
 			catch (Exception e)
 			{
-				notificationService.ShowErrorWindow($"Unable to save your password (encryption failed): {e.Message}");
+				dialogService.ShowErrorWindow($"Unable to save your password (encryption failed): {e.Message}");
 				EditWithEditWindow(newFile);
 			}
 		}
@@ -116,7 +119,7 @@ namespace PassWinmenu.Actions
 			catch (Exception e)
 			{
 				EnsureRemoval(plaintextFile);
-				notificationService.ShowErrorWindow($"Unable to edit your password (decryption failed): {e.Message}");
+				dialogService.ShowErrorWindow($"Unable to edit your password (decryption failed): {e.Message}");
 				return;
 			}
 
@@ -128,7 +131,7 @@ namespace PassWinmenu.Actions
 			catch (Win32Exception e)
 			{
 				EnsureRemoval(plaintextFile);
-				notificationService.ShowErrorWindow($"Unable to open an editor to edit your password file ({e.Message}).");
+				dialogService.ShowErrorWindow($"Unable to open an editor to edit your password file ({e.Message}).");
 				return;
 			}
 
@@ -158,12 +161,12 @@ namespace PassWinmenu.Actions
 				}
 				catch (GitException e)
 				{
-					notificationService.ShowErrorWindow($"Unable to commit your changes: {e.Message}");
+					dialogService.ShowErrorWindow($"Unable to commit your changes: {e.Message}");
 					EditWithTextEditor(newPasswordFile);
 				}
 				catch (Exception e)
 				{
-					notificationService.ShowErrorWindow($"Unable to save your password (encryption failed): {e.Message}");
+					dialogService.ShowErrorWindow($"Unable to save your password (encryption failed): {e.Message}");
 					EditWithTextEditor(newPasswordFile);
 				}
 			}
@@ -184,7 +187,7 @@ namespace PassWinmenu.Actions
 			}
 			catch (Exception e)
 			{
-				notificationService.ShowErrorWindow(
+				dialogService.ShowErrorWindow(
 					$"Unable to delete the plaintext file at {path}.\n" +
 					$"An error occurred: {e.GetType().Name} ({e.Message}).\n\n" +
 					$"Please navigate to the given path and delete it manually.", "Plaintext file not deleted.");

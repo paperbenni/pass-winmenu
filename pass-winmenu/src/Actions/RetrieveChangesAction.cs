@@ -11,13 +11,18 @@ namespace PassWinmenu.Actions
 	{
 		private readonly ISyncService? syncService;
 		private readonly INotificationService notificationService;
+		private readonly IDialogService dialogService;
 
 		public HotkeyAction ActionType => HotkeyAction.GitPull;
 
-		public RetrieveChangesAction(Option<ISyncService> syncService, INotificationService notificationService)
+		public RetrieveChangesAction(
+			Option<ISyncService> syncService,
+			INotificationService notificationService,
+			IDialogService dialogService)
 		{
 			this.syncService = syncService.ValueOrDefault();
 			this.notificationService = notificationService;
+			this.dialogService = dialogService;
 		}
 
 		public void Execute()
@@ -46,24 +51,24 @@ namespace PassWinmenu.Actions
 			}
 			catch (LibGit2SharpException e) when (e.Message == "unsupported URL protocol")
 			{
-				notificationService.ShowErrorWindow(
+				dialogService.ShowErrorWindow(
 					"Unable to update the password store: Remote uses an unknown protocol.\n\n" +
 					"If your remote URL is an SSH URL, try setting sync-mode to native-git in your configuration file.");
 			}
 			catch (LibGit2SharpException e)
 			{
-				notificationService.ShowErrorWindow($"Unable to update the password store:\n{e.Message}");
+				dialogService.ShowErrorWindow($"Unable to update the password store:\n{e.Message}");
 			}
 			catch (GitException e)
 			{
 				if (e.GitError != null)
 				{
-					notificationService.ShowErrorWindow(
+					dialogService.ShowErrorWindow(
 						$"Unable to fetch the latest changes: Git returned an error.\n\n{e.GitError}");
 				}
 				else
 				{
-					notificationService.ShowErrorWindow($"Unable to fetch the latest changes: {e.Message}");
+					dialogService.ShowErrorWindow($"Unable to fetch the latest changes: {e.Message}");
 				}
 			}
 		}

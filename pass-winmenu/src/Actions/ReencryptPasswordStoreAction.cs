@@ -15,6 +15,7 @@ namespace PassWinmenu.Actions
 	internal class ReencryptPasswordStoreAction : IAction
 	{
 		private readonly INotificationService notificationService;
+		private readonly IDialogService dialogService;
 		private readonly IPasswordManager passwordManager;
 		private readonly ICryptoService cryptoService;
 		private readonly IRecipientFinder recipientFinder;
@@ -24,12 +25,14 @@ namespace PassWinmenu.Actions
 
 		public ReencryptPasswordStoreAction(
 			INotificationService notificationService,
+			IDialogService dialogService,
 			IPasswordManager passwordManager,
 			ICryptoService cryptoService,
 			IRecipientFinder recipientFinder,
 			DialogCreator dialogCreator)
 		{
 			this.notificationService = notificationService;
+			this.dialogService = dialogService;
 			this.passwordManager = passwordManager;
 			this.cryptoService = cryptoService;
 			this.recipientFinder = recipientFinder;
@@ -40,7 +43,7 @@ namespace PassWinmenu.Actions
 		{
 			Helpers.AssertOnUiThread();
 
-			var result = notificationService.ShowYesNoWindow("The password store will now be re-encrypted. " +
+			var result = dialogService.ShowYesNoWindow("The password store will now be re-encrypted. " +
 				"If you have added or removed any recipients from your .gpg-id files, " +
 				"your password files will be updated to match the recipients specified in those files. " +
 				"Note that if your password store contains many passwords, this may take a while.\n\n" +
@@ -84,7 +87,7 @@ namespace PassWinmenu.Actions
 						var message = $"Failed to re-encrypt {file.FullPath}. An error occurred.\n\n" +
 							$"{e.GetType().Name}: {e.Message}";
 						viewer.AddMessage(message);
-						if (!notificationService.ShowYesNoWindow($"{message}\n\nDo you want to continue?", "An error occurred.", MessageBoxImage.Error))
+						if (!dialogService.ShowYesNoWindow($"{message}\n\nDo you want to continue?", "An error occurred.", MessageBoxImage.Error))
 						{
 							viewer.AddMessage("Re-encryption aborted.");
 							return;

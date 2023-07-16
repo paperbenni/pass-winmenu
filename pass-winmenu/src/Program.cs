@@ -25,14 +25,14 @@ namespace PassWinmenu
 		public const string EncryptedFileExtension = ".gpg";
 		public const string PlaintextFileExtension = ".txt";
 
-		public static IDisposable? Start(INotificationService notifications, string configPath)
+		public static IDisposable? Start(INotificationService notificationService, IDialogService dialogService, ConfigManager configManager)
 		{
 			IContainer? container = null;
 			try
 			{
-				container = Initialise(notifications, configPath);
-				Start(container, notifications);
-				RunInitialCheck(container, notifications);
+				container = Initialise(notificationService, dialogService, configManager);
+				Start(container, notificationService, dialogService);
+				RunInitialCheck(container, dialogService);
 			}
 			catch (Exception e)
 			{
@@ -46,8 +46,7 @@ namespace PassWinmenu
 				}
 
 				var errorMessage = $"pass-winmenu failed to start ({e.GetType().Name}: {e.Message})";
-				notifications.ShowErrorWindow(errorMessage);
-				notifications.Dispose();
+				dialogService.ShowErrorWindow(errorMessage);
 				container?.Dispose();
 				App.Exit();
 			}
@@ -58,7 +57,7 @@ namespace PassWinmenu
 		/// <summary>
 		/// Loads all required resources.
 		/// </summary>
-		private static IContainer Initialise(INotificationService notifications, string configPath)
+		private static IContainer Initialise(INotificationService notificationService, IDialogService dialogService, ConfigManager configManager)
 		{
 			// Load compiled-in resources.
 			EmbeddedResources.Load();
@@ -78,9 +77,9 @@ namespace PassWinmenu
 			}
 #endif
 
-			var container = new DependenciesBuilder(notifications)
-				.RegisterNotifications()
-				.RegisterConfiguration(configPath)
+			var container = new DependenciesBuilder()
+				.RegisterNotifications(notificationService, dialogService)
+				.RegisterConfiguration(configManager)
 				.RegisterEnvironment()
 				.RegisterActions()
 				.RegisterGpg()
@@ -91,7 +90,7 @@ namespace PassWinmenu
 			return container;
 		}
 
-		private static void Start(IContainer container, INotificationService notifications)
+		private static void Start(IContainer container, INotificationService notificationService, IDialogService dialogService)
 		{
 			var gpgConfig = container.Resolve<GpgConfig>();
 			if (gpgConfig.GpgAgent.Config.AllowConfigManagement)
@@ -104,11 +103,11 @@ namespace PassWinmenu
 			var hotkeys = container.Resolve<Config>().Hotkeys;
 			
 			// TODO: Not great, not terrible
-			if (notifications is INotifyIcon n)
+			if (notificationService is INotifyIcon n)
 			{
 				n.AddMenuActions(actionDispatcher);
 			}
-			AssignHotkeys(hotkeys, actionDispatcher, hotkeyService, notifications);
+			AssignHotkeys(hotkeys, actionDispatcher, hotkeyService, notificationService, dialogService);
 
 			if (container.Resolve<UpdateCheckingConfig>().CheckForUpdates)
 			{
@@ -128,7 +127,7 @@ namespace PassWinmenu
 		/// <summary>
 		/// Checks if all components are configured correctly.
 		/// </summary>
-		private static void RunInitialCheck(IContainer container, INotificationService notificationService)
+		private static void RunInitialCheck(IContainer container, IDialogService dialogService)
 		{
 			var gpg = container.Resolve<GPG>();
 			var passwordStoreConfig = container.Resolve<PasswordStoreConfig>();
@@ -136,7 +135,7 @@ namespace PassWinmenu
 
 			if (!Directory.Exists(passwordStoreConfig.Location))
 			{
-				notificationService.ShowErrorWindow($"Could not find the password store at {Path.GetFullPath(passwordStoreConfig.Location)}. Please make sure it exists.");
+				dialogService.ShowErrorWindow($"Could not find the password store at {Path.GetFullPath(passwordStoreConfig.Location)}. Please make sure it exists.");
 				App.Exit();
 				return;
 			}
@@ -146,13 +145,13 @@ namespace PassWinmenu
 			}
 			catch (System.ComponentModel.Win32Exception)
 			{
-				notificationService.ShowErrorWindow("Could not find GPG. Make sure your gpg-path is set correctly.");
+				dialogService.ShowErrorWindow("Could not find GPG. Make sure your gpg-path is set correctly.");
 				App.Exit();
 				return;
 			}
 			catch (Exception e)
 			{
-				notificationService.ShowErrorWindow($"Failed to initialise GPG. {e.GetType().Name}: {e.Message}");
+				dialogService.ShowErrorWindow($"Failed to initialise GPG. {e.GetType().Name}: {e.Message}");
 				App.Exit();
 				return;
 			}
@@ -166,7 +165,7 @@ namespace PassWinmenu
 					}
 					catch (GpgError err)
 					{
-						notificationService.ShowErrorWindow(err.Message);
+						dialogService.ShowErrorWindow(err.Message);
 					}
 					// Ignore other exceptions. If it turns out GPG is misconfigured,
 					// these errors will surface upon decryption/encryption.
@@ -184,7 +183,8 @@ namespace PassWinmenu
 			IEnumerable<HotkeyConfig> hotkeys,
 			ActionDispatcher actionDispatcher,
 			HotkeyService hotkeyService,
-			INotificationService notificationService)
+			INotificationService notificationService,
+			IDialogService dialogService)
 		{
 			try
 			{
@@ -198,7 +198,7 @@ namespace PassWinmenu
 				Log.Send("Failed to register hotkeys", LogLevel.Error);
 				Log.ReportException(e);
 
-				notificationService!.ShowErrorWindow(e.Message, "Could not register hotkeys");
+				dialogService.ShowErrorWindow(e.Message, "Could not register hotkeys");
 				App.Exit();
 			}
 		}

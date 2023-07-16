@@ -19,17 +19,16 @@ namespace PassWinmenu
 {
 	internal class DependenciesBuilder
 	{
-		private readonly INotificationService notificationService;
 		private readonly ContainerBuilder builder = new();
 
-		public DependenciesBuilder(INotificationService notificationService)
-		{
-			this.notificationService = notificationService;
-		}
-
-		public DependenciesBuilder RegisterNotifications()
+		public DependenciesBuilder RegisterNotifications(INotificationService notificationService, IDialogService dialogService)
 		{
 			builder.Register(_ => notificationService)
+				.AsImplementedInterfaces()
+				.ExternallyOwned()
+				.SingleInstance();
+
+			builder.Register(_ => dialogService)
 				.AsImplementedInterfaces()
 				.ExternallyOwned()
 				.SingleInstance();
@@ -41,30 +40,26 @@ namespace PassWinmenu
 					.ExternallyOwned()
 					.SingleInstance();
 			}
-			
+
 			return this;
 		}
 
-		public DependenciesBuilder RegisterConfiguration(string configPath)
+		public DependenciesBuilder RegisterConfiguration(ConfigManager configManager)
 		{
-			var configManager = ConfigurationLoader.Load(notificationService, configPath);
-			
-			configManager.Apply(cm =>
-			{
-				builder.Register(_ => cm).AsImplementedInterfaces().AsSelf();
-				builder.Register(_ => cm.ConfigurationFile).AsSelf();
-				builder.Register(_ => cm.ConfigurationFile.Config).AsSelf();
-				builder.Register(_ => cm.ConfigurationFile.Config.Application).AsSelf();
-				builder.Register(_ => cm.ConfigurationFile.Config.Application.UpdateChecking).AsSelf();
-				builder.Register(_ => cm.ConfigurationFile.Config.Git).AsSelf();
-				builder.Register(_ => cm.ConfigurationFile.Config.Gpg).AsSelf();
-				builder.Register(_ => cm.ConfigurationFile.Config.Gpg.GpgAgent).AsSelf();
-				builder.Register(_ => cm.ConfigurationFile.Config.Interface).AsSelf();
-				builder.Register(_ => cm.ConfigurationFile.Config.Interface.PasswordEditor).AsSelf();
-				builder.Register(_ => cm.ConfigurationFile.Config.PasswordStore).AsSelf();
-				builder.Register(_ => cm.ConfigurationFile.Config.PasswordStore.UsernameDetection).AsSelf();
-			});
-			
+			builder.Register(_ => configManager).AsImplementedInterfaces().AsSelf();
+			builder.Register(_ => configManager.ConfigurationFile).AsSelf();
+			builder.Register(_ => configManager.ConfigurationFile.Config).AsSelf();
+			builder.Register(_ => configManager.ConfigurationFile.Config.Application).AsSelf();
+			builder.Register(_ => configManager.ConfigurationFile.Config.Application.UpdateChecking).AsSelf();
+			builder.Register(_ => configManager.ConfigurationFile.Config.Git).AsSelf();
+			builder.Register(_ => configManager.ConfigurationFile.Config.Gpg).AsSelf();
+			builder.Register(_ => configManager.ConfigurationFile.Config.Gpg.GpgAgent).AsSelf();
+			builder.Register(_ => configManager.ConfigurationFile.Config.Interface).AsSelf();
+			builder.Register(_ => configManager.ConfigurationFile.Config.Interface.PasswordEditor).AsSelf();
+			builder.Register(_ => configManager.ConfigurationFile.Config.Notifications).AsSelf();
+			builder.Register(_ => configManager.ConfigurationFile.Config.PasswordStore).AsSelf();
+			builder.Register(_ => configManager.ConfigurationFile.Config.PasswordStore.UsernameDetection).AsSelf();
+
 			return this;
 		}
 
@@ -185,7 +180,7 @@ namespace PassWinmenu
 			var config = context.Resolve<GitConfig>();
 			var signService = context.Resolve<ISignService>();
 			var passwordStore = context.ResolveNamed<IDirectoryInfo>("PasswordStore");
-			var notificationService = context.Resolve<INotificationService>();
+			var dialogService = context.Resolve<IDialogService>();
 			var strategies = context.Resolve<GitSyncStrategies>();
 
 			var factory = new SyncServiceFactory(config, passwordStore, signService, strategies);
@@ -195,14 +190,18 @@ namespace PassWinmenu
 				var syncService = factory.BuildSyncService();
 				if (factory.Status == SyncServiceStatus.GitLibraryNotFound)
 				{
-					notificationService.ShowErrorWindow("The git2 DLL could not be found. Git support will be disabled.");
+					dialogService.ShowErrorWindow(
+						"The git2 DLL could not be found. Git support will be disabled.");
 				}
+
 				return Option.FromNullable(syncService);
 			}
 			catch (Exception e)
 			{
-				notificationService.ShowErrorWindow($"Failed to open the password store Git repository ({e.GetType().Name}: {e.Message}). Git support will be disabled.");
+				dialogService.ShowErrorWindow(
+					$"Failed to open the password store Git repository ({e.GetType().Name}: {e.Message}). Git support will be disabled.");
 			}
+
 			return Option<ISyncService>.None;
 		}
 	}

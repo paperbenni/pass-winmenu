@@ -12,14 +12,20 @@ namespace PassWinmenu.Actions
 	{
 		private readonly ISyncService? syncService;
 		private readonly INotificationService notificationService;
+		private readonly IDialogService dialogService;
 		private readonly NotificationConfig notificationConfig;
 
 		public HotkeyAction ActionType => HotkeyAction.GitPush;
 
-		public CommitChangesAction(Option<ISyncService> syncService, INotificationService notificationService, NotificationConfig notificationConfig)
+		public CommitChangesAction(
+			Option<ISyncService> syncService,
+			INotificationService notificationService,
+			IDialogService dialogService,
+			NotificationConfig notificationConfig)
 		{
 			this.syncService = syncService.ValueOrDefault();
 			this.notificationService = notificationService;
+			this.dialogService = dialogService;
 			this.notificationConfig = notificationConfig;
 		}
 
@@ -44,7 +50,7 @@ namespace PassWinmenu.Actions
 			}
 			catch (Exception e)
 			{
-				notificationService.ShowErrorWindow(
+				dialogService.ShowErrorWindow(
 					$"Unable to commit your changes. An error occurred: {e.GetType().Name} ({e.Message})");
 				Log.ReportException(e);
 				return;
@@ -58,7 +64,7 @@ namespace PassWinmenu.Actions
 			// FIXME: dependency on derived type
 			catch (LibGit2SharpException e) when (e.Message == "unsupported URL protocol")
 			{
-				notificationService.ShowErrorWindow(
+				dialogService.ShowErrorWindow(
 					"Unable to fetch the latest changes: Remote uses an unknown protocol.\n\n" +
 					"If your remote URL is an SSH URL, try setting sync-mode to native-git in your configuration file.");
 				Log.ReportException(e);
@@ -68,12 +74,12 @@ namespace PassWinmenu.Actions
 			{
 				if (e.GitError != null)
 				{
-					notificationService.ShowErrorWindow(
+					dialogService.ShowErrorWindow(
 						$"Unable to fetch the latest changes: Git returned an error.\n\n{e.GitError}");
 				}
 				else
 				{
-					notificationService.ShowErrorWindow($"Unable to fetch the latest changes: {e.Message}");
+					dialogService.ShowErrorWindow($"Unable to fetch the latest changes: {e.Message}");
 				}
 
 				Log.ReportException(e);
@@ -81,7 +87,7 @@ namespace PassWinmenu.Actions
 			}
 			catch (Exception e)
 			{
-				notificationService.ShowErrorWindow(
+				dialogService.ShowErrorWindow(
 					$"Unable to fetch the latest changes. An error occurred: ${e.GetType().Name} (${e.Message})");
 				Log.ReportException(e);
 				return;
@@ -99,7 +105,7 @@ namespace PassWinmenu.Actions
 			}
 			catch (LibGit2SharpException e)
 			{
-				notificationService.ShowErrorWindow(
+				dialogService.ShowErrorWindow(
 					$"Unable to rebase your changes onto the tracking branch:\n{e.Message}");
 				return;
 			}

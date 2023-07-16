@@ -12,17 +12,20 @@ namespace PassWinmenu.Actions
 	{
 		private readonly IPasswordManager passwordManager;
 		private readonly INotificationService notificationService;
+		private readonly IDialogService dialogService;
 		private readonly DialogCreator dialogCreator;
 		private readonly Config config;
 
 		public GenerateTotpAction(
 			IPasswordManager passwordManager,
 			INotificationService notificationService,
+			IDialogService dialogService,
 			DialogCreator dialogCreator,
 			Config config)
 		{
 			this.passwordManager = passwordManager;
 			this.notificationService = notificationService;
+			this.dialogService = dialogService;
 			this.dialogCreator = dialogCreator;
 			this.config = config;
 		}
@@ -47,12 +50,12 @@ namespace PassWinmenu.Actions
 			}
 			catch (Exception e) when (e is GpgError || e is GpgException || e is ConfigurationException)
 			{
-				notificationService.ShowErrorWindow("TOTP decryption failed: " + e.Message);
+				dialogService.ShowErrorWindow("TOTP decryption failed: " + e.Message);
 				return;
 			}
 			catch (Exception e)
 			{
-				notificationService.ShowErrorWindow($"TOTP decryption failed: An error occurred: {e.GetType().Name}: {e.Message}");
+				dialogService.ShowErrorWindow($"TOTP decryption failed: An error occurred: {e.GetType().Name}: {e.Message}");
 				return;
 			}
 
@@ -76,7 +79,7 @@ namespace PassWinmenu.Actions
 				},
 				() =>
 				{
-					notificationService.ShowErrorWindow($"TOTP decryption failed: Failed to find an OTP secret.");
+					dialogService.ShowErrorWindow($"TOTP decryption failed: Failed to find an OTP secret.");
 				}
 			);
 

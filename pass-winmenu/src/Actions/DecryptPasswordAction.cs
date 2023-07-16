@@ -14,6 +14,7 @@ namespace PassWinmenu.Actions
 	{
 		private readonly IPasswordManager passwordManager;
 		private readonly INotificationService notificationService;
+		private readonly IDialogService dialogService;
 		private readonly DialogCreator dialogCreator;
 		private readonly PasswordFileParser passwordFileParser;
 		private readonly PasswordStoreConfig passwordStoreConfig;
@@ -23,6 +24,7 @@ namespace PassWinmenu.Actions
 		public DecryptPasswordAction(
 			IPasswordManager passwordManager,
 			INotificationService notificationService,
+			IDialogService dialogService,
 			DialogCreator dialogCreator,
 			PasswordFileParser passwordFileParser,
 			PasswordStoreConfig passwordStoreConfig,
@@ -31,6 +33,7 @@ namespace PassWinmenu.Actions
 		{
 			this.passwordManager = passwordManager;
 			this.notificationService = notificationService;
+			this.dialogService = dialogService;
 			this.dialogCreator = dialogCreator;
 			this.passwordFileParser = passwordFileParser;
 			this.passwordStoreConfig = passwordStoreConfig;
@@ -54,12 +57,12 @@ namespace PassWinmenu.Actions
 			}
 			catch (Exception e) when (e is GpgError || e is GpgException || e is ConfigurationException)
 			{
-				notificationService.ShowErrorWindow("Password decryption failed: " + e.Message);
+				dialogService.ShowErrorWindow("Password decryption failed: " + e.Message);
 				return;
 			}
 			catch (Exception e)
 			{
-				notificationService.ShowErrorWindow($"Password decryption failed: An error occurred: {e.GetType().Name}: {e.Message}");
+				dialogService.ShowErrorWindow($"Password decryption failed: An error occurred: {e.GetType().Name}: {e.Message}");
 				return;
 			}
 
@@ -85,7 +88,7 @@ namespace PassWinmenu.Actions
 				}
 				catch (Exception e)
 				{
-					notificationService.ShowErrorWindow($"Could not retrieve your username: {e.Message}");
+					dialogService.ShowErrorWindow($"Could not retrieve your username: {e.Message}");
 					return;
 				}
 			}
