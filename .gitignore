@@ -1,6 +1,8 @@
 # Local configuration
 .vs/
+.idea
 *.DotSettings.user
+*.csproj.user
 
 # Build artifacts
 [Bb]in/

@@ -1,6 +1,7 @@
 ﻿using PassWinmenu.UpdateChecking;
+using PassWinmenu.WinApi;
 
-namespace PassWinmenu.WinApi;
+namespace PassWinmenu.CommandLine;
 
 internal class StubNotificationService : INotificationService
 {

@@ -55,5 +55,6 @@ using System.Runtime.CompilerServices;
 
 // Required for tests
 [assembly: InternalsVisibleTo("pass-winmenu-tests")]
+[assembly: InternalsVisibleTo("pw")]
 // Required for mocking internal interfaces
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]

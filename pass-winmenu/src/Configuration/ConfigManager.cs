@@ -48,11 +48,16 @@ namespace PassWinmenu.Configuration
 			
 			Log.Send("Config reloading enabled");
 		}
-
-		public static LoadResult Load(string path)
+		
+		public static LoadResult Load(string path, bool allowCreate)
 		{
 			if (!File.Exists(path))
 			{
+				if (!allowCreate)
+				{
+					return new LoadResult.NotFound();
+				}
+				
 				try
 				{
 					using var defaultConfig = EmbeddedResources.DefaultConfig;

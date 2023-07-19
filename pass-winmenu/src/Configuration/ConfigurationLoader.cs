@@ -13,7 +13,7 @@ internal class ConfigurationLoader
 		LoadResult result;
 		try
 		{
-			result = ConfigManager.Load(configPath);
+			result = ConfigManager.Load(configPath, allowCreate: true);
 		}
 		catch (Exception e) when (e.InnerException != null)
 		{
