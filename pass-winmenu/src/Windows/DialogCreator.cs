@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using PassWinmenu.Configuration;
-using PassWinmenu.ExternalPrograms.Gpg;
 using PassWinmenu.PasswordManagement;
 using PassWinmenu.Utilities;
 using PassWinmenu.WinApi;
@@ -14,149 +13,20 @@ namespace PassWinmenu.Windows
 	internal class DialogCreator
 	{
 		private readonly INotificationService notificationService;
-		private readonly IDialogService dialogService;
 		private readonly IPasswordManager passwordManager;
 		private readonly PathDisplayService pathDisplayService;
 		private readonly Config config;
 
 		public DialogCreator(
 			INotificationService notificationService,
-			IDialogService dialogService,
 			IPasswordManager passwordManager,
 			PathDisplayService pathDisplayService,
 			Config config)
 		{
-			this.notificationService = notificationService ?? throw new ArgumentNullException(nameof(notificationService));
-			this.dialogService = dialogService;
-			this.passwordManager = passwordManager ?? throw new ArgumentNullException(nameof(passwordManager));
+			this.notificationService = notificationService;
+			this.passwordManager = passwordManager;
 			this.pathDisplayService = pathDisplayService;
 			this.config = config;
-		}
-
-		public void DecryptMetadata(bool copyToClipboard, bool type)
-		{
-			var selectedFile = RequestPasswordFile();
-			if (selectedFile == null)
-			{
-				return;
-			}
-			KeyedPasswordFile passFile;
-			try
-			{
-				passFile = passwordManager.DecryptPassword(selectedFile, config.PasswordStore.FirstLineOnly);
-			}
-			catch (GpgError e)
-			{
-				dialogService.ShowErrorWindow("Password decryption failed: " + e.Message);
-				return;
-			}
-			catch (GpgException e)
-			{
-				dialogService.ShowErrorWindow("Password decryption failed. " + e.Message);
-				return;
-			}
-			catch (ConfigurationException e)
-			{
-				dialogService.ShowErrorWindow("Password decryption failed: " + e.Message);
-				return;
-			}
-			catch (Exception e)
-			{
-				dialogService.ShowErrorWindow($"Password decryption failed: An error occurred: {e.GetType().Name}: {e.Message}");
-				return;
-			}
-
-			if (copyToClipboard)
-			{
-				TemporaryClipboard.Place(passFile.Metadata, TimeSpan.FromSeconds(config.Interface.ClipboardTimeout));
-				if (config.Notifications.Types.PasswordCopied)
-				{
-					notificationService.Raise($"The key has been copied to your clipboard.\nIt will be cleared in {config.Interface.ClipboardTimeout:0.##} seconds.", Severity.Info);
-				}
-			}
-			if (type)
-			{
-				KeyboardEmulator.EnterText(passFile.Metadata);
-			}
-		}
-
-		public void GetKey(bool copyToClipboard, bool type, string? key)
-		{
-			var selectedFile = RequestPasswordFile();
-			if (selectedFile == null)
-			{
-				return;
-			}
-
-			KeyedPasswordFile passFile;
-			try
-			{
-				passFile = passwordManager.DecryptPassword(selectedFile, config.PasswordStore.FirstLineOnly);
-			}
-			catch (GpgError e)
-			{
-				dialogService.ShowErrorWindow("Password decryption failed: " + e.Message);
-				return;
-			}
-			catch (GpgException e)
-			{
-				dialogService.ShowErrorWindow("Password decryption failed. " + e.Message);
-				return;
-			}
-			catch (ConfigurationException e)
-			{
-				dialogService.ShowErrorWindow("Password decryption failed: " + e.Message);
-				return;
-			}
-			catch (Exception e)
-			{
-				dialogService.ShowErrorWindow($"Password decryption failed: An error occurred: {e.GetType().Name}: {e.Message}");
-				return;
-			}
-
-			if (string.IsNullOrWhiteSpace(key))
-			{
-				key = ShowPasswordMenu(passFile.Keys, k => k.Key, "Choose a key...").ValueOrDefault().Key;
-				if (key == null)
-				{
-					return;
-				}
-			}
-
-			var values = passFile.Keys.Where(k => k.Key == key).ToList();
-			if (values.Count == 0)
-			{
-				return;
-			}
-
-			string chosenValue;
-			if (values.Count > 1)
-			{
-				var choice = ShowPasswordMenu(values, v => v.Value, "Multiple keys found, choose a value...");
-				if (choice.IsNone)
-				{
-					return;
-				}
-
-				chosenValue = choice.ValueOrDefault().Value;
-			}
-			else
-			{
-				chosenValue = values[0].Value;
-			}
-
-			if (copyToClipboard)
-			{
-				TemporaryClipboard.Place(chosenValue, TimeSpan.FromSeconds(config.Interface.ClipboardTimeout));
-				if (config.Notifications.Types.PasswordCopied)
-				{
-					notificationService.Raise($"The key has been copied to your clipboard.\nIt will be cleared in {config.Interface.ClipboardTimeout:0.##} seconds.", Severity.Info);
-				}
-			}
-			if (type)
-			{
-				KeyboardEmulator.EnterText(chosenValue);
-			}
 		}
 
 		/// <summary>

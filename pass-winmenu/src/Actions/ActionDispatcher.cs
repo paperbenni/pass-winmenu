@@ -11,17 +11,23 @@ namespace PassWinmenu.Actions
 		private readonly DialogCreator dialogCreator;
 		private readonly DecryptPasswordAction decryptPasswordAction;
 		private readonly GenerateTotpAction generateTotpAction;
+		private readonly DecryptMetadataAction decryptMetadataAction;
+		private readonly GetKeyAction getKeyAction;
 		private readonly Dictionary<HotkeyAction, IAction> actions;
 
 		public ActionDispatcher(
 			DialogCreator dialogCreator,
 			DecryptPasswordAction decryptPasswordAction,
 			GenerateTotpAction generateTotpAction,
+			DecryptMetadataAction decryptMetadataAction,
+			GetKeyAction getKeyAction,
 			Dictionary<HotkeyAction, IAction> actions)
 		{
 			this.dialogCreator = dialogCreator;
 			this.decryptPasswordAction = decryptPasswordAction;
 			this.generateTotpAction = generateTotpAction;
+			this.decryptMetadataAction = decryptMetadataAction;
+			this.getKeyAction = getKeyAction;
 			this.actions = actions;
 		}
 
@@ -44,12 +50,12 @@ namespace PassWinmenu.Actions
 
 		public void DecryptMetadata(bool copyToClipboard, bool type)
 		{
-			dialogCreator.DecryptMetadata(copyToClipboard, type);
+			decryptMetadataAction.DecryptMetadata(copyToClipboard, type);
 		}
 
 		public void DecryptPasswordField(bool copyToClipboard, bool type, string? fieldName = null)
 		{
-			dialogCreator.GetKey(copyToClipboard, type, fieldName);
+			getKeyAction.GetKey(copyToClipboard, type, fieldName);
 		}
 
 		public void Dispatch(HotkeyAction hotkeyAction)
