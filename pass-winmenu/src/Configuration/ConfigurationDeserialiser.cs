@@ -11,6 +11,7 @@ namespace PassWinmenu.Configuration
 			.WithNamingConvention(HyphenatedNamingConvention.Instance)
 			.WithTypeConverter(new WidthConverter())
 			.WithTypeConverter(new BrushConverter())
+			.WithTypeConverter(new SizeConverter())
 			.Build();
 
 		public static T Deserialise<T>(StreamReader reader)

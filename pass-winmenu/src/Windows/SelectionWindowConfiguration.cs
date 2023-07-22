@@ -29,8 +29,8 @@ namespace PassWinmenu.Windows
 			{
 				// The menu position may either be specified in pixels or percentage values.
 				// ParseSize takes care of parsing both into a double (representing pixel values).
-				left = selectedScreen.ParseSize(config.Interface.Style.OffsetLeft, Direction.Horizontal);
-				top = selectedScreen.ParseSize(config.Interface.Style.OffsetTop, Direction.Vertical);
+				left = selectedScreen.ProjectSizeToPixels(config.Interface.Style.OffsetLeft, Direction.Horizontal);
+				top = selectedScreen.ProjectSizeToPixels(config.Interface.Style.OffsetTop, Direction.Vertical);
 			}
 			catch (Exception e) when (e is ArgumentNullException || e is FormatException || e is OverflowException)
 			{
@@ -38,8 +38,8 @@ namespace PassWinmenu.Windows
 			}
 			try
 			{
-				width = selectedScreen.ParseSize(config.Interface.Style.Width, Direction.Horizontal);
-				height = selectedScreen.ParseSize(config.Interface.Style.Height, Direction.Vertical);
+				width = selectedScreen.ProjectSizeToPixels(config.Interface.Style.Width, Direction.Horizontal);
+				height = selectedScreen.ProjectSizeToPixels(config.Interface.Style.Height, Direction.Vertical);
 			}
 			catch (Exception e) when (e is ArgumentNullException || e is FormatException || e is OverflowException)
 			{

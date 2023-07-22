@@ -144,7 +144,7 @@ namespace PassWinmenu.Windows
 			else
 			{
 				// First measure how high the search box wants to be.
-				SearchBox.Measure(new Size(double.MaxValue, double.MaxValue));
+				SearchBox.Measure(new System.Windows.Size(double.MaxValue, double.MaxValue));
 				// Now find out how much space we have to lay out our labels.
 				var availableSpace =
 					MaxHeight // Start with the maximum window height
@@ -180,7 +180,7 @@ namespace PassWinmenu.Windows
 		private double CalculateLabelHeight()
 		{
 			var sizeTest = CreateLabel("size-test");
-			sizeTest.Measure(new Size(double.MaxValue, double.MaxValue));
+			sizeTest.Measure(new System.Windows.Size(double.MaxValue, double.MaxValue));
 			var labelHeight = sizeTest.DesiredSize.Height;
 			return labelHeight;
 		}

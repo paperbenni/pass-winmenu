@@ -42,11 +42,27 @@ namespace PassWinmenu.Configuration
 		public Brush BorderColour { get; set; } = Helpers.BrushFromColourString("[accent]");
 		public Thickness BorderWidth { get; set; } = new Thickness(1);
 		public Brush CaretColour { get; set; } = Helpers.BrushFromColourString("#FFDDDDDD");
-		// These have to be strings, because they need to support percentage values.
-		public string OffsetLeft { get; set; } = "40%";
-		public string OffsetTop { get; set; } = "40%";
-		public string Width { get; set; } = "20%";
-		public string Height { get; set; } = "20%";
+		public Size OffsetLeft { get; set; } = Size.Percent.FromPercentage(40);
+		public Size OffsetTop { get; set; } = Size.Percent.FromPercentage(40);
+		public Size Width { get; set; } = Size.Percent.FromPercentage(20);
+		public Size Height { get; set; } = Size.Percent.FromPercentage(20);
 		public bool ScaleToFit { get; set; } = true;
+	}
+
+	public abstract record Size
+	{
+		public record Pixels(double Value) : Size;
+
+		public record Percent : Size
+		{
+			public double Factor { get; }
+
+			private Percent(double factor)
+			{
+				Factor = factor;
+			}
+
+			public static Percent FromPercentage(double percentage) => new(percentage / 100);
+		}
 	}
 }

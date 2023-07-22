@@ -103,7 +103,6 @@ namespace PassWinmenuTests.Configuration.TypeConverters
 				() => obj.Border.Right.ShouldBe(-2.22));
 		}
 
-
 		private class WrapperObject
 		{
 			public Thickness Border { get; set; }

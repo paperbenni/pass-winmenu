@@ -8,7 +8,6 @@ namespace PassWinmenu.Actions
 {
 	internal class ActionDispatcher
 	{
-		private readonly DialogCreator dialogCreator;
 		private readonly DecryptPasswordAction decryptPasswordAction;
 		private readonly GenerateTotpAction generateTotpAction;
 		private readonly DecryptMetadataAction decryptMetadataAction;
@@ -16,14 +15,12 @@ namespace PassWinmenu.Actions
 		private readonly Dictionary<HotkeyAction, IAction> actions;
 
 		public ActionDispatcher(
-			DialogCreator dialogCreator,
 			DecryptPasswordAction decryptPasswordAction,
 			GenerateTotpAction generateTotpAction,
 			DecryptMetadataAction decryptMetadataAction,
 			GetKeyAction getKeyAction,
 			Dictionary<HotkeyAction, IAction> actions)
 		{
-			this.dialogCreator = dialogCreator;
 			this.decryptPasswordAction = decryptPasswordAction;
 			this.generateTotpAction = generateTotpAction;
 			this.decryptMetadataAction = decryptMetadataAction;

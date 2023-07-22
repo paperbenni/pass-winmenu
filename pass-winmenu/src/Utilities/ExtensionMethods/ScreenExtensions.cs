@@ -1,31 +1,21 @@
 using System;
 using System.Globalization;
 using System.Windows.Forms;
+using PassWinmenu.Configuration;
 
 namespace PassWinmenu.Utilities.ExtensionMethods
 {
 	internal static class ScreenExtensions
 	{
-		public static double ParseSize(this Screen screen, string value, Direction direction)
+		public static double ProjectSizeToPixels(this Screen screen, Size size, Direction direction)
 		{
-			if (screen == null)
+			return size switch
 			{
-				throw new ArgumentNullException(nameof(screen));
-			}
-			else if (value == null)
-			{
-				throw new ArgumentNullException(nameof(value));
-			}
-
-			if (value.EndsWith("%", StringComparison.Ordinal))
-			{
-				var percentage = double.Parse(value.Substring(0, value.Length - 1), CultureInfo.InvariantCulture)/100.0;
-				return direction == Direction.Horizontal ? percentage * screen.Bounds.Width : percentage * screen.Bounds.Height;
-			}
-			else
-			{
-				return double.Parse(value, CultureInfo.InvariantCulture);
-			}
+				Size.Pixels p => p.Value,
+				Size.Percent p when direction == Direction.Horizontal => p.Factor * screen.Bounds.Width,
+				Size.Percent p when direction == Direction.Vertical => p.Factor * screen.Bounds.Height,
+				_ => throw new ArgumentOutOfRangeException(nameof(size))
+			};
 		}
 	}
 
