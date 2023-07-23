@@ -4,7 +4,7 @@ using YamlDotNet.Serialization;
 
 namespace PassWinmenu.Configuration
 {
-	internal class UsernameDetectionConfig
+	public class UsernameDetectionConfig
 	{
 		[YamlIgnore]
 		public UsernameDetectionMethod Method => (UsernameDetectionMethod)Enum.Parse(typeof(UsernameDetectionMethod), MethodString.ToPascalCase(), true);

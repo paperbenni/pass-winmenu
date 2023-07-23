@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 
 namespace PassWinmenu.ExternalPrograms.Gpg
 {
-	internal class GpgAgentConfigUpdater
+	public class GpgAgentConfigUpdater
 	{
 		public const string ManagedByPassWinmenuComment = "# This configuration key is automatically managed by pass-winmenu";
 

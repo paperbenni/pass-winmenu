@@ -4,7 +4,7 @@ using PassWinmenu.WinApi;
 
 namespace PassWinmenu.Configuration
 {
-	internal class PasswordStoreConfig
+	public class PasswordStoreConfig
 	{
 		private string location = Environment.ExpandEnvironmentVariables(@"%userprofile%\.password-store");
 		public string Location

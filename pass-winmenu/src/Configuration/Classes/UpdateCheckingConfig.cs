@@ -3,7 +3,7 @@ using YamlDotNet.Serialization;
 
 namespace PassWinmenu.Configuration
 {
-	internal class UpdateCheckingConfig
+	public class UpdateCheckingConfig
 	{
 		public bool CheckForUpdates { get; set; } = true;
 		public bool AllowPrereleases { get; set; } = false;

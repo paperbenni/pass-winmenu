@@ -6,7 +6,7 @@ using YamlDotNet.Serialization;
 # nullable enable
 namespace PassWinmenu.Configuration
 {
-	internal class GitConfig
+	public class GitConfig
 	{
 		public bool UseGit { get; set; } = true;
 

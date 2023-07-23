@@ -1,6 +1,6 @@
 namespace PassWinmenu.Configuration
 {
-	internal class NotificationTypesConfig
+	public class NotificationTypesConfig
 	{
 		public bool PasswordCopied { get; set; } = true;
 		public bool TotpCopied { get; set; } = true;

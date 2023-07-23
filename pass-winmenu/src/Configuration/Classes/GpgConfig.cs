@@ -4,7 +4,7 @@ using PassWinmenu.WinApi;
 #nullable enable
 namespace PassWinmenu.Configuration
 {
-	internal class GpgConfig
+	public class GpgConfig
 	{
 		private string? gpgPath = @"C:\Program Files (x86)\GnuPG\bin\gpg.exe";
 		public string? GpgPath

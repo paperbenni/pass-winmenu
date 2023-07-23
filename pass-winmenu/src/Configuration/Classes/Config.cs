@@ -6,7 +6,7 @@ using YamlDotNet.Serialization;
 #nullable enable
 namespace PassWinmenu.Configuration
 {
-	internal class Config
+	public class Config
 	{
 		public PasswordStoreConfig PasswordStore { get; set; } = new PasswordStoreConfig();
 		public GitConfig Git { get; set; } = new GitConfig();

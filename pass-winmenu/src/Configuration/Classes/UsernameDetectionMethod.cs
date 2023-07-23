@@ -1,6 +1,6 @@
 ﻿namespace PassWinmenu.Configuration
 {
-	internal enum UsernameDetectionMethod
+	public enum UsernameDetectionMethod
 	{
 		FileName,
 		LineNumber,

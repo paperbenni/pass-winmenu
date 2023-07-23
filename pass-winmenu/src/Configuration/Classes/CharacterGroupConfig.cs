@@ -5,11 +5,11 @@ using PassWinmenu.Utilities.ExtensionMethods;
 #nullable enable
 namespace PassWinmenu.Configuration
 {
-	internal class CharacterGroupConfig
+	public class CharacterGroupConfig
 	{
 		public string Name { get; set; } = "No name set";
 		public string Characters { get; set; } = string.Empty;
-		public HashSet<int> CharacterSet => new HashSet<int>(Characters.ToCodePoints());
+		public HashSet<int> CharacterSet => new(Characters.ToCodePoints());
 		public bool Enabled { get; set; }
 
 		public CharacterGroupConfig()
