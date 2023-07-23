@@ -105,7 +105,7 @@ namespace PassWinmenu.Notifications
 			};
 			startWithWindows.Click += (sender, args) =>
 			{
-				var target = Assembly.GetExecutingAssembly().Location;
+				var target = Application.ExecutablePath;
 				var workingDirectory = AppDomain.CurrentDomain.BaseDirectory;
 				startupLink.Toggle(target, workingDirectory);
 				startWithWindows.Checked = startupLink.Exists;
