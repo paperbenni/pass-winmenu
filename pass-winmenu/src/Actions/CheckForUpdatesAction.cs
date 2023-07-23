@@ -1,4 +1,5 @@
 using PassWinmenu.Configuration;
+using PassWinmenu.Notifications;
 using PassWinmenu.UpdateChecking;
 using PassWinmenu.WinApi;
 

@@ -2,13 +2,12 @@ using System;
 using System.IO;
 using PassWinmenu.Configuration;
 using PassWinmenu.ExternalPrograms;
-using PassWinmenu.ExternalPrograms.Gpg;
+using PassWinmenu.Notifications;
 using PassWinmenu.PasswordManagement;
 using PassWinmenu.Utilities;
 using PassWinmenu.WinApi;
 using PassWinmenu.Windows;
 
-#nullable enable
 namespace PassWinmenu.Actions
 {
 
@@ -22,6 +21,7 @@ namespace PassWinmenu.Actions
 		private readonly ISyncService? syncService;
 		private readonly INotificationService notificationService;
 		private readonly IDialogService dialogService;
+		private readonly TemporaryClipboard clipboard;
 		private readonly Config config;
 
 		public HotkeyAction ActionType => HotkeyAction.AddPassword;
@@ -32,6 +32,7 @@ namespace PassWinmenu.Actions
 			Option<ISyncService> syncService,
 			INotificationService notificationService,
 			IDialogService dialogService,
+			TemporaryClipboard clipboard,
 			Config config)
 		{
 			this.dialogCreator = dialogCreator;
@@ -39,6 +40,7 @@ namespace PassWinmenu.Actions
 			this.syncService = syncService.ValueOrDefault();
 			this.notificationService = notificationService;
 			this.dialogService = dialogService;
+			this.clipboard = clipboard;
 			this.config = config;
 		}
 
@@ -74,11 +76,10 @@ namespace PassWinmenu.Actions
 				return;
 			}
 			// Copy the newly generated password.
-			TemporaryClipboard.Place(password, TimeSpan.FromSeconds(config.Interface.ClipboardTimeout));
-
+			var timeout = clipboard.Place(password);
 			if (config.Notifications.Types.PasswordGenerated)
 			{
-				notificationService.Raise($"The new password has been copied to your clipboard.\nIt will be cleared in {config.Interface.ClipboardTimeout:0.##} seconds.", Severity.Info);
+				notificationService.Raise($"The new password has been copied to your clipboard.\nIt will be cleared in {timeout.TotalSeconds:0.##} seconds.", Severity.Info);
 			}
 
 			try

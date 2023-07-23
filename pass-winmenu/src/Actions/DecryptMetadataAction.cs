@@ -1,6 +1,7 @@
 ﻿using System;
 using PassWinmenu.Configuration;
 using PassWinmenu.ExternalPrograms.Gpg;
+using PassWinmenu.Notifications;
 using PassWinmenu.PasswordManagement;
 using PassWinmenu.WinApi;
 using PassWinmenu.Windows;
@@ -13,6 +14,7 @@ internal class DecryptMetadataAction
 	private readonly IPasswordManager passwordManager;
 	private readonly IDialogService dialogService;
 	private readonly INotificationService notificationService;
+	private readonly TemporaryClipboard clipboard;
 	private readonly Config config;
 
 	public DecryptMetadataAction(
@@ -20,12 +22,14 @@ internal class DecryptMetadataAction
 		IPasswordManager passwordManager,
 		IDialogService dialogService,
 		INotificationService notificationService,
+		TemporaryClipboard clipboard,
 		Config config)
 	{
 		this.dialogCreator = dialogCreator;
 		this.passwordManager = passwordManager;
 		this.dialogService = dialogService;
 		this.notificationService = notificationService;
+		this.clipboard = clipboard;
 		this.config = config;
 	}
 	
@@ -66,11 +70,11 @@ internal class DecryptMetadataAction
 
 		if (copyToClipboard)
 		{
-			TemporaryClipboard.Place(passFile.Metadata, TimeSpan.FromSeconds(config.Interface.ClipboardTimeout));
+			var timeout = clipboard.Place(passFile.Metadata);
 			if (config.Notifications.Types.PasswordCopied)
 			{
 				notificationService.Raise(
-					$"The key has been copied to your clipboard.\nIt will be cleared in {config.Interface.ClipboardTimeout:0.##} seconds.",
+					$"The key has been copied to your clipboard.\nIt will be cleared in {timeout.TotalSeconds:0.##} seconds.",
 					Severity.Info);
 			}
 		}

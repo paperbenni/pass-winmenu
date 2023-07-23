@@ -1,8 +1,7 @@
 using System;
-using System.Windows;
-using PassWinmenu.UpdateChecking;
+using PassWinmenu.WinApi;
 
-namespace PassWinmenu.WinApi
+namespace PassWinmenu.Notifications
 {
 	/// <summary>
 	/// Presents notifications to the user.
@@ -12,7 +11,5 @@ namespace PassWinmenu.WinApi
 	internal interface INotificationService : IDisposable
 	{
 		void Raise(string message, Severity level);
-
-		void HandleUpdateAvailable(UpdateAvailableEventArgs args);
 	}
 }

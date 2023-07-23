@@ -3,7 +3,7 @@ using McSherry.SemanticVersioning;
 
 namespace PassWinmenu.UpdateChecking
 {
-	internal struct ProgramVersion
+	public struct ProgramVersion
 	{
 		public SemanticVersion VersionNumber { get; set; }
 		public Uri ReleaseNotes { get; set; }

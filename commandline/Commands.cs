@@ -1,7 +1,6 @@
 ﻿using Autofac;
 using PassWinmenu.Configuration;
 using PassWinmenu.Utilities;
-using PassWinmenu.WinApi;
 
 namespace PassWinmenu.CommandLine;
 
@@ -27,8 +26,6 @@ public class ShowCommand
 
 	private IContainer CreateContainer()
 	{
-		var dialogService = new CommandLineDialogService();
-		var notificationService = new StubNotificationService();
 		var loadResult = ConfigManager.Load(configPath, allowCreate: false);
 		var configManager = loadResult switch
 		{
@@ -38,7 +35,7 @@ public class ShowCommand
 			_ => throw new ArgumentOutOfRangeException(),
 		};
 
-		return Setup.Initialise(notificationService, dialogService, configManager);
+		return Setup.InitialiseCommandLine(configManager);
 	}
 
 	public void All()

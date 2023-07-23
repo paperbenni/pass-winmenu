@@ -4,7 +4,7 @@ using PassWinmenu.WinApi;
 
 namespace PassWinmenu.Configuration
 {
-	internal class PasswordEditorConfig
+	public class PasswordEditorConfig
 	{
 		public bool UseBuiltin { get; set; } = true;
 

@@ -1,7 +1,7 @@
 #nullable enable
 namespace PassWinmenu.Configuration
 {
-	internal class HotkeyConfig
+	public class HotkeyConfig
 	{
 		public string Hotkey { get; set; } = string.Empty;
 		public HotkeyAction Action { get; set; } = HotkeyAction.AddPassword;

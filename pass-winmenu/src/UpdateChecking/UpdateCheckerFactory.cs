@@ -12,7 +12,7 @@ namespace PassWinmenu.UpdateChecking
 {
 	internal static class UpdateCheckerFactory
 	{
-		public static UpdateChecker CreateUpdateChecker(UpdateCheckingConfig updateCfg, INotificationService notificationService)
+		public static UpdateChecker CreateUpdateChecker(UpdateCheckingConfig updateCfg, IUpdateTracker updateTracker)
 		{
 			IUpdateSource updateSource = updateCfg.UpdateSource switch
 			{
@@ -44,7 +44,7 @@ namespace PassWinmenu.UpdateChecking
 
 			updateChecker.UpdateAvailable += (sender, args) =>
 			{
-				notificationService.HandleUpdateAvailable(args);
+				updateTracker.HandleUpdateAvailable(args);
 			};
 
 			return updateChecker;

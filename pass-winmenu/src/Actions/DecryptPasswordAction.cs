@@ -1,6 +1,7 @@
 using System;
 using PassWinmenu.Configuration;
 using PassWinmenu.ExternalPrograms.Gpg;
+using PassWinmenu.Notifications;
 using PassWinmenu.PasswordManagement;
 using PassWinmenu.WinApi;
 using PassWinmenu.Windows;
@@ -17,8 +18,8 @@ namespace PassWinmenu.Actions
 		private readonly IDialogService dialogService;
 		private readonly DialogCreator dialogCreator;
 		private readonly PasswordFileParser passwordFileParser;
+		private readonly TemporaryClipboard clipboard;
 		private readonly PasswordStoreConfig passwordStoreConfig;
-		private readonly InterfaceConfig interfaceConfig;
 		private readonly NotificationConfig notificationConfig;
 
 		public DecryptPasswordAction(
@@ -27,8 +28,8 @@ namespace PassWinmenu.Actions
 			IDialogService dialogService,
 			DialogCreator dialogCreator,
 			PasswordFileParser passwordFileParser,
+			TemporaryClipboard clipboard,
 			PasswordStoreConfig passwordStoreConfig,
-			InterfaceConfig interfaceConfig,
 			NotificationConfig notificationConfig)
 		{
 			this.passwordManager = passwordManager;
@@ -36,8 +37,8 @@ namespace PassWinmenu.Actions
 			this.dialogService = dialogService;
 			this.dialogCreator = dialogCreator;
 			this.passwordFileParser = passwordFileParser;
+			this.clipboard = clipboard;
 			this.passwordStoreConfig = passwordStoreConfig;
-			this.interfaceConfig = interfaceConfig;
 			this.notificationConfig = notificationConfig;
 		}
 
@@ -68,10 +69,10 @@ namespace PassWinmenu.Actions
 
 			if (copyToClipboard)
 			{
-				TemporaryClipboard.Place(passFile.Password, TimeSpan.FromSeconds(interfaceConfig.ClipboardTimeout));
+				var timeout = clipboard.Place(passFile.Password);
 				if (notificationConfig.Types.PasswordCopied)
 				{
-					notificationService.Raise($"The password has been copied to your clipboard.\nIt will be cleared in {interfaceConfig.ClipboardTimeout:0.##} seconds.", Severity.Info);
+					notificationService.Raise($"The password has been copied to your clipboard.\nIt will be cleared in {timeout.TotalSeconds:0.##} seconds.", Severity.Info);
 				}
 			}
 			var usernameEntered = false;

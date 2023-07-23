@@ -8,25 +8,40 @@ using PassWinmenu.Utilities;
 #nullable enable
 namespace PassWinmenu.WinApi
 {
-	public static class TemporaryClipboard
+	public class TemporaryClipboard
 	{
+		private readonly InterfaceConfig config;
+
+		public TemporaryClipboard(InterfaceConfig config)
+		{
+			this.config = config;
+		}
+		
 		/// <summary>
 		/// Copies a string to the clipboard. If it still exists on the clipboard after the amount of time
 		/// specified in <paramref name="timeout"/>, it will be removed again.
 		/// </summary>
 		/// <param name="text">The text to add to the clipboard.</param>
-		/// <param name="timeout">The amount of time, in seconds, the text should remain on the clipboard.</param>
-		public static void Place(string text, TimeSpan timeout)
+		/// <returns>The time until the placed text will be cleared.</returns>
+		public TimeSpan Place(string text)
 		{
 			Helpers.AssertOnUiThread();
 
 			var clipboardBackup = MakeClipboardBackup();
 			Clipboard.SetDataObject(text);
 
+			var timeout = TimeSpan.FromSeconds(config.ClipboardTimeout);
 			Task.Delay(timeout).ContinueWith(_ => PlaceInternal(text, clipboardBackup), TaskScheduler.Default);
+
+			return timeout;
 		}
 
-		private static void PlaceInternal(string text, Dictionary<string, object> clipboardBackup)
+		public string? GetText()
+		{
+			return Clipboard.ContainsText() ? Clipboard.GetText() : null;
+		}
+
+		private void PlaceInternal(string text, Dictionary<string, object> clipboardBackup)
 		{
 			Application.Current.Dispatcher.Invoke(() =>
 			{
@@ -40,7 +55,7 @@ namespace PassWinmenu.WinApi
 
 					Clipboard.Clear();
 
-					if (!ConfigManager.Config.Interface.RestoreClipboard)
+					if (!config.RestoreClipboard)
 					{
 						return;
 					}
@@ -90,12 +105,6 @@ namespace PassWinmenu.WinApi
 				}
 			}
 			return clipboardBackup;
-		}
-
-
-		public static string? GetText()
-		{
-			return Clipboard.ContainsText() ? Clipboard.GetText() : null;
 		}
 	}
 }

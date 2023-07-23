@@ -4,7 +4,7 @@ using System.Windows.Media;
 #nullable enable
 namespace PassWinmenu.Configuration
 {
-	internal class LabelStyleConfig
+	public class LabelStyleConfig
 	{
 		public Brush? TextColour { get; set; }
 		public Brush? BackgroundColour { get; set; }

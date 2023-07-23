@@ -8,11 +8,9 @@ using PassWinmenu.Actions;
 using PassWinmenu.Configuration;
 using PassWinmenu.ExternalPrograms;
 using PassWinmenu.UpdateChecking;
-using PassWinmenu.Utilities;
-using Application = System.Windows.Application;
+using PassWinmenu.WinApi;
 
-#nullable enable
-namespace PassWinmenu.WinApi
+namespace PassWinmenu.Notifications
 {
 	internal class Notifications : INotificationService, INotifyIcon, ISyncStateTracker
 	{
@@ -115,6 +113,13 @@ namespace PassWinmenu.WinApi
 			icon.ContextMenuStrip = menu;
 		}
 
+		public void AddUpdate(ProgramVersion version)
+		{
+			downloadUpdate.Text += $" ({version})";
+			downloadUpdate.Visible = true;
+			downloadSeparator.Visible = true;
+		}
+
 		public void Raise(string message, Severity level)
 		{
 			if (ConfigManager.Config.Notifications.Enabled)
@@ -135,41 +140,9 @@ namespace PassWinmenu.WinApi
 			};
 		}
 
-		private void HandleDownloadUpdateClick(object? sender, EventArgs e)
+		private static void HandleDownloadUpdateClick(object? sender, EventArgs e)
 		{
 			Process.Start(DownloadUpdateString);
-		}
-
-		public void HandleUpdateAvailable(UpdateAvailableEventArgs args)
-		{
-			Application.Current.Dispatcher.Invoke(() => HandleUpdateAvailableInternal(args));
-		}
-
-		private void HandleUpdateAvailableInternal(UpdateAvailableEventArgs args)
-		{
-			Helpers.AssertOnUiThread();
-
-			downloadUpdate.Text += $" ({args.Version})";
-			downloadUpdate.Visible = true;
-			downloadSeparator.Visible = true;
-
-			if (args.Version.Important &&
-			    (ConfigManager.Config.Notifications.Types.UpdateAvailable ||
-			     ConfigManager.Config.Notifications.Types.ImportantUpdateAvailable))
-			{
-				Raise($"An important vulnerability fix ({args.Version}) is available. Check the release for more information.", Severity.Info);
-			}
-			else if (ConfigManager.Config.Notifications.Types.UpdateAvailable)
-			{
-				if (args.Version.IsPrerelease)
-				{
-					Raise($"A new pre-release ({args.Version}) is available.", Severity.Info);
-				}
-				else
-				{
-					Raise($"A new update ({args.Version}) is available.", Severity.Info);
-				}
-			}
 		}
 
 		public void Dispose()

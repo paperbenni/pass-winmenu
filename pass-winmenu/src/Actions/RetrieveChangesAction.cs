@@ -1,6 +1,7 @@
 using LibGit2Sharp;
 using PassWinmenu.Configuration;
 using PassWinmenu.ExternalPrograms;
+using PassWinmenu.Notifications;
 using PassWinmenu.Utilities;
 using PassWinmenu.WinApi;
 

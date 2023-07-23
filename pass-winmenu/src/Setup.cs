@@ -1,7 +1,6 @@
 ﻿using System.Net;
 using Autofac;
 using PassWinmenu.Configuration;
-using PassWinmenu.WinApi;
 
 namespace PassWinmenu;
 
@@ -10,7 +9,7 @@ internal sealed class Setup
 	/// <summary>
 	/// Loads all required resources.
 	/// </summary>
-	public static IContainer Initialise(INotificationService notificationService, IDialogService dialogService, ConfigManager configManager)
+	public static IContainer InitialiseDesktop(ConfigManager configManager)
 	{
 		// Load compiled-in resources.
 		EmbeddedResources.Load();
@@ -31,7 +30,25 @@ internal sealed class Setup
 #endif
 
 		var container = new DependenciesBuilder()
-			.RegisterNotifications(notificationService, dialogService)
+			.RegisterDesktopNotifications()
+			.RegisterConfiguration(configManager)
+			.RegisterEnvironment()
+			.RegisterActions()
+			.RegisterGpg()
+			.RegisterGit()
+			.RegisterApplication()
+			.Build();
+
+		return container;
+	}
+
+	public static IContainer InitialiseCommandLine(ConfigManager configManager)
+	{
+		// Load compiled-in resources.
+		EmbeddedResources.Load();
+		
+		var container = new DependenciesBuilder()
+			.RegisterCommandLineNotifications()
 			.RegisterConfiguration(configManager)
 			.RegisterEnvironment()
 			.RegisterActions()

@@ -12,7 +12,8 @@ public class CommandBuilder
 		configFile = new Option<string>(
 			"--config-file",
 			"Path to the configuration file, relative to the main executable");
-		configFile.SetDefaultValue("pass-winmenu.yaml");
+		var defaultConfigPath = Path.Join(AppDomain.CurrentDomain.BaseDirectory, "pass-winmenu.yaml");
+		configFile.SetDefaultValue(defaultConfigPath);
 		RootCommand.AddGlobalOption(configFile);
 	}
 

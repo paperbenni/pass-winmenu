@@ -9,6 +9,7 @@ using PassWinmenu.Configuration;
 using PassWinmenu.ExternalPrograms;
 using PassWinmenu.ExternalPrograms.Gpg;
 using PassWinmenu.Hotkeys;
+using PassWinmenu.Notifications;
 using PassWinmenu.PasswordManagement;
 using PassWinmenu.UpdateChecking;
 using PassWinmenu.Utilities;
@@ -21,26 +22,19 @@ namespace PassWinmenu
 	{
 		private readonly ContainerBuilder builder = new();
 
-		public DependenciesBuilder RegisterNotifications(INotificationService notificationService, IDialogService dialogService)
+		public DependenciesBuilder RegisterDesktopNotifications()
 		{
-			builder.Register(_ => notificationService)
-				.AsImplementedInterfaces()
-				.ExternallyOwned()
-				.SingleInstance();
-
-			builder.Register(_ => dialogService)
-				.AsImplementedInterfaces()
-				.ExternallyOwned()
-				.SingleInstance();
-
-			if (notificationService is ISyncStateTracker syncStateTracker)
-			{
-				builder.Register(_ => syncStateTracker)
-					.AsSelf()
-					.ExternallyOwned()
-					.SingleInstance();
-			}
-
+			builder.Register(_ => Notifications.Notifications.Create()).AsImplementedInterfaces().SingleInstance();
+			builder.RegisterType<GraphicalDialogService>().AsImplementedInterfaces();
+			
+			return this;
+		}
+		
+		public DependenciesBuilder RegisterCommandLineNotifications()
+		{
+			builder.RegisterType<StubNotificationService>().AsImplementedInterfaces();
+			builder.RegisterType<CommandLineDialogService>().AsImplementedInterfaces();
+			
 			return this;
 		}
 
@@ -57,6 +51,7 @@ namespace PassWinmenu
 			builder.Register(_ => configManager.ConfigurationFile.Config.Interface).AsSelf();
 			builder.Register(_ => configManager.ConfigurationFile.Config.Interface.PasswordEditor).AsSelf();
 			builder.Register(_ => configManager.ConfigurationFile.Config.Notifications).AsSelf();
+			builder.Register(_ => configManager.ConfigurationFile.Config.Notifications.Types).AsSelf();
 			builder.Register(_ => configManager.ConfigurationFile.Config.PasswordStore).AsSelf();
 			builder.Register(_ => configManager.ConfigurationFile.Config.PasswordStore.UsernameDetection).AsSelf();
 
@@ -134,7 +129,7 @@ namespace PassWinmenu
 			builder.Register(
 					context => UpdateCheckerFactory.CreateUpdateChecker(
 						context.Resolve<UpdateCheckingConfig>(),
-						context.Resolve<INotificationService>()))
+						context.Resolve<IUpdateTracker>()))
 				.SingleInstance();
 			builder.RegisterType<RemoteUpdateCheckerFactory>().AsSelf();
 			builder.Register(context => context.Resolve<RemoteUpdateCheckerFactory>().Build()).AsSelf().SingleInstance();
@@ -166,6 +161,8 @@ namespace PassWinmenu
 				.AsSelf();
 
 			builder.RegisterType<PasswordFileParser>().AsSelf();
+			builder.RegisterType<TemporaryClipboard>().AsSelf();
+			builder.RegisterType<UpdateTracker>().AsImplementedInterfaces();
 
 			return this;
 		}

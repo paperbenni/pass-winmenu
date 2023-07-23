@@ -1,7 +1,7 @@
 #nullable enable
 namespace PassWinmenu.Configuration
 {
-	internal class HotkeyOptions
+	public class HotkeyOptions
 	{
 		public bool CopyToClipboard { get; set; }
 		public bool TypeTotpCode { get; set; }

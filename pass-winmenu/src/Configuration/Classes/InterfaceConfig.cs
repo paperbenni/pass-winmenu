@@ -4,7 +4,7 @@ using YamlDotNet.Serialization;
 
 namespace PassWinmenu.Configuration
 {
-	internal class InterfaceConfig
+	public class InterfaceConfig
 	{
 		public bool FollowCursor { get; set; } = true;
 		public string DirectorySeparator { get; set; } = "/";

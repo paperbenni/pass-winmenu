@@ -149,7 +149,7 @@ namespace PassWinmenu.UpdateChecking
 		}
 	}
 
-	internal class UpdateAvailableEventArgs : EventArgs
+	public class UpdateAvailableEventArgs : EventArgs
 	{
 		public ProgramVersion Version { get; set; }
 

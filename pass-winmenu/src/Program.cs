@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Autofac;
 using Autofac.Core;
@@ -8,6 +7,7 @@ using PassWinmenu.Configuration;
 using PassWinmenu.ExternalPrograms;
 using PassWinmenu.ExternalPrograms.Gpg;
 using PassWinmenu.Hotkeys;
+using PassWinmenu.Notifications;
 using PassWinmenu.UpdateChecking;
 using PassWinmenu.Utilities;
 using PassWinmenu.WinApi;
@@ -23,14 +23,14 @@ namespace PassWinmenu
 		public const string EncryptedFileExtension = ".gpg";
 		public const string PlaintextFileExtension = ".txt";
 
-		public static IDisposable? Start(INotificationService notificationService, IDialogService dialogService, ConfigManager configManager)
+		public static IDisposable? Start(ConfigManager configManager)
 		{
 			IContainer? container = null;
 			try
 			{
-				container = Setup.Initialise(notificationService, dialogService, configManager);
-				Start(container, notificationService, dialogService);
-				RunInitialCheck(container, dialogService);
+				container = Setup.InitialiseDesktop(configManager);
+				Start(container);
+				RunInitialCheck(container);
 			}
 			catch (Exception e)
 			{
@@ -38,13 +38,13 @@ namespace PassWinmenu
 				Log.Send("Could not start pass-winmenu: An exception occurred.", LogLevel.Error);
 				Log.ReportException(e);
 
-				if (e is DependencyResolutionException de && de.InnerException != null)
+				if (e is DependencyResolutionException {InnerException: not null} de)
 				{
 					e = de.InnerException;
 				}
 
 				var errorMessage = $"pass-winmenu failed to start ({e.GetType().Name}: {e.Message})";
-				dialogService.ShowErrorWindow(errorMessage);
+				new GraphicalDialogService().ShowErrorWindow(errorMessage);
 				container?.Dispose();
 				App.Exit();
 			}
@@ -52,7 +52,7 @@ namespace PassWinmenu
 			return container;
 		}
 
-		private static void Start(IContainer container, INotificationService notificationService, IDialogService dialogService)
+		private static void Start(IContainer container)
 		{
 			var gpgConfig = container.Resolve<GpgConfig>();
 			if (gpgConfig.GpgAgent.Config.AllowConfigManagement)
@@ -60,16 +60,9 @@ namespace PassWinmenu
 				container.Resolve<GpgAgentConfigUpdater>().UpdateAgentConfig(gpgConfig.GpgAgent.Config.Keys);
 			}
 
-			var actionDispatcher = container.Resolve<ActionDispatcher>();
-			var hotkeyService = container.Resolve<HotkeyService>();
-			var hotkeys = container.Resolve<Config>().Hotkeys;
+			container.Resolve<INotifyIcon>().AddMenuActions(container.Resolve<ActionDispatcher>());
 			
-			// TODO: Not great, not terrible
-			if (notificationService is INotifyIcon n)
-			{
-				n.AddMenuActions(actionDispatcher);
-			}
-			AssignHotkeys(hotkeys, actionDispatcher, hotkeyService, notificationService, dialogService);
+			AssignHotkeys(container);
 
 			if (container.Resolve<UpdateCheckingConfig>().CheckForUpdates)
 			{
@@ -89,10 +82,11 @@ namespace PassWinmenu
 		/// <summary>
 		/// Checks if all components are configured correctly.
 		/// </summary>
-		private static void RunInitialCheck(IContainer container, IDialogService dialogService)
+		private static void RunInitialCheck(IContainer container)
 		{
 			var gpg = container.Resolve<GPG>();
 			var gpgAgentConfig = container.Resolve<GpgAgentConfig>();
+			var dialogService = container.Resolve<IDialogService>();
 
 			try
 			{
@@ -134,26 +128,22 @@ namespace PassWinmenu
 		/// <summary>
 		/// Loads keybindings from the configuration file and registers them with Windows.
 		/// </summary>
-		private static void AssignHotkeys(
-			IEnumerable<HotkeyConfig> hotkeys,
-			ActionDispatcher actionDispatcher,
-			HotkeyService hotkeyService,
-			INotificationService notificationService,
-			IDialogService dialogService)
+		private static void AssignHotkeys(IContainer container)
 		{
+			var hotkeyService = container.Resolve<HotkeyService>();
+			var hotkeys = container.Resolve<Config>().Hotkeys;
+			var actionDispatcher = container.Resolve<ActionDispatcher>();
+			
 			try
 			{
-				hotkeyService.AssignHotkeys(
-					hotkeys,
-					actionDispatcher,
-					notificationService!);
+				hotkeyService.AssignHotkeys(hotkeys, actionDispatcher);
 			}
 			catch (Exception e) when (e is HotkeyException)
 			{
 				Log.Send("Failed to register hotkeys", LogLevel.Error);
 				Log.ReportException(e);
 
-				dialogService.ShowErrorWindow(e.Message, "Could not register hotkeys");
+				container.Resolve<IDialogService>().ShowErrorWindow(e.Message, "Could not register hotkeys");
 				App.Exit();
 			}
 		}

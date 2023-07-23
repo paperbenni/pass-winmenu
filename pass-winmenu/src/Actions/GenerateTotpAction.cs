@@ -1,6 +1,7 @@
 using System;
 using PassWinmenu.Configuration;
 using PassWinmenu.ExternalPrograms.Gpg;
+using PassWinmenu.Notifications;
 using PassWinmenu.PasswordManagement;
 using PassWinmenu.WinApi;
 using PassWinmenu.Windows;
@@ -14,6 +15,7 @@ namespace PassWinmenu.Actions
 		private readonly INotificationService notificationService;
 		private readonly IDialogService dialogService;
 		private readonly DialogCreator dialogCreator;
+		private readonly TemporaryClipboard clipboard;
 		private readonly Config config;
 
 		public GenerateTotpAction(
@@ -21,12 +23,14 @@ namespace PassWinmenu.Actions
 			INotificationService notificationService,
 			IDialogService dialogService,
 			DialogCreator dialogCreator,
+			TemporaryClipboard clipboard,
 			Config config)
 		{
 			this.passwordManager = passwordManager;
 			this.notificationService = notificationService;
 			this.dialogService = dialogService;
 			this.dialogCreator = dialogCreator;
+			this.clipboard = clipboard;
 			this.config = config;
 		}
 
@@ -65,10 +69,10 @@ namespace PassWinmenu.Actions
 				{
 					if (copyToClipboard)
 					{
-						TemporaryClipboard.Place(code, TimeSpan.FromSeconds(config.Interface.ClipboardTimeout));
+						var timeout = clipboard.Place(code);
 						if (config.Notifications.Types.TotpCopied)
 						{
-							notificationService.Raise($"The totp code has been copied to your clipboard.\nIt will be cleared in {config.Interface.ClipboardTimeout:0.##} seconds.", Severity.Info);
+							notificationService.Raise($"The totp code has been copied to your clipboard.\nIt will be cleared in {timeout.TotalSeconds:0.##} seconds.", Severity.Info);
 						}
 					}
 

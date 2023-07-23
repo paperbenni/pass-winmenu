@@ -1,7 +1,8 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using PassWinmenu.WinApi;
 
-namespace PassWinmenu.CommandLine;
+namespace PassWinmenu.Notifications;
 
 internal class CommandLineDialogService : IDialogService
 {

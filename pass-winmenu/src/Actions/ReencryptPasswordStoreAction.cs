@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using PassWinmenu.Configuration;
 using PassWinmenu.ExternalPrograms;
+using PassWinmenu.Notifications;
 using PassWinmenu.PasswordManagement;
 using PassWinmenu.Utilities;
 using PassWinmenu.Utilities.ExtensionMethods;

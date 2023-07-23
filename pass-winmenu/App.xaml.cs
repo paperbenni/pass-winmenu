@@ -1,5 +1,6 @@
 using System;
 using System.CommandLine;
+using System.IO;
 using System.Windows;
 using PassWinmenu.Configuration;
 using PassWinmenu.Utilities;
@@ -17,7 +18,6 @@ namespace PassWinmenu
 	{
 		private MainWindow? mainWindow;
 		private IDisposable? program;
-		private INotificationService? notificationService;
 		
 		private void App_Startup(object sender, StartupEventArgs e)
 		{
@@ -27,7 +27,7 @@ namespace PassWinmenu
 			var configFile = new CommandLine.Option<string>(
 				"--config-file",
 				"Path to the configuration file, relative to the main executable");
-			configFile.SetDefaultValue("pass-winmenu.yaml");
+			configFile.SetDefaultValue(Path.Join(AppDomain.CurrentDomain.BaseDirectory, "pass-winmenu.yaml"));
 			command.AddGlobalOption(configFile);
 			
 			command.SetHandler(HandleRun, configFile);
@@ -37,13 +37,9 @@ namespace PassWinmenu
 
 		private void HandleRun(string configPath)
 		{
-			var dialogService = new GraphicalDialogService();
-			var configManager = ConfigurationLoader.Load(dialogService, configPath);
-			notificationService = Notifications.Create();
+			var configManager = ConfigurationLoader.Load(new GraphicalDialogService(), configPath);
 
-			program = configManager.Match(
-				c => Program.Start(notificationService, dialogService, c),
-				() => Disposable.Empty);
+			program = configManager.Match(Program.Start, () => Disposable.Empty);
 
 			mainWindow = new MainWindow();
 		}
@@ -52,7 +48,6 @@ namespace PassWinmenu
 		{
 			mainWindow?.Close();
 			program?.Dispose();
-			notificationService?.Dispose();
 			Environment.Exit(0);
 		}
 

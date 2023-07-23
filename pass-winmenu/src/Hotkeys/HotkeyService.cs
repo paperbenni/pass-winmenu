@@ -8,7 +8,7 @@ namespace PassWinmenu.Hotkeys
 {
 	internal class HotkeyService : IDisposable
 	{
-		private readonly List<IDisposable> registrations = new List<IDisposable>();
+		private readonly List<IDisposable> registrations = new();
 		private readonly IHotkeyRegistrar registrar;
 
 		/// <summary>
@@ -19,7 +19,7 @@ namespace PassWinmenu.Hotkeys
 			this.registrar = registrar;
 		}
 
-		public void AssignHotkeys(IEnumerable<HotkeyConfig> config, ActionDispatcher actionDispatcher, INotificationService notificationService)
+		public void AssignHotkeys(IEnumerable<HotkeyConfig> config, ActionDispatcher actionDispatcher)
 		{
 			foreach (var hotkey in config)
 			{

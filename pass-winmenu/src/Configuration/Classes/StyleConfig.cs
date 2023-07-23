@@ -5,7 +5,7 @@ using PassWinmenu.Utilities;
 
 namespace PassWinmenu.Configuration
 {
-	internal class StyleConfig
+	public class StyleConfig
 	{
 		public LabelStyleConfig Search { get; set; } = new LabelStyleConfig
 		{
