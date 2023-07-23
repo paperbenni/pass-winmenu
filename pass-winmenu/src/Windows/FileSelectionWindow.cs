@@ -15,8 +15,8 @@ namespace PassWinmenu.Windows
 
 		private bool hasSuggestionForEnteredFileName;
 
-		public FileSelectionWindow(IDirectoryInfo baseDirectory, SelectionWindowConfiguration configuration, InterfaceConfig interfaceConfig,
-			string hint) : base(configuration, interfaceConfig, hint)
+		public FileSelectionWindow(IDirectoryInfo baseDirectory, InterfaceConfig interfaceConfig,
+			string hint) : base(interfaceConfig, hint)
 		{
 			this.baseDirectory = baseDirectory;
 			autocomplete = new DirectoryAutocomplete(baseDirectory);

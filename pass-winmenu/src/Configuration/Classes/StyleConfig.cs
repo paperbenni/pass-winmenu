@@ -1,4 +1,5 @@
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 using PassWinmenu.Utilities;
 
@@ -35,7 +36,7 @@ namespace PassWinmenu.Configuration
 			TextColour = Helpers.BrushFromColourString("#FF999999"),
 		};
 		public int ScrollBoundary { get; set; } = 0;
-		public string Orientation { get; set; } = "vertical";
+		public Orientation Orientation { get; set; } = Orientation.Vertical;
 		public double FontSize { get; set; } = 14;
 		public string FontFamily { get; set; } = "Consolas";
 		public Brush BackgroundColour { get; set; } = Helpers.BrushFromColourString("#FF202020");

@@ -5,25 +5,21 @@ using System.Windows;
 using PassWinmenu.Configuration;
 using PassWinmenu.PasswordManagement;
 using PassWinmenu.Utilities;
-using PassWinmenu.WinApi;
 
 #nullable enable
 namespace PassWinmenu.Windows
 {
 	internal class DialogCreator
 	{
-		private readonly INotificationService notificationService;
 		private readonly IPasswordManager passwordManager;
 		private readonly PathDisplayService pathDisplayService;
-		private readonly Config config;
+		private readonly InterfaceConfig config;
 
 		public DialogCreator(
-			INotificationService notificationService,
 			IPasswordManager passwordManager,
 			PathDisplayService pathDisplayService,
-			Config config)
+			InterfaceConfig config)
 		{
-			this.notificationService = notificationService;
 			this.passwordManager = passwordManager;
 			this.pathDisplayService = pathDisplayService;
 			this.config = config;
@@ -35,19 +31,8 @@ namespace PassWinmenu.Windows
 		/// <returns>The path to the file that the user has chosen</returns>
 		public string? ShowFileSelectionWindow()
 		{
-			SelectionWindowConfiguration windowConfig;
-			try
-			{
-				windowConfig = SelectionWindowConfiguration.ParseMainWindowConfiguration(config);
-			}
-			catch (ConfigurationParseException e)
-			{
-				notificationService.Raise(e.Message, Severity.Error);
-				return null;
-			}
-
 			// Ask the user where the password file should be placed.
-			var pathWindow = new FileSelectionWindow(passwordManager.PasswordStore, windowConfig, config.Interface, "Choose a location...");
+			var pathWindow = new FileSelectionWindow(passwordManager.PasswordStore, config, "Choose a location...");
 			pathWindow.ShowDialog();
 			if (!pathWindow.Success)
 			{
@@ -88,18 +73,7 @@ namespace PassWinmenu.Windows
 		/// <returns>One of the values contained in <paramref name="options"/>, or the default value of <typeparamref name="TEntry"/> if no option was chosen.</returns>
 		public Option<TEntry> ShowPasswordMenu<TEntry>(IEnumerable<TEntry> options, Func<TEntry, string> keySelector, string hint)
 		{
-			SelectionWindowConfiguration windowConfig;
-			try
-			{
-				windowConfig = SelectionWindowConfiguration.ParseMainWindowConfiguration(config);
-			}
-			catch (ConfigurationParseException e)
-			{
-				notificationService.Raise(e.Message, Severity.Error);
-				return default;
-			}
-
-			var menu = new PasswordSelectionWindow<TEntry>(options, keySelector, windowConfig, config.Interface, hint);
+			var menu = new PasswordSelectionWindow<TEntry>(options, keySelector, config, hint);
 			menu.ShowDialog();
 			if (menu.Success)
 			{

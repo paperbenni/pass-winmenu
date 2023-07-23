@@ -51,7 +51,7 @@ namespace PassWinmenu.Windows
 		/// <summary>
 		/// Initialises the window with the provided options.
 		/// </summary>
-		protected SelectionWindow(SelectionWindowConfiguration configuration, InterfaceConfig interfaceConfig, string hint)
+		protected SelectionWindow(InterfaceConfig interfaceConfig, string hint)
 		{
 			HintText = hint;
 			this.interfaceConfig = interfaceConfig;
@@ -74,17 +74,15 @@ namespace PassWinmenu.Windows
 				}
 			}
 
-			var position = fromDevice.Transform(configuration.Position);
-			Left = position.X;
-			Top = position.Y;
-
-			var dimensions = fromDevice.Transform(configuration.Dimensions);
-			Width = dimensions.X;
-			MaxHeight = dimensions.Y;
+			var windowPosition = WindowPosition.Calculate(fromDevice, interfaceConfig);
+			Left = windowPosition.Position.X;
+			Top = windowPosition.Position.Y;
+			Width = windowPosition.Dimensions.X;
+			MaxHeight = windowPosition.Dimensions.Y;
 
 			InitializeComponent();
 
-			InitialiseLabels(configuration.Orientation);
+			InitialiseLabels(interfaceConfig.Style.Orientation);
 			SelectedLabel = Labels[0];
 			ApplySelectionStyle(SelectedLabel);
 

@@ -2,6 +2,7 @@
 using PassWinmenu.Configuration.TypeConverters;
 using Shouldly;
 using Xunit;
+using YamlDotNet.Core;
 using YamlDotNet.Serialization;
 
 namespace PassWinmenuTests.Configuration.TypeConverters;
@@ -20,7 +21,7 @@ public class SizeConverterTests
 
 		obj.Size.ShouldBe(new Size.Pixels(expected));
 	}
-	
+
 	[Theory]
 	[InlineData("0%", 0)]
 	[InlineData("33%", 33)]
@@ -32,6 +33,15 @@ public class SizeConverterTests
 		var obj = des.Deserialize<WrapperObject>("Size: " + size);
 
 		obj.Size.ShouldBe(Size.Percent.FromPercentage(expected));
+	}
+
+	[Theory]
+	[InlineData("text")]
+	public void Deserialize_InvalidInput_ThrowsException(string size)
+	{
+		var des = GetDeserialiser();
+
+		Should.Throw<YamlException>(() => des.Deserialize<WrapperObject>("Size: " + size));
 	}
 
 	private class WrapperObject
