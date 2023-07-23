@@ -21,7 +21,7 @@ namespace PassWinmenu.Configuration
 			new HotkeyConfig
 			{
 				Hotkey = "ctrl alt p",
-				ActionString = "decrypt-password",
+				Action = HotkeyAction.DecryptPassword,
 				Options = new HotkeyOptions
 				{
 					CopyToClipboard = true
@@ -30,7 +30,7 @@ namespace PassWinmenu.Configuration
 			new HotkeyConfig
 			{
 				Hotkey = "ctrl alt shift p",
-				ActionString = "decrypt-password",
+				Action = HotkeyAction.DecryptPassword,
 				Options = new HotkeyOptions
 				{
 					CopyToClipboard = true,

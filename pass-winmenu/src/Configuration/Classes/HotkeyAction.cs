@@ -1,6 +1,6 @@
 namespace PassWinmenu.Configuration
 {
-	internal enum HotkeyAction
+	public enum HotkeyAction
 	{
 		DecryptPassword, // Decrypt a password
 		AddPassword, // Add a new password

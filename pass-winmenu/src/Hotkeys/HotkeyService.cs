@@ -24,21 +24,9 @@ namespace PassWinmenu.Hotkeys
 			foreach (var hotkey in config)
 			{
 				var keys = KeyCombination.Parse(hotkey.Hotkey);
-				HotkeyAction action;
 				try
 				{
-					// Reading the Action variable will cause it to be parsed from hotkey.ActionString.
-					// If this fails, an ArgumentException is thrown.
-					action = hotkey.Action;
-				}
-				catch (ArgumentException)
-				{
-					notificationService.Raise($"Invalid hotkey configuration in config.yaml.\nThe action \"{hotkey.ActionString}\" is not known.", Severity.Error);
-					continue;
-				}
-				try
-				{
-					switch (action)
+					switch (hotkey.Action)
 					{
 						case HotkeyAction.DecryptPassword:
 							AddHotKey(keys, () => actionDispatcher.DecryptPassword(hotkey.Options.CopyToClipboard, hotkey.Options.TypeUsername, hotkey.Options.TypePassword));
@@ -59,8 +47,12 @@ namespace PassWinmenu.Hotkeys
 						case HotkeyAction.GitPull:
 						case HotkeyAction.GitPush:
 						case HotkeyAction.OpenShell:
-							AddHotKey(keys, () => actionDispatcher.Dispatch(action));
+							AddHotKey(keys, () => actionDispatcher.Dispatch(hotkey.Action));
 							break;
+						case HotkeyAction.SelectNext:
+						case HotkeyAction.SelectPrevious:
+						case HotkeyAction.SelectFirst:
+						case HotkeyAction.SelectLast:
 						default:
 							throw new HotkeyException("Invalid hotkey action");
 					}

@@ -17,12 +17,12 @@ namespace PassWinmenu.Configuration
 			new HotkeyConfig
 			{
 				Hotkey = "tab",
-				ActionString = "select-next"
+				Action = HotkeyAction.SelectNext,
 			},
 			new HotkeyConfig
 			{
 				Hotkey = "shift tab",
-				ActionString = "select-previous"
+				Action = HotkeyAction.SelectPrevious,
 			}
 		};
 

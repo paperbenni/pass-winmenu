@@ -12,6 +12,7 @@ namespace PassWinmenu.Configuration
 			.WithTypeConverter(new WidthConverter())
 			.WithTypeConverter(new BrushConverter())
 			.WithTypeConverter(new SizeConverter())
+			.WithTypeConverter(new PascalCaseEnumConverter<HotkeyAction>())
 			.Build();
 
 		public static T Deserialise<T>(StreamReader reader)
