@@ -37,6 +37,7 @@ internal sealed class Setup
 			.RegisterGpg()
 			.RegisterGit()
 			.RegisterApplication()
+			.RegisterJobs()
 			.Build();
 
 		return container;

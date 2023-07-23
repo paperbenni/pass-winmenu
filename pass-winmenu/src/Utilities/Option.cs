@@ -3,7 +3,7 @@ using System;
 #nullable enable
 namespace PassWinmenu.Utilities
 {
-	internal readonly struct Option<T>
+	public readonly struct Option<T>
 	{
 		private T Value { get; }
 		public bool IsSome { get; }

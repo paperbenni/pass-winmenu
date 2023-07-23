@@ -1,6 +1,6 @@
 ﻿namespace PassWinmenu.ExternalPrograms
 {
-	internal enum SyncState
+	public enum SyncState
 	{
 		UpToDate,
 		Ahead,

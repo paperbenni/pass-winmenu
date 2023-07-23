@@ -1,6 +1,6 @@
 ﻿namespace PassWinmenu.ExternalPrograms
 {
-	internal interface ISyncStateTracker
+	public interface ISyncStateTracker
 	{
 		void SetSyncState(SyncState state);
 	}

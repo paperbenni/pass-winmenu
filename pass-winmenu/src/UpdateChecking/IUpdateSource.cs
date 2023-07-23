@@ -2,7 +2,7 @@
 
 namespace PassWinmenu.UpdateChecking
 {
-	internal interface IUpdateSource
+	public interface IUpdateSource
 	{
 		/// <summary>
 		/// Does the update source require an internet connection to check for updates?

@@ -5,7 +5,7 @@ using PassWinmenu.Configuration;
 #nullable enable
 namespace PassWinmenu.ExternalPrograms
 {
-	internal class RemoteUpdateChecker: IDisposable
+	public class RemoteUpdateChecker: IDisposable
 	{
 		private readonly ISyncService syncService;
 		private readonly GitConfig gitConfig;

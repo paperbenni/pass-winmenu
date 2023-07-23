@@ -7,7 +7,7 @@ using System.Windows;
 #nullable enable
 namespace PassWinmenu.Configuration
 {
-	internal class ConfigManager : IDisposable
+	public class ConfigManager : IDisposable
 	{
 		public ConfigurationFile ConfigurationFile { get; private set; }
 		

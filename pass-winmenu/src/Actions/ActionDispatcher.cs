@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using Autofac;
 using PassWinmenu.Configuration;
 using PassWinmenu.WinApi;
 
@@ -8,27 +10,15 @@ namespace PassWinmenu.Actions
 {
 	internal class ActionDispatcher
 	{
-		private readonly DecryptPasswordAction decryptPasswordAction;
-		private readonly GenerateTotpAction generateTotpAction;
-		private readonly DecryptMetadataAction decryptMetadataAction;
-		private readonly GetKeyAction getKeyAction;
+		private readonly ILifetimeScope container;
 		private readonly IDialogService dialogService;
-		private readonly Dictionary<HotkeyAction, IAction> actions;
 
 		public ActionDispatcher(
-			DecryptPasswordAction decryptPasswordAction,
-			GenerateTotpAction generateTotpAction,
-			DecryptMetadataAction decryptMetadataAction,
-			GetKeyAction getKeyAction,
-			IDialogService dialogService,
-			Dictionary<HotkeyAction, IAction> actions)
+			ILifetimeScope container,
+			IDialogService dialogService)
 		{
-			this.decryptPasswordAction = decryptPasswordAction;
-			this.generateTotpAction = generateTotpAction;
-			this.decryptMetadataAction = decryptMetadataAction;
-			this.getKeyAction = getKeyAction;
+			this.container = container;
 			this.dialogService = dialogService;
-			this.actions = actions;
 		}
 
 		/// <summary>
@@ -36,7 +26,12 @@ namespace PassWinmenu.Actions
 		/// </summary>
 		public void DecryptPassword(bool copyToClipboard, bool typeUsername, bool typePassword)
 		{
-			Try(() => decryptPasswordAction.Execute(copyToClipboard, typeUsername, typePassword), "Unable to decrypt password");
+			using var scope = container.BeginLifetimeScope();
+			var decryptPasswordAction = scope.Resolve<DecryptPasswordAction>();
+
+			Try(
+				() => decryptPasswordAction.Execute(copyToClipboard, typeUsername, typePassword),
+				"Unable to decrypt password");
 		}
 
 		/// <summary>
@@ -45,21 +40,35 @@ namespace PassWinmenu.Actions
 		/// </summary>
 		public void GenerateTotpCode(bool copyToClipboard, bool typeTotpCode)
 		{
-			Try(() => generateTotpAction.GenerateTotpCode(copyToClipboard, typeTotpCode), "Unable to generate TOTP code");
+			using var scope = container.BeginLifetimeScope();
+			var generateTotpAction = scope.Resolve<GenerateTotpAction>();
+
+			Try(
+				() => generateTotpAction.GenerateTotpCode(copyToClipboard, typeTotpCode),
+				"Unable to generate TOTP code");
 		}
 
 		public void DecryptMetadata(bool copyToClipboard, bool type)
 		{
+			using var scope = container.BeginLifetimeScope();
+			var decryptMetadataAction = scope.Resolve<DecryptMetadataAction>();
+
 			Try(() => decryptMetadataAction.DecryptMetadata(copyToClipboard, type), "Unable to decrypt metadata");
 		}
 
 		public void DecryptPasswordField(bool copyToClipboard, bool type, string? fieldName = null)
 		{
+			using var scope = container.BeginLifetimeScope();
+			var getKeyAction = scope.Resolve<GetKeyAction>();
+
 			Try(() => getKeyAction.GetKey(copyToClipboard, type, fieldName), "Unable to decrypt password field");
 		}
 
 		public void Dispatch(HotkeyAction hotkeyAction)
 		{
+			using var scope = container.BeginLifetimeScope();
+			var actions = scope.Resolve<IEnumerable<IAction>>().ToDictionary(a => a.ActionType);
+
 			if (actions.TryGetValue(hotkeyAction, out var action))
 			{
 				Try(() => action.Execute(), $"Action '{hotkeyAction}' failed");

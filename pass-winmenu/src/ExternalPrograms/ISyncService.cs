@@ -2,7 +2,7 @@ using LibGit2Sharp;
 
 namespace PassWinmenu.ExternalPrograms
 {
-	internal interface ISyncService
+	public interface ISyncService
 	{
 		void AddPassword(string passwordFilePath);
 		void EditPassword(string passwordFilePath);

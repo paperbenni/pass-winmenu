@@ -1,7 +1,5 @@
 using System;
-using System.Collections.Generic;
 using System.IO.Abstractions;
-using System.Linq;
 using System.Reflection;
 using Autofac;
 using PassWinmenu.Actions;
@@ -9,6 +7,7 @@ using PassWinmenu.Configuration;
 using PassWinmenu.ExternalPrograms;
 using PassWinmenu.ExternalPrograms.Gpg;
 using PassWinmenu.Hotkeys;
+using PassWinmenu.Jobs;
 using PassWinmenu.Notifications;
 using PassWinmenu.PasswordManagement;
 using PassWinmenu.UpdateChecking;
@@ -24,7 +23,7 @@ namespace PassWinmenu
 
 		public DependenciesBuilder RegisterDesktopNotifications()
 		{
-			builder.Register(ctx => Notifications.Notifications.Create(ctx.Resolve<NotificationConfig>())).AsImplementedInterfaces().SingleInstance();
+			builder.Register(ctx => Notifications.Notifications.Create(ctx.Resolve<ActionDispatcher>(), ctx.Resolve<NotificationConfig>())).AsImplementedInterfaces().SingleInstance();
 			builder.RegisterType<GraphicalDialogService>().AsImplementedInterfaces();
 			
 			return this;
@@ -48,6 +47,7 @@ namespace PassWinmenu
 			builder.Register(_ => configManager.ConfigurationFile.Config.Git).AsSelf();
 			builder.Register(_ => configManager.ConfigurationFile.Config.Gpg).AsSelf();
 			builder.Register(_ => configManager.ConfigurationFile.Config.Gpg.GpgAgent).AsSelf();
+			builder.Register(_ => configManager.ConfigurationFile.Config.Gpg.GpgAgent.Config).AsSelf();
 			builder.Register(_ => configManager.ConfigurationFile.Config.Interface).AsSelf();
 			builder.Register(_ => configManager.ConfigurationFile.Config.Interface.PasswordEditor).AsSelf();
 			builder.Register(_ => configManager.ConfigurationFile.Config.Notifications).AsSelf();
@@ -84,10 +84,7 @@ namespace PassWinmenu
 				.AsSelf();
 			builder.Register(_ => WindowsHotkeyRegistrar.Retrieve()).As<IHotkeyRegistrar>();
 
-			builder.RegisterType<ActionDispatcher>()
-				.WithParameter(
-					(p, ctx) => p.ParameterType == typeof(Dictionary<HotkeyAction, IAction>),
-					(info, context) => context.Resolve<IEnumerable<IAction>>().ToDictionary(a => a.ActionType));
+			builder.RegisterType<ActionDispatcher>().AsSelf();
 
 			return this;
 		}
@@ -163,6 +160,21 @@ namespace PassWinmenu
 			builder.RegisterType<PasswordFileParser>().AsSelf();
 			builder.RegisterType<TemporaryClipboard>().AsSelf();
 			builder.RegisterType<UpdateTracker>().AsImplementedInterfaces();
+
+			return this;
+		}
+
+		public DependenciesBuilder RegisterJobs()
+		{
+			builder.RegisterTypes(
+					typeof(AssignHotkeys),
+					typeof(EnableConfigReloading),
+					typeof(PreloadGpgAgent),
+					typeof(StartRemoteUpdateChecker),
+					typeof(StartUpdateChecker),
+					typeof(UpdateGpgAgentConfig))
+				.AsImplementedInterfaces()
+				.AsSelf();
 
 			return this;
 		}

@@ -22,7 +22,7 @@ namespace PassWinmenu.Notifications
 		private const string DownloadUpdateString = "https://github.com/geluk/pass-winmenu/releases";
 		private const int ToolTipTimeoutMs = 5000;
 
-		private Notifications(NotifyIcon icon, NotificationConfig config)
+		private Notifications(NotifyIcon icon, ActionDispatcher actionDispatcher, NotificationConfig config)
 		{
 			this.icon = icon;
 			this.config = config;
@@ -39,9 +39,11 @@ namespace PassWinmenu.Notifications
 			{
 				Visible = false
 			};
+			
+			AddMenuActions(actionDispatcher);
 		}
 
-		public static Notifications Create(NotificationConfig config)
+		public static Notifications Create(ActionDispatcher actionDispatcher, NotificationConfig config)
 		{
 			var icon = new NotifyIcon
 			{
@@ -50,7 +52,7 @@ namespace PassWinmenu.Notifications
 			};
 
 
-			return new Notifications(icon, config);
+			return new Notifications(icon, actionDispatcher, config);
 		}
 
 		private void HandleIconClick(object? sender, EventArgs e)
@@ -68,7 +70,7 @@ namespace PassWinmenu.Notifications
 			}
 		}
 
-		public void AddMenuActions(ActionDispatcher actionDispatcher)
+		private void AddMenuActions(ActionDispatcher actionDispatcher)
 		{
 			var menu = new ContextMenuStrip();
 			menu.Items.Add(new ToolStripLabel("pass-winmenu " + Program.Version));

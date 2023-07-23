@@ -6,7 +6,7 @@ using McSherry.SemanticVersioning;
 #nullable enable
 namespace PassWinmenu.UpdateChecking
 {
-	internal class UpdateChecker : IDisposable
+	public class UpdateChecker : IDisposable
 	{
 
 		public IUpdateSource UpdateSource { get; }

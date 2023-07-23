@@ -1,6 +1,6 @@
 namespace PassWinmenu.Configuration
 {
-	internal record ConfigurationFile(
+	public record ConfigurationFile(
 		string Path,
 		Config Config);
 }
