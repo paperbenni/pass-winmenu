@@ -24,7 +24,7 @@ namespace PassWinmenu
 
 		public DependenciesBuilder RegisterDesktopNotifications()
 		{
-			builder.Register(_ => Notifications.Notifications.Create()).AsImplementedInterfaces().SingleInstance();
+			builder.Register(ctx => Notifications.Notifications.Create(ctx.Resolve<NotificationConfig>())).AsImplementedInterfaces().SingleInstance();
 			builder.RegisterType<GraphicalDialogService>().AsImplementedInterfaces();
 			
 			return this;

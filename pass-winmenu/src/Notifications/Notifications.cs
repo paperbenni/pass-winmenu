@@ -15,29 +15,33 @@ namespace PassWinmenu.Notifications
 	internal class Notifications : INotificationService, INotifyIcon, ISyncStateTracker
 	{
 		private readonly NotifyIcon icon;
-
-		private const string DownloadUpdateString = "https://github.com/geluk/pass-winmenu/releases";
+		private readonly NotificationConfig config;
 		private readonly ToolStripMenuItem downloadUpdate;
 		private readonly ToolStripSeparator downloadSeparator;
+
+		private const string DownloadUpdateString = "https://github.com/geluk/pass-winmenu/releases";
 		private const int ToolTipTimeoutMs = 5000;
 
-		private Notifications(NotifyIcon icon)
+		private Notifications(NotifyIcon icon, NotificationConfig config)
 		{
 			this.icon = icon;
+			this.config = config;
 			this.icon.Click += HandleIconClick;
 
-			downloadUpdate = new ToolStripMenuItem("Download Update");
+			downloadUpdate = new ToolStripMenuItem("Download Update")
+			{
+				BackColor = Color.Beige,
+				Visible = false,
+			};
 			downloadUpdate.Click += HandleDownloadUpdateClick;
-			downloadUpdate.BackColor = Color.Beige;
 
-			downloadUpdate.Visible = false;
 			downloadSeparator = new ToolStripSeparator
 			{
 				Visible = false
 			};
 		}
 
-		public static Notifications Create()
+		public static Notifications Create(NotificationConfig config)
 		{
 			var icon = new NotifyIcon
 			{
@@ -46,7 +50,7 @@ namespace PassWinmenu.Notifications
 			};
 
 
-			return new Notifications(icon);
+			return new Notifications(icon, config);
 		}
 
 		private void HandleIconClick(object? sender, EventArgs e)
@@ -122,7 +126,7 @@ namespace PassWinmenu.Notifications
 
 		public void Raise(string message, Severity level)
 		{
-			if (ConfigManager.Config.Notifications.Enabled)
+			if (config.Enabled)
 			{
 				icon.ShowBalloonTip(ToolTipTimeoutMs, "pass-winmenu", message, GetIconForSeverity(level));
 			}

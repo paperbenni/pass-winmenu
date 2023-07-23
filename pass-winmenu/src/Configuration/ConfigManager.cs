@@ -9,9 +9,6 @@ namespace PassWinmenu.Configuration
 {
 	internal class ConfigManager : IDisposable
 	{
-		[Obsolete("Remove usages and rely on DI instead")]
-		public static Config Config => instance?.ConfigurationFile.Config ?? throw new NullReferenceException();
-		private static ConfigManager? instance;
 		public ConfigurationFile ConfigurationFile { get; private set; }
 		
 		private FileSystemWatcher? watcher;
@@ -19,7 +16,6 @@ namespace PassWinmenu.Configuration
 		private ConfigManager(ConfigurationFile configurationFile)
 		{
 			ConfigurationFile = configurationFile;
-			instance = this;
 		}
 
 		public void EnableAutoReloading()
