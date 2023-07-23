@@ -92,6 +92,7 @@ namespace PassWinmenu.PasswordManagement
 		/// <summary>
 		/// Returns all password files in the store
 		/// </summary>
+		/// <exception cref="DirectoryNotFoundException">If the password store directory does not exist.</exception>
 		public IEnumerable<PasswordFile> GetPasswordFiles()
 		{
 			var patternRegex = new Regex(configuration.PasswordFileMatch);

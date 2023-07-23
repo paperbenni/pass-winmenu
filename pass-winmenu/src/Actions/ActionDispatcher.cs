@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using PassWinmenu.Configuration;
-using PassWinmenu.Windows;
+using PassWinmenu.WinApi;
 
 #nullable enable
 namespace PassWinmenu.Actions
@@ -12,6 +12,7 @@ namespace PassWinmenu.Actions
 		private readonly GenerateTotpAction generateTotpAction;
 		private readonly DecryptMetadataAction decryptMetadataAction;
 		private readonly GetKeyAction getKeyAction;
+		private readonly IDialogService dialogService;
 		private readonly Dictionary<HotkeyAction, IAction> actions;
 
 		public ActionDispatcher(
@@ -19,12 +20,14 @@ namespace PassWinmenu.Actions
 			GenerateTotpAction generateTotpAction,
 			DecryptMetadataAction decryptMetadataAction,
 			GetKeyAction getKeyAction,
+			IDialogService dialogService,
 			Dictionary<HotkeyAction, IAction> actions)
 		{
 			this.decryptPasswordAction = decryptPasswordAction;
 			this.generateTotpAction = generateTotpAction;
 			this.decryptMetadataAction = decryptMetadataAction;
 			this.getKeyAction = getKeyAction;
+			this.dialogService = dialogService;
 			this.actions = actions;
 		}
 
@@ -33,7 +36,7 @@ namespace PassWinmenu.Actions
 		/// </summary>
 		public void DecryptPassword(bool copyToClipboard, bool typeUsername, bool typePassword)
 		{
-			decryptPasswordAction.Execute(copyToClipboard, typeUsername, typePassword);
+			Try(() => decryptPasswordAction.Execute(copyToClipboard, typeUsername, typePassword), "Unable to decrypt password");
 		}
 
 		/// <summary>
@@ -42,28 +45,40 @@ namespace PassWinmenu.Actions
 		/// </summary>
 		public void GenerateTotpCode(bool copyToClipboard, bool typeTotpCode)
 		{
-			generateTotpAction.GenerateTotpCode(copyToClipboard, typeTotpCode);
+			Try(() => generateTotpAction.GenerateTotpCode(copyToClipboard, typeTotpCode), "Unable to generate TOTP code");
 		}
 
 		public void DecryptMetadata(bool copyToClipboard, bool type)
 		{
-			decryptMetadataAction.DecryptMetadata(copyToClipboard, type);
+			Try(() => decryptMetadataAction.DecryptMetadata(copyToClipboard, type), "Unable to decrypt metadata");
 		}
 
 		public void DecryptPasswordField(bool copyToClipboard, bool type, string? fieldName = null)
 		{
-			getKeyAction.GetKey(copyToClipboard, type, fieldName);
+			Try(() => getKeyAction.GetKey(copyToClipboard, type, fieldName), "Unable to decrypt password field");
 		}
 
 		public void Dispatch(HotkeyAction hotkeyAction)
 		{
 			if (actions.TryGetValue(hotkeyAction, out var action))
 			{
-				action.Execute();
+				Try(() => action.Execute(), $"Action '{hotkeyAction}' failed");
 			}
 			else
 			{
-				throw new NotImplementedException("Action does not exist.");
+				dialogService.ShowErrorWindow($"No handler for action '{hotkeyAction}' exists");
+			}
+		}
+
+		private void Try(Action action, string baseMessage)
+		{
+			try
+			{
+				action();
+			}
+			catch (Exception e)
+			{
+				dialogService.ShowErrorWindow($"{baseMessage}: " + e.Message);
 			}
 		}
 	}

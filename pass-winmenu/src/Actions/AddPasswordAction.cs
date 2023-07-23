@@ -54,28 +54,21 @@ namespace PassWinmenu.Actions
 			}
 
 			// Display the password generation window.
-			string password;
-			string metadata;
 			var passwordWindow = new PasswordWindow(Path.GetFileNameWithoutExtension(passwordFilePath), config.PasswordStore.PasswordGeneration);
 			passwordWindow.ShowDialog();
 			if (!passwordWindow.DialogResult.GetValueOrDefault())
 			{
 				return;
 			}
-			password = passwordWindow.Password.Text;
-			metadata = passwordWindow.ExtraContent.Text.Replace(Environment.NewLine, "\n");
+			var password = passwordWindow.Password.Text;
+			var metadata = passwordWindow.ExtraContent.Text.Replace(Environment.NewLine, "\n");
 
 			PasswordFile passwordFile;
 			try
 			{
 				passwordFile = passwordManager.AddPassword(passwordFilePath, password, metadata);
 			}
-			catch (GpgException e)
-			{
-				dialogService.ShowErrorWindow("Unable to encrypt your password: " + e.Message);
-				return;
-			}
-			catch (ConfigurationException e)
+			catch (Exception e)
 			{
 				dialogService.ShowErrorWindow("Unable to encrypt your password: " + e.Message);
 				return;

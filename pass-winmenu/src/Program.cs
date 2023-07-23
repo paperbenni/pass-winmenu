@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Net;
 using System.Threading.Tasks;
 using Autofac;
 using Autofac.Core;
@@ -94,15 +92,8 @@ namespace PassWinmenu
 		private static void RunInitialCheck(IContainer container, IDialogService dialogService)
 		{
 			var gpg = container.Resolve<GPG>();
-			var passwordStoreConfig = container.Resolve<PasswordStoreConfig>();
 			var gpgAgentConfig = container.Resolve<GpgAgentConfig>();
 
-			if (!Directory.Exists(passwordStoreConfig.Location))
-			{
-				dialogService.ShowErrorWindow($"Could not find the password store at {Path.GetFullPath(passwordStoreConfig.Location)}. Please make sure it exists.");
-				App.Exit();
-				return;
-			}
 			try
 			{
 				Log.Send("Using GPG version " + gpg.GetVersion());
