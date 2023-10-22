@@ -23,7 +23,7 @@ internal sealed class Setup
 #if DEBUG
 		Log.EnableFileLogging();
 #else
-			if (ConfigManager.Config.CreateLogFile)
+			if (configManager.ConfigurationFile.Config.CreateLogFile)
 			{
 				Log.EnableFileLogging();
 			}
